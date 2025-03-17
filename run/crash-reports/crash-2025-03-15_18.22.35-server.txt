@@ -1,0 +1,157 @@
+---- Minecraft Crash Report ----
+// Daisy, daisy...
+
+Time: 2025-03-15 18:22:35
+Description: Ticking player
+
+java.lang.ExceptionInInitializerError: null
+	at net.artur.nacikmod.item.RingOfTime.curioTick(RingOfTime.java:38) ~[%23196!/:?] {re:classloading}
+	at top.theillusivec4.curios.common.capability.ItemizedCurioCapability.curioTick(ItemizedCurioCapability.java:55) ~[curios-forge-5.3.1+1.20.1_mapped_official_1.20.1.jar%23200!/:5.3.1+1.20.1] {re:classloading}
+	at top.theillusivec4.curios.common.event.CuriosEventHandler.lambda$tick$24(CuriosEventHandler.java:562) ~[curios-forge-5.3.1+1.20.1_mapped_official_1.20.1.jar%23200!/:5.3.1+1.20.1] {re:classloading}
+	at net.minecraftforge.common.util.LazyOptional.ifPresent(LazyOptional.java:137) ~[forge-1.20.1-47.3.0_mapped_official_1.20.1.jar%23190%23197!/:?] {re:classloading}
+	at top.theillusivec4.curios.common.event.CuriosEventHandler.lambda$tick$29(CuriosEventHandler.java:562) ~[curios-forge-5.3.1+1.20.1_mapped_official_1.20.1.jar%23200!/:5.3.1+1.20.1] {re:classloading}
+	at net.minecraftforge.common.util.LazyOptional.ifPresent(LazyOptional.java:137) ~[forge-1.20.1-47.3.0_mapped_official_1.20.1.jar%23190%23197!/:?] {re:classloading}
+	at top.theillusivec4.curios.common.event.CuriosEventHandler.tick(CuriosEventHandler.java:541) ~[curios-forge-5.3.1+1.20.1_mapped_official_1.20.1.jar%23200!/:5.3.1+1.20.1] {re:classloading}
+	at top.theillusivec4.curios.common.event.__CuriosEventHandler_tick_LivingTickEvent.invoke(.dynamic) ~[curios-forge-5.3.1+1.20.1_mapped_official_1.20.1.jar%23200!/:5.3.1+1.20.1] {re:classloading,pl:eventbus:B}
+	at net.minecraftforge.eventbus.ASMEventHandler.invoke(ASMEventHandler.java:73) ~[eventbus-6.0.5.jar%23114!/:?] {}
+	at net.minecraftforge.eventbus.EventBus.post(EventBus.java:315) ~[eventbus-6.0.5.jar%23114!/:?] {}
+	at net.minecraftforge.eventbus.EventBus.post(EventBus.java:296) ~[eventbus-6.0.5.jar%23114!/:?] {}
+	at net.minecraftforge.common.ForgeHooks.onLivingTick(ForgeHooks.java:264) ~[forge-1.20.1-47.3.0_mapped_official_1.20.1.jar%23190%23197!/:?] {re:classloading}
+	at net.minecraft.world.entity.LivingEntity.tick(LivingEntity.java:2258) ~[forge-1.20.1-47.3.0_mapped_official_1.20.1.jar%23191!/:?] {re:mixin,re:computing_frames,re:classloading,pl:mixin:APP:curios.mixins.json:MixinLivingEntity,pl:mixin:A}
+	at net.minecraft.world.entity.player.Player.tick(Player.java:241) ~[forge-1.20.1-47.3.0_mapped_official_1.20.1.jar%23191!/:?] {re:computing_frames,pl:accesstransformer:B,re:mixin,pl:accesstransformer:B,re:classloading,pl:accesstransformer:B}
+	at net.minecraft.server.level.ServerPlayer.doTick(ServerPlayer.java:467) ~[forge-1.20.1-47.3.0_mapped_official_1.20.1.jar%23191!/:?] {re:computing_frames,pl:accesstransformer:B,re:classloading,pl:accesstransformer:B}
+	at net.minecraft.server.network.ServerGamePacketListenerImpl.tick(ServerGamePacketListenerImpl.java:262) ~[forge-1.20.1-47.3.0_mapped_official_1.20.1.jar%23191!/:?] {re:classloading,pl:accesstransformer:B}
+	at net.minecraft.network.Connection.tick(Connection.java:263) ~[forge-1.20.1-47.3.0_mapped_official_1.20.1.jar%23191!/:?] {re:classloading}
+	at net.minecraft.server.network.ServerConnectionListener.tick(ServerConnectionListener.java:142) ~[forge-1.20.1-47.3.0_mapped_official_1.20.1.jar%23191!/:?] {re:classloading}
+	at net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:907) ~[forge-1.20.1-47.3.0_mapped_official_1.20.1.jar%23191!/:?] {re:classloading,pl:accesstransformer:B}
+	at net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:814) ~[forge-1.20.1-47.3.0_mapped_official_1.20.1.jar%23191!/:?] {re:classloading,pl:accesstransformer:B}
+	at net.minecraft.client.server.IntegratedServer.tickServer(IntegratedServer.java:89) ~[forge-1.20.1-47.3.0_mapped_official_1.20.1.jar%23191!/:?] {re:classloading,pl:runtimedistcleaner:A}
+	at net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:661) ~[forge-1.20.1-47.3.0_mapped_official_1.20.1.jar%23191!/:?] {re:classloading,pl:accesstransformer:B}
+	at net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:251) ~[forge-1.20.1-47.3.0_mapped_official_1.20.1.jar%23191!/:?] {re:classloading,pl:accesstransformer:B}
+	at java.lang.Thread.run(Thread.java:833) ~[?:?] {}
+Caused by: java.lang.IllegalArgumentException: Registration of impl channels is locked
+	at net.minecraftforge.network.NetworkRegistry.createInstance(NetworkRegistry.java:135) ~[forge-1.20.1-47.3.0_mapped_official_1.20.1.jar%23190%23197!/:?] {re:classloading}
+	at net.minecraftforge.network.NetworkRegistry.newSimpleChannel(NetworkRegistry.java:103) ~[forge-1.20.1-47.3.0_mapped_official_1.20.1.jar%23190%23197!/:?] {re:classloading}
+	at net.artur.nacikmod.network.ModMessages.<clinit>(ModMessages.java:10) ~[%23196!/:?] {re:classloading}
+	... 24 more
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- Head --
+Thread: Server thread
+Suspected Mods: 
+	Nacik Mod (nacikmod), Version: 0.0.1-1.20.1
+		at TRANSFORMER/nacikmod@0.0.1-1.20.1/net.artur.nacikmod.item.RingOfTime.curioTick(RingOfTime.java:38)
+
+	Curios API (curios), Version: 5.3.1+1.20.1
+		Issue tracker URL: https://github.com/TheIllusiveC4/Curios/issues
+		at TRANSFORMER/curios@5.3.1+1.20.1/top.theillusivec4.curios.common.capability.ItemizedCurioCapability.curioTick(ItemizedCurioCapability.java:55)
+Stacktrace:
+	at net.artur.nacikmod.item.RingOfTime.curioTick(RingOfTime.java:38) ~[%23196!/:?] {re:classloading}
+	at top.theillusivec4.curios.common.capability.ItemizedCurioCapability.curioTick(ItemizedCurioCapability.java:55) ~[curios-forge-5.3.1+1.20.1_mapped_official_1.20.1.jar%23200!/:5.3.1+1.20.1] {re:classloading}
+	at top.theillusivec4.curios.common.event.CuriosEventHandler.lambda$tick$24(CuriosEventHandler.java:562) ~[curios-forge-5.3.1+1.20.1_mapped_official_1.20.1.jar%23200!/:5.3.1+1.20.1] {re:classloading}
+	at net.minecraftforge.common.util.LazyOptional.ifPresent(LazyOptional.java:137) ~[forge-1.20.1-47.3.0_mapped_official_1.20.1.jar%23190%23197!/:?] {re:classloading}
+	at top.theillusivec4.curios.common.event.CuriosEventHandler.lambda$tick$29(CuriosEventHandler.java:562) ~[curios-forge-5.3.1+1.20.1_mapped_official_1.20.1.jar%23200!/:5.3.1+1.20.1] {re:classloading}
+	at net.minecraftforge.common.util.LazyOptional.ifPresent(LazyOptional.java:137) ~[forge-1.20.1-47.3.0_mapped_official_1.20.1.jar%23190%23197!/:?] {re:classloading}
+	at top.theillusivec4.curios.common.event.CuriosEventHandler.tick(CuriosEventHandler.java:541) ~[curios-forge-5.3.1+1.20.1_mapped_official_1.20.1.jar%23200!/:5.3.1+1.20.1] {re:classloading}
+	at top.theillusivec4.curios.common.event.__CuriosEventHandler_tick_LivingTickEvent.invoke(.dynamic) ~[curios-forge-5.3.1+1.20.1_mapped_official_1.20.1.jar%23200!/:5.3.1+1.20.1] {re:classloading,pl:eventbus:B}
+	at net.minecraftforge.eventbus.ASMEventHandler.invoke(ASMEventHandler.java:73) ~[eventbus-6.0.5.jar%23114!/:?] {}
+	at net.minecraftforge.eventbus.EventBus.post(EventBus.java:315) ~[eventbus-6.0.5.jar%23114!/:?] {}
+	at net.minecraftforge.eventbus.EventBus.post(EventBus.java:296) ~[eventbus-6.0.5.jar%23114!/:?] {}
+	at net.minecraftforge.common.ForgeHooks.onLivingTick(ForgeHooks.java:264) ~[forge-1.20.1-47.3.0_mapped_official_1.20.1.jar%23190%23197!/:?] {re:classloading}
+	at net.minecraft.world.entity.LivingEntity.tick(LivingEntity.java:2258) ~[forge-1.20.1-47.3.0_mapped_official_1.20.1.jar%23191!/:?] {re:mixin,re:computing_frames,re:classloading,pl:mixin:APP:curios.mixins.json:MixinLivingEntity,pl:mixin:A}
+	at net.minecraft.world.entity.player.Player.tick(Player.java:241) ~[forge-1.20.1-47.3.0_mapped_official_1.20.1.jar%23191!/:?] {re:computing_frames,pl:accesstransformer:B,re:mixin,pl:accesstransformer:B,re:classloading,pl:accesstransformer:B}
+-- Player being ticked --
+Details:
+	Entity Type: minecraft:player (net.minecraft.server.level.ServerPlayer)
+	Entity ID: 140
+	Entity Name: Dev
+	Entity's Exact location: 146.28, 74.00, -0.30
+	Entity's Block location: World: (146,74,-1), Section: (at 2,10,15 in 9,4,-1; chunk contains blocks 144,-64,-16 to 159,319,-1), Region: (0,-1; contains chunks 0,-32 to 31,-1, blocks 0,-64,-512 to 511,319,-1)
+	Entity's Momentum: 0.00, -0.08, 0.00
+	Entity's Passengers: []
+	Entity's Vehicle: null
+Stacktrace:
+	at net.minecraft.server.level.ServerPlayer.doTick(ServerPlayer.java:467) ~[forge-1.20.1-47.3.0_mapped_official_1.20.1.jar%23191!/:?] {re:computing_frames,pl:accesstransformer:B,re:classloading,pl:accesstransformer:B}
+	at net.minecraft.server.network.ServerGamePacketListenerImpl.tick(ServerGamePacketListenerImpl.java:262) ~[forge-1.20.1-47.3.0_mapped_official_1.20.1.jar%23191!/:?] {re:classloading,pl:accesstransformer:B}
+	at net.minecraft.network.Connection.tick(Connection.java:263) ~[forge-1.20.1-47.3.0_mapped_official_1.20.1.jar%23191!/:?] {re:classloading}
+	at net.minecraft.server.network.ServerConnectionListener.tick(ServerConnectionListener.java:142) ~[forge-1.20.1-47.3.0_mapped_official_1.20.1.jar%23191!/:?] {re:classloading}
+	at net.minecraft.server.MinecraftServer.tickChildren(MinecraftServer.java:907) ~[forge-1.20.1-47.3.0_mapped_official_1.20.1.jar%23191!/:?] {re:classloading,pl:accesstransformer:B}
+	at net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:814) ~[forge-1.20.1-47.3.0_mapped_official_1.20.1.jar%23191!/:?] {re:classloading,pl:accesstransformer:B}
+	at net.minecraft.client.server.IntegratedServer.tickServer(IntegratedServer.java:89) ~[forge-1.20.1-47.3.0_mapped_official_1.20.1.jar%23191!/:?] {re:classloading,pl:runtimedistcleaner:A}
+	at net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:661) ~[forge-1.20.1-47.3.0_mapped_official_1.20.1.jar%23191!/:?] {re:classloading,pl:accesstransformer:B}
+	at net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:251) ~[forge-1.20.1-47.3.0_mapped_official_1.20.1.jar%23191!/:?] {re:classloading,pl:accesstransformer:B}
+	at java.lang.Thread.run(Thread.java:833) ~[?:?] {}
+
+
+-- System Details --
+Details:
+	Minecraft Version: 1.20.1
+	Minecraft Version ID: 1.20.1
+	Operating System: Windows 10 (amd64) version 10.0
+	Java Version: 17.0.6, Oracle Corporation
+	Java VM Version: Java HotSpot(TM) 64-Bit Server VM (mixed mode, sharing), Oracle Corporation
+	Memory: 1248786408 bytes (1190 MiB) / 2319450112 bytes (2212 MiB) up to 4282384384 bytes (4084 MiB)
+	CPUs: 12
+	Processor Vendor: AuthenticAMD
+	Processor Name: AMD Ryzen 5 1600 Six-Core Processor            
+	Identifier: AuthenticAMD Family 23 Model 1 Stepping 1
+	Microarchitecture: Zen
+	Frequency (GHz): 3.19
+	Number of physical packages: 1
+	Number of physical CPUs: 6
+	Number of logical CPUs: 12
+	Graphics card #0 name: NVIDIA GeForce GTX 1060 6GB
+	Graphics card #0 vendor: NVIDIA (0x10de)
+	Graphics card #0 VRAM (MB): 4095.00
+	Graphics card #0 deviceId: 0x1c03
+	Graphics card #0 versionInfo: DriverVersion=31.0.15.3734
+	Memory slot #0 capacity (MB): 8192.00
+	Memory slot #0 clockSpeed (GHz): 2.40
+	Memory slot #0 type: DDR4
+	Memory slot #1 capacity (MB): 8192.00
+	Memory slot #1 clockSpeed (GHz): 2.40
+	Memory slot #1 type: DDR4
+	Virtual memory max (MB): 56450.64
+	Virtual memory used (MB): 43646.75
+	Swap memory total (MB): 40118.22
+	Swap memory used (MB): 5948.78
+	JVM Flags: 1 total; -XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump
+	Server Running: true
+	Player Count: 1 / 8; [ServerPlayer['Dev'/140, l='ServerLevel[New World]', x=146.28, y=74.00, z=-0.30]]
+	Data Packs: vanilla, mod:forge, mod:nacikmod, mod:curios (incompatible), mod:geckolib, mod:tickrateapi
+	Enabled Feature Flags: minecraft:vanilla
+	World Generation: Stable
+	Type: Integrated Server (map_client.txt)
+	Is Modded: Definitely; Client brand changed to 'forge'; Server brand changed to 'forge'
+	Launched Version: MOD_DEV
+	ModLauncher: 10.0.9+10.0.9+main.dcd20f30
+	ModLauncher launch target: forgeclientuserdev
+	ModLauncher naming: mcp
+	ModLauncher services: 
+		mixin-0.8.5.jar mixin PLUGINSERVICE 
+		eventbus-6.0.5.jar eventbus PLUGINSERVICE 
+		fmlloader-1.20.1-47.3.0.jar slf4jfixer PLUGINSERVICE 
+		fmlloader-1.20.1-47.3.0.jar object_holder_definalize PLUGINSERVICE 
+		fmlloader-1.20.1-47.3.0.jar runtime_enum_extender PLUGINSERVICE 
+		fmlloader-1.20.1-47.3.0.jar capability_token_subclass PLUGINSERVICE 
+		accesstransformers-8.0.4.jar accesstransformer PLUGINSERVICE 
+		fmlloader-1.20.1-47.3.0.jar runtimedistcleaner PLUGINSERVICE 
+		modlauncher-10.0.9.jar mixin TRANSFORMATIONSERVICE 
+		modlauncher-10.0.9.jar fml TRANSFORMATIONSERVICE 
+	FML Language Providers: 
+		minecraft@1.0
+		lowcodefml@null
+		javafml@null
+	Mod List: 
+		forge-1.20.1-47.3.0_mapped_official_1.20.1.jar    |Minecraft                     |minecraft                     |1.20.1              |DONE      |Manifest: a1:d4:5e:04:4f:d3:d6:e0:7b:37:97:cf:77:b0:de:ad:4a:47:ce:8c:96:49:5f:0a:cf:8c:ae:b2:6d:4b:8a:3f
+		                                                  |Forge                         |forge                         |47.3.0              |DONE      |Manifest: NOSIGNATURE
+		main                                              |Nacik Mod                     |nacikmod                      |0.0.1-1.20.1        |DONE      |Manifest: NOSIGNATURE
+		curios-forge-5.3.1+1.20.1_mapped_official_1.20.1.j|Curios API                    |curios                        |5.3.1+1.20.1        |DONE      |Manifest: NOSIGNATURE
+		geckolib-forge-1.20.1-4.4.4_mapped_official_1.20.1|GeckoLib 4                    |geckolib                      |4.4.4               |DONE      |Manifest: NOSIGNATURE
+		tickrate-api-969702-6237424_mapped_official_1.20.1|Tickrate API                  |tickrateapi                   |3.0.0               |DONE      |Manifest: NOSIGNATURE
+	Crash Report UUID: 652d91b3-6088-4d68-a8d2-bf6be7f06e7f
+	FML: 47.3
+	Forge: net.minecraftforge:47.3.0

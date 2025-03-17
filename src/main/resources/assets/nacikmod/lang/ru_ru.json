@@ -1,0 +1,14 @@
+{
+  "item.nacikmod.lans_of_protection": "Копье Защиты",
+  "item.nacikmod.lans_of_nacii": "Копьё Здоровья",
+  "effect.nacikmod.no_regen": "Антихил",
+  "effect.nacikmod.health_reduction": "Неизличимые раны",
+  "effect.nacikmod.armor_reduction": "Разрушение брони",
+  "effect.nacikmod.love":"Любовь",
+  "entity.nacikmod.lanser": "Диармайд",
+  "item.nacikmod.lanser_spawn_egg": "Яйцо призыва Диармайда",
+  "item.nacikmod.magic_armor": "Магическая броня",
+  "item.nacikmod.ring_of_time": "Кольцо времени",
+  "curios.identifier.artifact": "Артефакт",
+  "curios.identifier.ring": "Кольцо"
+}
