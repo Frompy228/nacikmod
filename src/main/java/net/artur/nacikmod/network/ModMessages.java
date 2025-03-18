@@ -33,22 +33,13 @@ public class ModMessages {
                 CooldownSyncPacket::handle
         );
 
-        INSTANCE.registerMessage(
-                id++,
-                ManaSyncPacket.class,
-                ManaSyncPacket::toBytes,
-                ManaSyncPacket::new,
-                ManaSyncPacket::handle
-        );
     }
 
     // Синхронизация перезарядки с клиентом
     public static void sendToClient(ServerPlayer player, int cooldown) {
         INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new CooldownSyncPacket(player.getUUID(), cooldown));
     }
-    public static void sendManaToClient(ServerPlayer player, int currentMana, int maxMana) {
-        INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new ManaSyncPacket(player.getUUID(), currentMana, maxMana));
-    }
+
 
     public static void sendToServer(TimeStopPacket packet) {
         INSTANCE.sendToServer(packet);

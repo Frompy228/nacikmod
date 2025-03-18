@@ -1,12 +1,13 @@
 package net.artur.nacikmod.item;
 
-import net.artur.nacikmod.capability.mana.ManaCapability;
 import net.artur.nacikmod.event.KeyBindings;
 import net.artur.nacikmod.network.ModMessages;
 import net.artur.nacikmod.network.TimeStopPacket;
 import net.artur.nacikmod.network.CooldownSyncPacket;
+import net.artur.nacikmod.registry.ModAttributes;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -40,12 +41,12 @@ public class RingOfTime extends Item implements ICurioItem {
             }
 
             if (player.level().isClientSide && KeyBindings.INSTANSE.ability.isDown() && getCooldown(player) == 0) {
-                player.getCapability(ManaCapability.MANA_CAPABILITY).ifPresent(mana -> {
-                    if (mana.getMana() >= 50) { // Проверяем, хватает ли маны
-                        ModMessages.sendToServer(new TimeStopPacket()); // Отправляем пакет активации
-                        mana.consumeMana(50); // Тратим 50 маны
-                    }
-                });
+                AttributeInstance manaAttribute = player.getAttribute(ModAttributes.MANA.get());
+
+                if (manaAttribute != null && manaAttribute.getBaseValue() >= 50) { // Проверяем, хватает ли маны
+                    ModMessages.sendToServer(new TimeStopPacket()); // Отправляем пакет активации
+                    manaAttribute.setBaseValue(manaAttribute.getBaseValue() - 50); // Тратим 50 маны
+                }
             }
         }
     }

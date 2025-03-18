@@ -1,10 +1,10 @@
 package net.artur.nacikmod.item.ability;
 
+import net.artur.nacikmod.registry.ModAttributes;
 import net.artur.nacikmod.registry.ModEffects;
-import net.artur.nacikmod.capability.mana.ManaCapability;
-import net.artur.nacikmod.capability.mana.IMana;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.level.Level;
@@ -44,23 +44,20 @@ public class TimeStop {
             LivingEntity entity = affectedEntities.get(currentEntityIndex);
 
             if (!world.isClientSide) {
-                if (!entity.hasEffect(ModEffects.TIME_SLOW.get()) && entity.isAlive()) {
-                    // Получаем максимальную ману игрока
-                    int maxMana = player.getCapability(ManaCapability.MANA_CAPABILITY)
-                            .map(IMana::getMaxMana)
-                            .orElse(100);
+                AttributeInstance maxManaAttribute = player.getAttribute(ModAttributes.MAX_MANA.get());
+                int maxMana = maxManaAttribute != null ? (int) maxManaAttribute.getValue() : 100;
 
-                    // Рассчитываем amplifier
-                    int amplifier;
-                    if (maxMana >= 2500) {
-                        amplifier = 3;
-                    } else if (maxMana >= 2000) {
-                        amplifier = 2;
-                    } else if (maxMana >= 1000) {
-                        amplifier = 1;
-                    } else {
-                        amplifier = 0;
-                    }
+                // Рассчитываем amplifier в зависимости от максимальной маны
+                int amplifier;
+                if (maxMana >= 2500) {
+                    amplifier = 3;
+                } else if (maxMana >= 2000) {
+                    amplifier = 2;
+                } else if (maxMana >= 1000) {
+                    amplifier = 1;
+                } else {
+                    amplifier = 0;
+
 
                     // Применяем эффект с рассчитанным amplifier
                     MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.TIME_SLOW.get(), 100, amplifier);

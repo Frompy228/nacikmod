@@ -1,6 +1,5 @@
 package net.artur.nacikmod.entity.custom;
 
-import net.artur.nacikmod.capability.mana.ManaCapability;
 import net.artur.nacikmod.entity.MobClass.HeroSouls;
 import net.artur.nacikmod.registry.ModAttributes;
 import net.artur.nacikmod.registry.ModEffects;
