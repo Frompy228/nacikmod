@@ -11,6 +11,8 @@ public class ModAttributes {
     public static final DeferredRegister<Attribute> ATTRIBUTES =
             DeferredRegister.create(ForgeRegistries.ATTRIBUTES, NacikMod.MOD_ID);
 
+
+
     public static final RegistryObject<Attribute> BONUS_ARMOR = ATTRIBUTES.register("bonus_armor",
             () -> new RangedAttribute("attribute.nacikmod.bonus_armor", 0.0, 0.0, 2048.0).setSyncable(true));
 
