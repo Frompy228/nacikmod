@@ -17,9 +17,9 @@ public class ManaOverlayRenderer {
 
     @SubscribeEvent
     public static void onRenderGuiOverlay(RenderGuiOverlayEvent.Pre event) {
+
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.player == null) return;
-
         minecraft.player.getCapability(ManaCapability.MANA_CAPABILITY).ifPresent(mana -> {
             int currentMana = mana.getMana();
             int maxMana = mana.getMaxMana();
@@ -36,7 +36,6 @@ public class ManaOverlayRenderer {
 
             // Отрисовка текста
             event.getGuiGraphics().drawString(font, "Mana: " + currentMana + "/" + maxMana, x, y, 0x00FFFF, false);
-
             RenderSystem.disableBlend();
             poseStack.popPose();
 
