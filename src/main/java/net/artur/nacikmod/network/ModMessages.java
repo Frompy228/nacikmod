@@ -40,6 +40,7 @@ public class ModMessages {
                 ManaSyncPacket::new,
                 ManaSyncPacket::handle
         );
+
     }
 
     // Синхронизация перезарядки с клиентом

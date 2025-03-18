@@ -4,9 +4,15 @@ public class Mana implements IMana {
     private int mana;
     private int maxMana;
 
+    // Конструктор без значений по умолчанию
+    public Mana() {
+        // Нет инициализации значений, они будут заданы позже
+    }
+
+    // Конструктор с максимальной маной
     public Mana(int maxMana) {
         this.maxMana = maxMana;
-        this.mana = maxMana; // Начинаем с полной маны
+        this.mana = maxMana;  // Изначально можно установить ману равной максимальной
     }
 
     @Override
@@ -21,24 +27,23 @@ public class Mana implements IMana {
 
     @Override
     public void setMana(int mana) {
-        this.mana = Math.min(mana, maxMana); // Не превышаем максимум
+        this.mana = mana;
     }
 
     @Override
     public void setMaxMana(int maxMana) {
         this.maxMana = maxMana;
-        if (mana > maxMana) {
-            mana = maxMana; // Убеждаемся, что текущая мана не превышает максимум
-        }
+
     }
 
     @Override
     public void addMana(int amount) {
-        setMana(this.mana + amount);
-    }
+        if (mana<maxMana){
+        setMana(this.mana + amount); // Добавляем ману, но с проверкой на максимальное значение
+    }}
 
     @Override
     public void consumeMana(int amount) {
-        this.mana = Math.max(this.mana - amount, 0); // Не опускаемся ниже нуля
+        this.mana = Math.max(this.mana - amount, 0); // Уменьшаем ману, но не меньше 0
     }
 }
