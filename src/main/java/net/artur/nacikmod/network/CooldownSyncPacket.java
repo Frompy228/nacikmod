@@ -4,6 +4,8 @@ import net.artur.nacikmod.item.RingOfTime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.UUID;
@@ -28,16 +30,17 @@ public class CooldownSyncPacket {
         buf.writeInt(cooldown);
     }
 
-    public void handle(Supplier<NetworkEvent.Context> contextSupplier) {
-        NetworkEvent.Context context = contextSupplier.get();
-        context.enqueueWork(() -> {
-            if (Minecraft.getInstance().level != null) {
-                Player player = Minecraft.getInstance().level.getPlayerByUUID(playerUUID);
-                if (player != null) {
-                    RingOfTime.setCooldown(player, cooldown);
-                }
-            }
+    public void handle(Supplier<NetworkEvent.Context> context) {
+        context.get().enqueueWork(() -> {
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> handleClient());
         });
-        context.setPacketHandled(true);
+        context.get().setPacketHandled(true);
+    }
+
+    private void handleClient() {
+        Player player = Minecraft.getInstance().level.getPlayerByUUID(playerUUID);
+        if (player != null) {
+            RingOfTime.setCooldown(player, cooldown);
+        }
     }
 }

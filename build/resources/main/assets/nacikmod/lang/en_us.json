@@ -9,6 +9,10 @@
   "item.nacikmod.lanser_spawn_egg": "Lanser Spawn Egg",
   "item.nacikmod.magic_armor": "Magic Armor",
   "item.nacikmod.ring_of_time": "Ring of Time",
+  "item.nacikmod.magic_charm": "Magic Charm",
+  "item.nacikmod.magic_seal": "Magic Seal",
   "curios.identifier.artifact": "Artifact",
-  "curios.identifier.ring": "Ring"
+  "curios.identifier.ring": "Ring",
+  "curios.identifer.charm": "Charm",
+  "key.nacikmod.ability_key": "Key Ability"
 }

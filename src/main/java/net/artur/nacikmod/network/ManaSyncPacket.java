@@ -1,56 +1,51 @@
 package net.artur.nacikmod.network;
 
-import net.artur.nacikmod.capability.mana.ManaCapability;
+import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.util.UUID;
 import java.util.function.Supplier;
 
-public class ManaSyncPacket {
-    private final UUID playerUUID;
-    private final int currentMana;
+public class ManaSyncPacket  {
+    private final int mana;
     private final int maxMana;
 
-    // Конструктор для создания пакета
-    public ManaSyncPacket(UUID playerUUID, int currentMana, int maxMana) {
-        this.playerUUID = playerUUID;
-        this.currentMana = currentMana;
+    public ManaSyncPacket(int mana, int maxMana) {
+        this.mana = mana;
         this.maxMana = maxMana;
     }
 
-    // Метод для кодирования пакета в байты
-    public void toBytes(FriendlyByteBuf buffer) {
-        buffer.writeUUID(playerUUID);
-        buffer.writeInt(currentMana);
-        buffer.writeInt(maxMana);
+    public ManaSyncPacket(FriendlyByteBuf buf) {
+        this.mana = buf.readInt();
+        this.maxMana = buf.readInt();
     }
 
-    // Метод для декодирования пакета из байтов
-    public ManaSyncPacket(FriendlyByteBuf buffer) {
-        this.playerUUID = buffer.readUUID();
-        this.currentMana = buffer.readInt();
-        this.maxMana = buffer.readInt();
+    public void toBytes(FriendlyByteBuf buf) {
+        buf.writeInt(mana);
+        buf.writeInt(maxMana);
     }
 
-    // Метод для обработки пакета на стороне клиента
-    public void handle(Supplier<NetworkEvent.Context> contextSupplier) {
-        NetworkEvent.Context context = contextSupplier.get();
+    public boolean handle(Supplier<NetworkEvent.Context> supplier) {
+        NetworkEvent.Context context = supplier.get();
         context.enqueueWork(() -> {
-            // Получаем клиентского игрока
-            if (Minecraft.getInstance().level != null) {
-                Player player = Minecraft.getInstance().level.getPlayerByUUID(playerUUID);
-                if (player != null) {
-                    // Обновляем данные маны на клиенте
-                    player.getCapability(ManaCapability.MANA_CAPABILITY).ifPresent(mana -> {
-                        mana.setMana(currentMana);
-                        mana.setMaxMana(maxMana);
-                    });
-                }
-            }
+            // Запуск только на клиенте
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> handleClient());
         });
         context.setPacketHandled(true);
+        return true;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    private void handleClient() {
+        if (Minecraft.getInstance().player != null) {
+            Minecraft.getInstance().player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
+                mana.setMana(this.mana);
+                mana.setMaxMana(this.maxMana);
+            });
+        }
     }
 }

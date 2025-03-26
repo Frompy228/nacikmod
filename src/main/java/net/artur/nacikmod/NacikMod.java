@@ -2,13 +2,13 @@ package net.artur.nacikmod;
 
 
 import com.mojang.logging.LogUtils;
+import net.artur.nacikmod.capability.mana.ManaSyncOnDeath;
 import net.artur.nacikmod.entity.client.LanserRender;
 import net.artur.nacikmod.network.ModMessages;
 import net.artur.nacikmod.registry.ModAttributes;
 import net.artur.nacikmod.registry.ModEffects;
 import net.artur.nacikmod.registry.ModEntities;
 import net.artur.nacikmod.registry.ModItems;
-import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -44,11 +44,9 @@ public class NacikMod
         ModEntities.register(modEventBus);
         ModAttributes.ATTRIBUTES.register(modEventBus);
         ModMessages.register();
-
-
+        MinecraftForge.EVENT_BUS.register(ManaSyncOnDeath.class);
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
-
 
         // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);

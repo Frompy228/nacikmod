@@ -9,6 +9,10 @@
   "item.nacikmod.lanser_spawn_egg": "Яйцо призыва Диармайда",
   "item.nacikmod.magic_armor": "Магическая броня",
   "item.nacikmod.ring_of_time": "Кольцо времени",
+  "item.nacikmod.magic_charm": "Магический амулет",
+  "item.nacikmod.magic_seal": "Магическая печать",
   "curios.identifier.artifact": "Артефакт",
-  "curios.identifier.ring": "Кольцо"
+  "curios.identifier.ring": "Кольцо",
+  "curios.identifer.charm": "Амулет",
+  "key.nacikmod.ability_key": "Кнопка способности"
 }

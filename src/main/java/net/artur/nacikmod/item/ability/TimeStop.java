@@ -1,8 +1,8 @@
 package net.artur.nacikmod.item.ability;
 
-import net.artur.nacikmod.registry.ModEffects;
-import net.artur.nacikmod.capability.mana.ManaCapability;
 import net.artur.nacikmod.capability.mana.IMana;
+import net.artur.nacikmod.capability.mana.ManaProvider;
+import net.artur.nacikmod.registry.ModEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -46,15 +46,15 @@ public class TimeStop {
             if (!world.isClientSide) {
                 if (!entity.hasEffect(ModEffects.TIME_SLOW.get()) && entity.isAlive()) {
                     // Получаем максимальную ману игрока
-                    int maxMana = player.getCapability(ManaCapability.MANA_CAPABILITY)
+                    int maxMana = player.getCapability(ManaProvider.MANA_CAPABILITY)
                             .map(IMana::getMaxMana)
                             .orElse(100);
 
                     // Рассчитываем amplifier
                     int amplifier;
-                    if (maxMana >= 2500) {
+                    if (maxMana >= 100000) {
                         amplifier = 3;
-                    } else if (maxMana >= 2000) {
+                    } else if (maxMana >= 10000) {
                         amplifier = 2;
                     } else if (maxMana >= 1000) {
                         amplifier = 1;

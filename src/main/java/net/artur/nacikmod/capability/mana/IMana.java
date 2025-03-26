@@ -1,12 +1,14 @@
 package net.artur.nacikmod.capability.mana;
 
 public interface IMana {
-    int getMana();          // Получить текущее количество маны
-    void setMana(int mana); // Установить ману
-    void addMana(int amount);  // Увеличить ману
-    void consumeMana(int amount); // Потратить ману
-    int getMaxMana();       // Получить максимальную ману
+    int getMana();
+    void setMana(int amount);
+    void addMana(int amount);
+    void removeMana(int amount);
 
-    void setMaxMana(int maxMana); // Установить максимальную ману
+    int getMaxMana();
+    void setMaxMana(int amount);
+    void addMaxMana(int amount);
+
+    void regenerateMana();
 }
-
