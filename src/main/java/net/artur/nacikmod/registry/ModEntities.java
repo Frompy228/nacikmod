@@ -1,5 +1,6 @@
 package net.artur.nacikmod.registry;
 
+
 import net.artur.nacikmod.entity.custom.LanserEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -17,10 +18,10 @@ public class ModEntities {
 
     public static final RegistryObject<EntityType<LanserEntity>> LANSER =
             ENTITY_TYPES.register("lanser", () -> EntityType.Builder.of(LanserEntity::new, MobCategory.MONSTER).sized(0.6f,1.8f).build("lanser"));
-
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);
     }
+
 }
 
 

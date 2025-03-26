@@ -10,12 +10,15 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.ForgeHooksClient;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
+@OnlyIn(Dist.CLIENT) // <-- Добавляем аннотацию для клиент-специфичности
 @Mixin(ItemInHandRenderer.class)
 public abstract class HandMixin {
 
@@ -32,7 +35,6 @@ public abstract class HandMixin {
         ItemStack offhand = player.getOffhandItem();
         ItemStack mainHand = player.getMainHandItem();
 
-        // Используем getCurrentItemAttackStrengthDelay() вместо attackStrengthTicker
         double attackStrength = player.getCurrentItemAttackStrengthDelay();
         float attackProgress = Mth.clamp((float) (attackStrength / player.getAttackStrengthScale(1.0F)), 0.0F, 1.0F);
 
@@ -40,13 +42,13 @@ public abstract class HandMixin {
         return Mth.clamp((!reequip ? (attackProgress * attackProgress * attackProgress) : 0F) - this.offHandHeight, -0.4F, 0.4F);
     }
 
-
     @Redirect(method = "renderHandsWithItems", at = @At(target = "Lnet/minecraft/client/renderer/ItemInHandRenderer;renderArmWithItem(Lnet/minecraft/client/player/AbstractClientPlayer;FFLnet/minecraft/world/InteractionHand;FLnet/minecraft/world/item/ItemStack;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V", value = "INVOKE", ordinal = 1))
     public void renderArmWithItemOff(ItemInHandRenderer instance, AbstractClientPlayer player, float p1, float p2, InteractionHand hand, float swing, ItemStack stack, float p3, PoseStack poseStack, MultiBufferSource buffer, int light) {
         this.renderArmWithItem(player, p1, p2, hand, getOffHandSwing(p1), stack, p3, poseStack, buffer, light);
     }
 
-    public float getOffHandSwing(float partial) {
+    @OnlyIn(Dist.CLIENT) // <-- Аннотация для клиент-метода
+    private float getOffHandSwing(float partial) {
         Player player = Minecraft.getInstance().player;
         if (player == null) return 0F;
 

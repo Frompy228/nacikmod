@@ -1,8 +1,11 @@
 package net.artur.nacikmod.item;
 
+import com.mojang.blaze3d.shaders.Effect;
 import net.artur.nacikmod.registry.ModAttributes;
 import net.artur.nacikmod.registry.ModEffects;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -53,7 +56,9 @@ public class MagicArmor extends Item implements ICurioItem {
             if (entity.hasEffect(ModEffects.LOVE.get())) {
                 entity.removeEffect(ModEffects.LOVE.get());
             }
-
+            if (entity.hasEffect(MobEffects.POISON)){
+                entity.removeEffect(MobEffects.POISON);
+            }
 
         }
     }

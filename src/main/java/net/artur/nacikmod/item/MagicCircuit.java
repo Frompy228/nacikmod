@@ -1,7 +1,7 @@
 package net.artur.nacikmod.item;
 
 import net.artur.nacikmod.capability.mana.IMana;
-import net.artur.nacikmod.capability.mana.ManaCapability;
+import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.network.ModMessages;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -24,13 +24,12 @@ public class MagicCircuit extends Item {
         if (!level.isClientSide) { // Выполняем только на сервере
             ItemStack stack = player.getItemInHand(hand);
 
-            LazyOptional<IMana> manaCap = player.getCapability(ManaCapability.MANA_CAPABILITY);
+            LazyOptional<IMana> manaCap = player.getCapability(ManaProvider.MANA_CAPABILITY);
             manaCap.ifPresent(mana -> {
                 int newMaxMana = mana.getMaxMana() + 50;
                 mana.setMaxMana(newMaxMana); // Увеличиваем макс. ману
 
-                // Синхронизируем изменения с клиентом
-                if (player instanceof ServerPlayer serverPlayer) {
+                if (player instanceof ServerPlayer serverPlayer && serverPlayer.connection != null) {
                     ModMessages.sendManaToClient(serverPlayer, mana.getMana(), mana.getMaxMana());
                 }
             });

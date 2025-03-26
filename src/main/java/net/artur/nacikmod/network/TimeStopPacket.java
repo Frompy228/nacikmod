@@ -1,10 +1,12 @@
 package net.artur.nacikmod.network;
 
+import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.item.RingOfTime;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
 
+import java.util.UUID;
 import java.util.function.Supplier;
 
 import static net.artur.nacikmod.item.ability.TimeStop.activate;
@@ -21,22 +23,23 @@ public class TimeStopPacket {
         context.enqueueWork(() -> {
             ServerPlayer player = context.getSender();
             if (player != null) {
-                // Проверяем, есть ли у игрока перезарядка
                 if (RingOfTime.getCooldown(player) == 0) {
-                    // Запускаем способность
-                    activate(player);
+                    player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
+                        if (mana.getMana() >= 500) {
+                            mana.setMana(mana.getMana() - 500);
+                            ModMessages.sendManaToClient(player, mana.getMana(), mana.getMaxMana());
 
-                    // Устанавливаем перезарядку
-                    int cooldown = 200;
-                    RingOfTime.setCooldown(player, cooldown);
+                            activate(player);
 
-                    // Синхронизируем перезарядку с клиентом
-                    ModMessages.sendToClient(player, cooldown);
+                            int cooldown = 200;
+                            RingOfTime.setCooldown(player, cooldown);
+                            // Исправленный вызов:
+                            ModMessages.sendToClient(player, new CooldownSyncPacket(player.getUUID(), cooldown));
+                        }
+                    });
                 }
             }
         });
         context.setPacketHandled(true);
     }
-
-
 }

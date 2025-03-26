@@ -2,25 +2,30 @@ package net.artur.nacikmod.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.artur.nacikmod.capability.mana.IMana;
-import net.artur.nacikmod.capability.mana.ManaCapability;
 import net.artur.nacikmod.NacikMod;
+import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = NacikMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+
+@OnlyIn(Dist.CLIENT)
+@Mod.EventBusSubscriber(modid = NacikMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT) // Добавлено value = Dist.CLIENT
 public class ManaOverlayRenderer {
 
     @SubscribeEvent
     public static void onRenderGuiOverlay(RenderGuiOverlayEvent.Pre event) {
 
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.player == null) return;
-        minecraft.player.getCapability(ManaCapability.MANA_CAPABILITY).ifPresent(mana -> {
+        Player player = minecraft.player;
+        if (player == null) return;
+
+        player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
             int currentMana = mana.getMana();
             int maxMana = mana.getMaxMana();
 

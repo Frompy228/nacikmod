@@ -6,8 +6,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 
+
+
+@OnlyIn(Dist.CLIENT)
 public class TimeStopOverlay {
     private static boolean showReadyMessage = false;
     private static int readyMessageTimer = 0;

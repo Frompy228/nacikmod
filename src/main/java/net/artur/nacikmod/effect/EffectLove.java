@@ -18,11 +18,11 @@ public class EffectLove extends MobEffect {
         super(MobEffectCategory.HARMFUL,0xff00c9);
 
         this.addAttributeModifier(Attributes.MOVEMENT_SPEED, LOVE.toString()
-                ,-0.02, AttributeModifier.Operation.ADDITION);
+                ,-0.03, AttributeModifier.Operation.ADDITION);
         this.addAttributeModifier(Attributes.ATTACK_SPEED, LOVE.toString()
-                ,-0.4, AttributeModifier.Operation.ADDITION);
+                ,-0.5, AttributeModifier.Operation.ADDITION);
         this.addAttributeModifier(Attributes.ATTACK_DAMAGE, LOVE.toString()
-                ,-10, AttributeModifier.Operation.ADDITION);
+                ,-12, AttributeModifier.Operation.ADDITION);
     }
 
 

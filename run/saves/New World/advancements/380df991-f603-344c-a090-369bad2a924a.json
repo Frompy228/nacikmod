@@ -8,15 +8,33 @@
   "minecraft:adventure/adventuring_time": {
     "criteria": {
       "minecraft:snowy_slopes": "2025-02-21 12:32:23 +0500",
+      "minecraft:taiga": "2025-03-20 14:17:02 +0500",
+      "minecraft:deep_ocean": "2025-03-20 14:47:31 +0500",
+      "minecraft:frozen_river": "2025-03-23 19:16:36 +0500",
       "minecraft:cherry_grove": "2025-02-19 15:58:04 +0500",
       "minecraft:sunflower_plains": "2025-02-19 15:59:05 +0500",
+      "minecraft:bamboo_jungle": "2025-03-20 14:50:34 +0500",
       "minecraft:beach": "2025-03-15 03:11:54 +0500",
+      "minecraft:dark_forest": "2025-03-20 14:48:51 +0500",
       "minecraft:river": "2025-03-15 03:15:21 +0500",
       "minecraft:stony_shore": "2025-03-15 02:55:21 +0500",
+      "minecraft:snowy_plains": "2025-03-20 15:13:56 +0500",
+      "minecraft:dripstone_caves": "2025-03-20 14:15:43 +0500",
+      "minecraft:snowy_taiga": "2025-03-20 15:10:17 +0500",
+      "minecraft:swamp": "2025-03-20 14:15:05 +0500",
+      "minecraft:grove": "2025-03-20 14:45:04 +0500",
+      "minecraft:cold_ocean": "2025-03-20 14:24:38 +0500",
       "minecraft:forest": "2025-03-15 02:53:23 +0500",
+      "minecraft:lush_caves": "2025-03-21 23:58:38 +0500",
+      "minecraft:frozen_ocean": "2025-03-23 15:01:30 +0500",
+      "minecraft:desert": "2025-03-20 15:09:10 +0500",
       "minecraft:ocean": "2025-03-15 03:15:17 +0500",
+      "minecraft:jungle": "2025-03-20 15:10:55 +0500",
+      "minecraft:snowy_beach": "2025-03-23 15:01:29 +0500",
       "minecraft:frozen_peaks": "2025-03-17 13:46:45 +0500",
       "minecraft:old_growth_birch_forest": "2025-03-15 02:59:20 +0500",
+      "minecraft:deep_dark": "2025-03-20 14:45:08 +0500",
+      "minecraft:meadow": "2025-03-23 20:16:06 +0500",
       "minecraft:plains": "2025-02-20 18:01:25 +0500"
     },
     "done": false
@@ -400,7 +418,10 @@
   },
   "minecraft:nether/explore_nether": {
     "criteria": {
-      "minecraft:crimson_forest": "2025-03-17 20:06:03 +0500"
+      "minecraft:crimson_forest": "2025-03-17 20:06:03 +0500",
+      "minecraft:nether_wastes": "2025-03-20 14:57:06 +0500",
+      "minecraft:soul_sand_valley": "2025-03-20 14:54:02 +0500",
+      "minecraft:basalt_deltas": "2025-03-20 14:53:21 +0500"
     },
     "done": false
   },
@@ -413,6 +434,198 @@
   "minecraft:story/enter_the_nether": {
     "criteria": {
       "entered_nether": "2025-03-17 20:06:03 +0500"
+    },
+    "done": true
+  },
+  "minecraft:story/follow_ender_eye": {
+    "criteria": {
+      "in_stronghold": "2025-03-20 14:15:45 +0500"
+    },
+    "done": true
+  },
+  "minecraft:nether/find_bastion": {
+    "criteria": {
+      "bastion": "2025-03-20 14:54:02 +0500"
+    },
+    "done": true
+  },
+  "minecraft:nether/loot_bastion": {
+    "criteria": {
+      "loot_bastion_treasure": "2025-03-20 14:55:58 +0500"
+    },
+    "done": true
+  },
+  "minecraft:nether/find_fortress": {
+    "criteria": {
+      "fortress": "2025-03-20 14:57:44 +0500"
+    },
+    "done": true
+  },
+  "minecraft:nether/fast_travel": {
+    "criteria": {
+      "travelled": "2025-03-20 15:09:09 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/misc/stick_from_bamboo_item": {
+    "criteria": {
+      "has_bamboo": "2025-03-20 15:11:22 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/building_blocks/bamboo_block": {
+    "criteria": {
+      "has_bamboo": "2025-03-20 15:11:22 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/decorations/scaffolding": {
+    "criteria": {
+      "has_bamboo": "2025-03-20 15:11:22 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/misc/wild_armor_trim_smithing_template": {
+    "criteria": {
+      "has_wild_armor_trim_smithing_template": "2025-03-20 15:11:24 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/misc/wild_armor_trim_smithing_template_smithing_trim": {
+    "criteria": {
+      "has_smithing_trim_template": "2025-03-20 15:11:24 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/tools/golden_axe": {
+    "criteria": {
+      "has_gold_ingot": "2025-03-20 15:11:24 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/tools/golden_pickaxe": {
+    "criteria": {
+      "has_gold_ingot": "2025-03-20 15:11:24 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/misc/gold_nugget": {
+    "criteria": {
+      "has_gold_ingot": "2025-03-20 15:11:24 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/tools/golden_shovel": {
+    "criteria": {
+      "has_gold_ingot": "2025-03-20 15:11:24 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/food/golden_apple": {
+    "criteria": {
+      "has_gold_ingot": "2025-03-20 15:11:24 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/combat/golden_boots": {
+    "criteria": {
+      "has_gold_ingot": "2025-03-20 15:11:24 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/combat/golden_helmet": {
+    "criteria": {
+      "has_gold_ingot": "2025-03-20 15:11:24 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/combat/golden_sword": {
+    "criteria": {
+      "has_gold_ingot": "2025-03-20 15:11:24 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/building_blocks/gold_block": {
+    "criteria": {
+      "has_gold_ingot": "2025-03-20 15:11:24 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/combat/golden_chestplate": {
+    "criteria": {
+      "has_gold_ingot": "2025-03-20 15:11:24 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/tools/golden_hoe": {
+    "criteria": {
+      "has_gold_ingot": "2025-03-20 15:11:24 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/redstone/light_weighted_pressure_plate": {
+    "criteria": {
+      "has_gold_ingot": "2025-03-20 15:11:24 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/combat/golden_leggings": {
+    "criteria": {
+      "has_gold_ingot": "2025-03-20 15:11:24 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/combat/leather_helmet": {
+    "criteria": {
+      "has_leather": "2025-03-22 16:54:31 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/combat/leather_leggings": {
+    "criteria": {
+      "has_leather": "2025-03-22 16:54:31 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/food/cooked_beef_from_smoking": {
+    "criteria": {
+      "has_beef": "2025-03-22 16:54:31 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/decorations/item_frame": {
+    "criteria": {
+      "has_leather": "2025-03-22 16:54:31 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/combat/leather_chestplate": {
+    "criteria": {
+      "has_leather": "2025-03-22 16:54:31 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/combat/leather_boots": {
+    "criteria": {
+      "has_leather": "2025-03-22 16:54:31 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/misc/leather_horse_armor": {
+    "criteria": {
+      "has_leather": "2025-03-22 16:54:31 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/food/cooked_beef": {
+    "criteria": {
+      "has_beef": "2025-03-22 16:54:31 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/food/cooked_beef_from_campfire_cooking": {
+    "criteria": {
+      "has_beef": "2025-03-22 16:54:31 +0500"
     },
     "done": true
   },

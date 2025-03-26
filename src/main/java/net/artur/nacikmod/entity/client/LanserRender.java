@@ -6,7 +6,10 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class LanserRender extends HumanoidMobRenderer<LanserEntity, LanserModel<LanserEntity>> {
     public LanserRender(EntityRendererProvider.Context context) {
         super(context, new LanserModel<>(context.bakeLayer(ModModelLayers.LANSER_LAYER)), 0.5f);

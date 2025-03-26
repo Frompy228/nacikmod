@@ -4,15 +4,9 @@ public class Mana implements IMana {
     private int mana;
     private int maxMana;
 
-    // Конструктор без значений по умолчанию
     public Mana() {
-        // Нет инициализации значений, они будут заданы позже
-    }
-
-    // Конструктор с максимальной маной
-    public Mana(int maxMana) {
-        this.maxMana = maxMana;
-        this.mana = maxMana;  // Изначально можно установить ману равной максимальной
+        this.mana = 100;  // Начальная мана
+        this.maxMana = 100;
     }
 
     @Override
@@ -21,29 +15,38 @@ public class Mana implements IMana {
     }
 
     @Override
+    public void setMana(int amount) {
+        this.mana = amount; // Ограничение от 0 до maxMana
+    }
+
+    @Override
+    public void addMana(int amount) {
+        setMana(this.mana + amount);
+    }
+
+    @Override
+    public void removeMana(int amount) {
+        setMana(this.mana - amount);
+    }
+
+    @Override
     public int getMaxMana() {
         return maxMana;
     }
 
     @Override
-    public void setMana(int mana) {
-        this.mana = mana;
+    public void setMaxMana(int amount) {
+        this.maxMana = Math.max(1, amount); // Минимальное значение 1
+        setMana(mana); // Обновляем текущую ману, чтобы не превышала максимум
     }
 
     @Override
-    public void setMaxMana(int maxMana) {
-        this.maxMana = maxMana;
-
+    public void addMaxMana(int amount) {
+        setMaxMana(this.maxMana + amount);
     }
 
     @Override
-    public void addMana(int amount) {
-        if (mana<maxMana){
-        setMana(this.mana + amount); // Добавляем ману, но с проверкой на максимальное значение
-    }}
-
-    @Override
-    public void consumeMana(int amount) {
-        this.mana = Math.max(this.mana - amount, 0); // Уменьшаем ману, но не меньше 0
+    public void regenerateMana() {
+        addMana(1); // Простая регенерация
     }
 }
