@@ -1,16 +1,25 @@
 package net.artur.nacikmod.entity.custom;
 
+import com.min01.tickrateapi.TickrateAPI;
+import com.min01.tickrateapi.capabilities.TickrateCapabilities;
+import com.min01.tickrateapi.util.CustomTimer;
+import com.min01.tickrateapi.util.TickrateUtil;
+import com.min01.tickrateapi.world.TickrateSavedData;
 import net.artur.nacikmod.entity.MobClass.HeroSouls;
 import net.artur.nacikmod.registry.ModAttributes;
 import net.artur.nacikmod.registry.ModEffects;
 import net.artur.nacikmod.registry.ModItems;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
@@ -22,6 +31,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.Nullable;
@@ -30,6 +40,7 @@ import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Random;
 
 public class LanserEntity extends HeroSouls {
 
@@ -43,8 +54,20 @@ public class LanserEntity extends HeroSouls {
 
     @Override
     public void tick() {
+        // Ограничение amplifier эффекта TIME_SLOW
+        MobEffectInstance timeSlowEffect = this.getEffect(ModEffects.TIME_SLOW.get());
+        if (timeSlowEffect != null && timeSlowEffect.getAmplifier() > 2) {
+            // Заменяем эффект amplifier=2, если текущий amplifier > 2
+            this.removeEffect(ModEffects.TIME_SLOW.get());
+            this.addEffect(new MobEffectInstance(ModEffects.TIME_SLOW.get(), timeSlowEffect.getDuration(), 2));
+        }
+
         super.tick();
 
+
+        if (!this.level().isClientSide && this.tickCount % 40 == 0) { // 20 тиков = 1 секунда
+            this.heal(1.0F);
+        }
         // Получаем ми
         Level world = this.level();
         if (world == null || world.isClientSide) return; // Проверка на null и клиент
@@ -87,15 +110,20 @@ public class LanserEntity extends HeroSouls {
                                         @Nullable CompoundTag dataTag) {
         SpawnGroupData data = super.finalizeSpawn(world, difficulty, reason, spawnData, dataTag);
 
+        // Выдаём копья мобу
         this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ModItems.LANS_OF_NACII.get()));
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(ModItems.LANS_OF_PROTECTION.get()));
 
+        // Устанавливаем атрибут BONUS_ARMOR вручную
+        AttributeInstance attribute = this.getAttribute(ModAttributes.BONUS_ARMOR.get());
+        attribute.setBaseValue(10.0);
         return data;
     }
 
+
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(ModAttributes.BONUS_ARMOR.get(),15)
+                .add(ModAttributes.BONUS_ARMOR.get(),10)
                 .add(Attributes.ARMOR, 20)
                 .add(Attributes.MAX_HEALTH, 100.0)
                 .add(Attributes.ATTACK_DAMAGE, 6.0)
@@ -119,10 +147,12 @@ public class LanserEntity extends HeroSouls {
     static class RetreatOnLowHealthGoal extends Goal {
         private final LanserEntity lanser;
         private int cooldown = 0;
+        private double baseSpeed; // Базовая скорость
 
         public RetreatOnLowHealthGoal(LanserEntity lanser) {
             this.lanser = lanser;
             this.setFlags(EnumSet.of(Flag.MOVE));
+            this.baseSpeed = lanser.getAttribute(Attributes.MOVEMENT_SPEED).getBaseValue(); // Сохраняем базовую скорость
         }
 
         @Override
@@ -139,14 +169,29 @@ public class LanserEntity extends HeroSouls {
             Vec3 retreatDirection = lanser.position().subtract(target.position()).normalize().scale(1.5);
             lanser.setDeltaMovement(retreatDirection.x, 0.3, retreatDirection.z); // Добавляем импульс
             lanser.hurtMarked = true; // Обновляем движение
-            cooldown = 60; // 3 секунды перезарядка (60 тиков)
+
+            // Лечение на 25 HP
+            lanser.heal(25.0F);
+
+            // Увеличение скорости на 0.1
+            double newSpeed = baseSpeed + 0.1;
+            lanser.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(newSpeed);
+
+            cooldown = 400; // 20 секунд перезарядка (400 тиков)
         }
 
         @Override
         public void tick() {
             if (cooldown > 0) cooldown--;
+
+            // Если здоровье больше 25, возвращаем скорость в норму
+            if (lanser.getHealth() > 25) {
+                lanser.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(baseSpeed);
+            }
         }
     }
+
+
 
 
     static class CustomMeleeAttackGoal extends MeleeAttackGoal {
@@ -198,12 +243,17 @@ public class LanserEntity extends HeroSouls {
             if (attackCooldown <= 0 && squaredDistance <= maxDistance * maxDistance) {
                 InteractionHand attackHand = lanser.attackWithMainHand ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
                 lanser.swing(attackHand);
-                lanser.doHurtTarget(target);
 
-                ItemStack weapon = lanser.getItemInHand(attackHand);
-                applyWeaponEffects(lanser, target, weapon);
+                // Проверяем успешность атаки
+                boolean attackSuccess = lanser.doHurtTarget(target);
 
-                lanser.attackWithMainHand = !lanser.attackWithMainHand; // Меняем руку
+                // Применяем эффекты только если атака прошла успешно
+                if (attackSuccess) {
+                    ItemStack weapon = lanser.getItemInHand(attackHand);
+                    applyWeaponEffects(lanser, target, weapon);
+                }
+
+                lanser.attackWithMainHand = !lanser.attackWithMainHand;
                 attackCooldown = 20;
             } else {
                 attackCooldown--;
@@ -224,22 +274,22 @@ public class LanserEntity extends HeroSouls {
                 if (amplifier > 0) {
                     target.addEffect(new MobEffectInstance(ModEffects.HEALTH_REDUCTION.get(), 20000, amplifier));
                 }
-                target.addEffect(new MobEffectInstance(ModEffects.NO_REGEN.get(), 200, 0));
+                target.addEffect(new MobEffectInstance(ModEffects.NO_REGEN.get(), 240, 0));
             }
 
             if (weapon.getItem() == ModItems.LANS_OF_PROTECTION.get()) {
                 double baseDamage = lanser.getAttributeValue(Attributes.ATTACK_DAMAGE) + 1;
                 double armor = target.getArmorValue();
-                double bonusDamage = baseDamage * (armor / 20.0);
+                double bonusDamage = baseDamage * (armor / 45.0);
                 double totalDamage = baseDamage + bonusDamage;
                 target.hurt(lanser.damageSources().mobAttack(lanser), (float) totalDamage);
 
                 MobEffectInstance existingEffect = target.getEffect(ModEffects.ARMOR_REDUCTION.get());
-                int newAmplifier = (int) Math.floor(totalDamage / 10);
+                int newAmplifier = (int) Math.floor(totalDamage / 9);
                 if (existingEffect != null) {
                     newAmplifier += existingEffect.getAmplifier();
                 }
-                target.addEffect(new MobEffectInstance(ModEffects.ARMOR_REDUCTION.get(), 200, newAmplifier));
+                target.addEffect(new MobEffectInstance(ModEffects.ARMOR_REDUCTION.get(), 240, newAmplifier));
             }
         }
     }
@@ -258,21 +308,70 @@ public class LanserEntity extends HeroSouls {
     }
 
 
+
     private boolean isValidTarget(LivingEntity entity) {
         return !(entity instanceof Animal) &&  // Исключаем наземных животных
                 !(entity instanceof WaterAnimal); // Исключаем рыб и водных существ
     }
 
     @Override
-    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
-        super.dropCustomDeathLoot(source, looting, recentlyHit);
-
-        // Дропаем два разных предмета, каждый ровно 1 раз
-        this.spawnAtLocation(new ItemStack(ModItems.LANS_OF_PROTECTION.get()));
-        this.spawnAtLocation(new ItemStack(ModItems.LANS_OF_NACII.get()));
-        this.spawnAtLocation(new ItemStack(ModItems.MAGIC_CIRCUIT.get()));
+    protected boolean shouldDropLoot() {
+        return true; // Включаем обработку лута
     }
 
+    @Override
+    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
+        Random random = new Random(); // Генератор случайных чисел
+
+        // Шанс дропа в процентах (0.0 - 1.0)
+        double chanceProtectionLans = 0.7;
+        double chanceNaciiLans = 0.7;
+        double chanceCircuit = 0.9;
+
+        // Логика дропа с шансом
+        if (random.nextDouble() < chanceProtectionLans) {
+            this.spawnAtLocation(new ItemStack(ModItems.LANS_OF_PROTECTION.get()));
+        }
+
+        if (random.nextDouble() < chanceNaciiLans) {
+            this.spawnAtLocation(new ItemStack(ModItems.LANS_OF_NACII.get()));
+        }
+
+        if (random.nextDouble() < chanceCircuit) {
+            this.spawnAtLocation(new ItemStack(ModItems.MAGIC_CIRCUIT.get(), 3));
+        }
+    }
+
+
+    @Override
+    protected void dropEquipment() {
+        // Пусто - не дропаем экипировку из рук
+    }
+
+    @Override
+    protected void populateDefaultEquipmentSlots(RandomSource random, DifficultyInstance difficulty) {
+        // Пусто - не генерируем случайную экипировку
+    }
+
+    // Если нужно сохранить опыт, но убрать стандартный дроп
+    @Override
+    public void dropAllDeathLoot(DamageSource source) {
+        this.dropCustomDeathLoot(source, 0, false);
+        this.dropExperience(); // Если нужен опыт
+    }
+
+    @Override
+    protected void dropExperience() {
+        if (!this.level().isClientSide) {
+            this.level().addFreshEntity(new ExperienceOrb(
+                    this.level(),
+                    this.getX(),
+                    this.getY(),
+                    this.getZ(),
+                    70 // Количество опыта
+            ));
+        }
+    }
 
     @Override
     protected SoundEvent getAmbientSound() {
@@ -288,4 +387,5 @@ public class LanserEntity extends HeroSouls {
     protected @Nullable SoundEvent getDeathSound() {
         return super.getDeathSound();
     }
+
 }

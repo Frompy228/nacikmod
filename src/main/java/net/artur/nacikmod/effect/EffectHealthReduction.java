@@ -24,6 +24,7 @@ public class EffectHealthReduction extends MobEffect {
         return true; // Эффект обновляется каждую секунду
     }
 
+
     @Override
     public void applyEffectTick(LivingEntity entity, int amplifier) {
         if (entity.getHealth() > entity.getMaxHealth()) {

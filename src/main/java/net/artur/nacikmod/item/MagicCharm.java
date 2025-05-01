@@ -1,6 +1,7 @@
 package net.artur.nacikmod.item;
 
 import net.artur.nacikmod.registry.ModAttributes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -8,9 +9,12 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
+import java.util.List;
 import java.util.UUID;
 
 public class MagicCharm extends Item implements ICurioItem {
@@ -35,7 +39,6 @@ public class MagicCharm extends Item implements ICurioItem {
     public MagicCharm() {
         super(new Item.Properties().stacksTo(1).defaultDurability(0));
     }
-
     @Override
     public void onEquip(SlotContext slotContext, ItemStack prevStack, ItemStack stack) {
         LivingEntity entity = slotContext.entity();
@@ -75,5 +78,10 @@ public class MagicCharm extends Item implements ICurioItem {
         if (instance != null && instance.getModifier(uuid) != null) {
             instance.removeModifier(uuid);
         }
+    }
+    @Override
+    public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag flag) {
+        tooltip.add(net.minecraft.network.chat.Component.translatable("item.nacikmod.magic_charm.desc1"));
+
     }
 }

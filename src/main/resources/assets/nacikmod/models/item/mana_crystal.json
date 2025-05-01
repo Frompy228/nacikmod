@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "nacikmod:item/mana_crystal_empty"
+  },
+  "overrides": [
+    {
+      "predicate": { "mana_level": 1 },
+      "model": "nacikmod:item/mana_crystal_full"
+    }
+  ]
+}

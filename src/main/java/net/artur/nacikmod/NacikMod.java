@@ -3,7 +3,9 @@ package net.artur.nacikmod;
 
 import com.mojang.logging.LogUtils;
 import net.artur.nacikmod.capability.mana.ManaSyncOnDeath;
+import net.artur.nacikmod.entity.client.FireArrowRenderer;
 import net.artur.nacikmod.entity.client.LanserRender;
+import net.artur.nacikmod.item.ModCreativeModTabs;
 import net.artur.nacikmod.network.ModMessages;
 import net.artur.nacikmod.registry.ModAttributes;
 import net.artur.nacikmod.registry.ModEffects;
@@ -47,7 +49,7 @@ public class NacikMod
         MinecraftForge.EVENT_BUS.register(ManaSyncOnDeath.class);
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
-
+        ModCreativeModTabs.register(modEventBus);
         // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
@@ -66,6 +68,7 @@ public class NacikMod
         public static void onClientSetup(FMLClientSetupEvent event)
         {
             EntityRenderers.register(ModEntities.LANSER.get(), LanserRender::new);
+            EntityRenderers.register(ModEntities.FIRE_ARROW.get(), FireArrowRenderer::new);
 
 
 
