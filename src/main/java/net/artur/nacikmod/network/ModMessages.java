@@ -54,6 +54,7 @@ public class ModMessages {
                 PacketSyncEffect::handle,
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT) // Клиент получает пакет
         );
+
     }
 
     // Исправленный метод для CooldownSyncPacket

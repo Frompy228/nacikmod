@@ -45,31 +45,42 @@ public class TimeStop {
 
             if (!world.isClientSide) {
                 if (!entity.hasEffect(ModEffects.TIME_SLOW.get()) && entity.isAlive()) {
-                    // Получаем максимальную ману игрока
-                    int maxMana = player.getCapability(ManaProvider.MANA_CAPABILITY)
+                    // Получаем ману владельца
+                    int ownerMana = player.getCapability(ManaProvider.MANA_CAPABILITY)
                             .map(IMana::getMaxMana)
                             .orElse(100);
 
-                    // Рассчитываем amplifier
+                    // Рассчитываем базовый amplifier от маны владельца
                     int amplifier;
-                    if (maxMana >= 100000) {
+                    if (ownerMana >= 100000) {
                         amplifier = 3;
-                    } else if (maxMana >= 10000) {
+                    } else if (ownerMana >= 10000) {
                         amplifier = 2;
-                    } else if (maxMana >= 1000) {
+                    } else if (ownerMana >= 1000) {
                         amplifier = 1;
                     } else {
                         amplifier = 0;
                     }
 
-                    // Применяем эффект с рассчитанным amplifier
-                    MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.TIME_SLOW.get(), 100, amplifier);
-                    entity.addEffect(effectInstance);
+                    // Получаем ману цели
+                    int targetMana = entity.getCapability(ManaProvider.MANA_CAPABILITY)
+                            .map(IMana::getMaxMana)
+                            .orElse(0);
+
+                    // Корректируем amplifier если у цели больше маны
+                    if (targetMana > ownerMana) {
+                        amplifier = Math.max(amplifier - 1, 0); // Гарантируем неотрицательное значение
+                    }
+
+                    // Применяем эффект только если amplifier >= 0
+                    if (amplifier >= 0) {
+                        MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.TIME_SLOW.get(), 100, amplifier);
+                        entity.addEffect(effectInstance);
+                    }
                 }
             }
 
             currentEntityIndex++;
-
             if (currentEntityIndex < affectedEntities.size()) {
                 applyEffectToNextEntity(world, player);
             } else {

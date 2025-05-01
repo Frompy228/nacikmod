@@ -34,6 +34,10 @@ public class LootTableHandler {
                     .setWeight(7)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
+            LootItem.Builder<?> manaCrystal = LootItem.lootTableItem(ModItems.MANA_CRYSTAL.get())
+                    .setWeight(3)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
             LootItem.Builder<?> magicSeal = LootItem.lootTableItem(ModItems.MAGIC_SEAL.get())
                     .setWeight(9)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
@@ -45,13 +49,14 @@ public class LootTableHandler {
             // Создаём пул лута
             LootPool pool = LootPool.lootPool()
                     .name("nacikmod_loot_pool")
-                    .setRolls(UniformGenerator.between(0, 2)) // 0, 1 или 2 предмета
+                    .setRolls(UniformGenerator.between(0, 2))
                     .when(LootItemRandomChanceCondition.randomChance(0.1f))
                     .add(magicCircuit)
                     .add(magicArmor)
                     .add(ringOfTime)
                     .add(magicCharm)
                     .add(magicSeal)
+                    .add(manaCrystal)
                     .build();
 
 

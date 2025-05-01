@@ -53,17 +53,17 @@ public class LansOfProtectionItem extends SwordItem {
 
             double baseDamage = attacker.getAttributeValue(Attributes.ATTACK_DAMAGE) + 1;
             double armor = target.getArmorValue();
-            double bonusDamage = baseDamage * (armor / 20.0);
+            double bonusDamage = baseDamage * (armor / 45.0);
             double totalDamage = baseDamage + bonusDamage;
             target.hurt(attacker.damageSources().playerAttack((Player) attacker), (float) totalDamage);
 
             // Проверяем, есть ли уже эффект снижения брони
             MobEffectInstance existingEffect = target.getEffect(ModEffects.ARMOR_REDUCTION.get());
-            int newAmplifier = (int) Math.floor(totalDamage / 10);
+            int newAmplifier = (int) Math.floor(totalDamage / 9);
             if (existingEffect != null) {
                 newAmplifier += existingEffect.getAmplifier();
             }
-            target.addEffect(new MobEffectInstance(ModEffects.ARMOR_REDUCTION.get(), 200, newAmplifier));
+            target.addEffect(new MobEffectInstance(ModEffects.ARMOR_REDUCTION.get(), 240, newAmplifier));
 
             if (attacker instanceof Player player) {
                 ItemStack mainHandItem = player.getMainHandItem();
@@ -96,7 +96,7 @@ public class LansOfProtectionItem extends SwordItem {
 
     private static class CustomTier implements Tier {
         @Override
-        public int getUses() { return 20000; }
+        public int getUses() { return 2500; }
         @Override
         public float getSpeed() { return 2.0f; }
         @Override

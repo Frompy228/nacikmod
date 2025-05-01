@@ -28,17 +28,19 @@ public class ManaRegenerationHandler {
         UUID playerId = player.getUUID();
         int ticks = tickCounter.getOrDefault(playerId, 0) + 1;
 
-        if (ticks >= TICKS_PER_SECOND) { // Раз в секунду
+        if (ticks >= TICKS_PER_SECOND) {
+            // Раз в секунду
             LazyOptional<IMana> manaCap = player.getCapability(ManaProvider.MANA_CAPABILITY);
             manaCap.ifPresent(mana -> {
                 int currentMana = mana.getMana();
                 int maxMana = mana.getMaxMana();
+                if (player instanceof ServerPlayer serverPlayer) {
+                    ModMessages.sendManaToClient(serverPlayer, mana.getMana(), maxMana); // Синхронизация
+                }
                 if (currentMana < maxMana) {
                     mana.setMana(Math.min(currentMana + MANA_REGEN_AMOUNT, maxMana)); // Восстанавливаем ману
 
-                    if (player instanceof ServerPlayer serverPlayer) {
-                        ModMessages.sendManaToClient(serverPlayer, mana.getMana(), maxMana); // Синхронизация
-                    }
+
                 }
             });
 

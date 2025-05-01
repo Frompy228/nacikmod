@@ -16,6 +16,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.network.PacketDistributor;
@@ -25,7 +26,7 @@ import java.util.List;
 public class MagicSeal extends Item {
     private static final int MANA_COST = 100;
     private static final int RADIUS = 5;
-    private static final int EFFECT_DURATION = 100;
+    private static final int EFFECT_DURATION = 140;
 
     public MagicSeal(Properties properties) {
         super(properties);
@@ -95,6 +96,12 @@ public class MagicSeal extends Item {
                 }
             }
         }
+    }
+    @Override
+    public void appendHoverText(ItemStack stack, Level level, List<net.minecraft.network.chat.Component> tooltip, TooltipFlag flag) {
+        tooltip.add(net.minecraft.network.chat.Component.translatable("item.nacikmod.magic_seal.desc1"));
+        tooltip.add(net.minecraft.network.chat.Component.translatable("item.nacikmod.magic_seal.desc2")
+                .withStyle(style -> style.withColor(0x00FFFF))); // Цвет - голубой
     }
 
 }

@@ -58,7 +58,7 @@ public class LansOfNaciiItem extends SwordItem {
             if (amplifier > 0) {
                 target.addEffect(new MobEffectInstance(ModEffects.HEALTH_REDUCTION.get(), 20000, amplifier));
             }
-            target.addEffect(new MobEffectInstance(ModEffects.NO_REGEN.get(), 200, 0));
+            target.addEffect(new MobEffectInstance(ModEffects.NO_REGEN.get(), 240, 0));
 
             if (attacker instanceof Player player) {
                 ItemStack mainHandItem = player.getMainHandItem();
@@ -91,7 +91,7 @@ public class LansOfNaciiItem extends SwordItem {
     private static class CustomTier implements Tier {
         @Override
         public int getUses() {
-            return 20000; // Прочность меча
+            return 2500; // Прочность меча
         }
 
         @Override
