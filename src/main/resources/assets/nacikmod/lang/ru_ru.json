@@ -22,6 +22,7 @@
   "item.nacikmod.mana_crystal": "Мана кристалл",
   "item.nacikmod.magic_circuit": "Магическая цепь",
   "item.nacikmod.magic_healing": "Магическое исцеление",
+  "item.nacikmod.release": "Высвобождение",
   "item.nacikmod.magic_circuit.desc1": "Магическая цепь увеличивающая максимальный запас маны игрока на 50",
   "curios.identifier.artifact": "Артефакт",
   "curios.identifier.ring": "Кольцо",
@@ -31,5 +32,9 @@
   "item.nacikmod.magic_healing.active": "Активировано",
   "item.nacikmod.magic_healing.inactive": "Деактивировано",
   "item.nacikmod.magic_healing.desc1": "Правильный способ использования исцеляющей магии",
-  "item.nacikmod.magic_healing.desc2": "Затраты маны: 10/с | Сила лечения: %d"
+  "item.nacikmod.magic_healing.desc2": "Затраты маны: 10/с | Сила лечения: %d",
+  "item.nacikmod.release.desc1": "Освобождение магии для усиления тела",
+  "item.nacikmod.release.desc2": "Затраты Маны: %d/ps | Сила: %d",
+  "item.nacikmod.release.active": "Активировано",
+  "item.nacikmod.release.inactive": "Деактивировано"
 }
