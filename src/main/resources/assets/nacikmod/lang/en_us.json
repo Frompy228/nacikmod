@@ -22,6 +22,7 @@
   "item.nacikmod.mana_crystal": "Mana Crystal",
   "item.nacikmod.magic_circuit": "Magic Circuit",
   "item.nacikmod.magic_healing": "Magic Healing",
+  "item.nacikmod.release": "Release",
   "item.nacikmod.magic_circuit.desc1": "A magic chain that increases the player's maximum mana reserve by 50",
   "curios.identifier.artifact": "Artifact",
   "curios.identifier.ring": "Ring",
@@ -31,5 +32,9 @@
   "item.nacikmod.magic_healing.active": "Active",
   "item.nacikmod.magic_healing.inactive": "Inactive",
   "item.nacikmod.magic_healing.desc1": "The right way to use healing magic",
-  "item.nacikmod.magic_healing.desc2": "Mana Cost: 10/ps | Heal Power: %d"
+  "item.nacikmod.magic_healing.desc2": "Mana Cost: 10/ps | Heal Power: %d",
+  "item.nacikmod.release.desc1": "Releasing magic to strengthen the body",
+  "item.nacikmod.release.desc2": "Mana Cost: %d/ps | Power: %d",
+  "item.nacikmod.release.active": "Active",
+  "item.nacikmod.release.inactive": "Inactive"
 }

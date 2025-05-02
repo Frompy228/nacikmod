@@ -29,6 +29,7 @@ public class ModItems {
     public static final RegistryObject<Item> RING_OF_TIME = ITEMS.register("ring_of_time", () -> new RingOfTime(new Item.Properties()));
     public static final RegistryObject<Item> FIRE_STAFF = ITEMS.register("fire_staff", () -> new FireStaff(new Item.Properties()));
     public static final RegistryObject<Item> MAGIC_HEALING = ITEMS.register("magic_healing", () -> new MagicHealing(new Item.Properties()));
+    public static final RegistryObject<Item> RELEASE = ITEMS.register("release", () -> new Release(new Item.Properties()));
     public static final RegistryObject<Item> LANSER_SPAWN_EGG = ITEMS.register("lanser_spawn_egg",
             ()-> new ForgeSpawnEggItem(ModEntities.LANSER, 0x5b107e, 0xCF6A84,
                     new Item.Properties()));

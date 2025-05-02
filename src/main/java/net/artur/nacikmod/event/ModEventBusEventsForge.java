@@ -41,7 +41,7 @@ public class ModEventBusEventsForge {
 
         if (attribute != null) {
             double bonusArmor = attribute.getValue();
-            double reductionPercentage = Math.min(bonusArmor * 0.025, 0.9);
+            double reductionPercentage = Math.min(bonusArmor * 0.02, 0.9);
             float reducedDamage = (float) (event.getAmount() * (1 - reductionPercentage));
             event.setAmount(reducedDamage);
         }

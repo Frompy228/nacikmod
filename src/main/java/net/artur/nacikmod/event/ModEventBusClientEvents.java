@@ -1,6 +1,7 @@
 package net.artur.nacikmod.event;
 
 import net.artur.nacikmod.NacikMod;
+import net.artur.nacikmod.client.renderer.ReleaseAuraRenderer;
 import net.artur.nacikmod.entity.client.FireArrowModel;
 import net.artur.nacikmod.entity.client.ModModelLayers;
 import net.artur.nacikmod.entity.client.LanserModel;
@@ -62,6 +63,14 @@ public class ModEventBusClientEvents {
                 (stack, level, entity, seed) -> {
                     return MagicCrystal.getStoredMana(stack) > 100 ? 1.0F : 0.0F;
                 });
+    }
+
+    @SubscribeEvent
+    public static void onRegisterLayers(EntityRenderersEvent.AddLayers event) {
+        for (String skin : event.getSkins()) {
+            PlayerRenderer renderer = event.getSkin(skin);
+            renderer.addLayer(new ReleaseAuraRenderer(renderer));
+        }
     }
 }
 
