@@ -14,4 +14,6 @@ public class ModModelLayers {
     @OnlyIn(Dist.CLIENT)
     public static final ModelLayerLocation FIRE_ARROW_LAYER = new ModelLayerLocation(
             new ResourceLocation(NacikMod.MOD_ID, "fire_arrow"), "main");
+
+
 }

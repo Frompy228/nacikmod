@@ -2,6 +2,7 @@ package net.artur.nacikmod.event;
 
 import net.artur.nacikmod.NacikMod;
 import net.artur.nacikmod.client.renderer.ReleaseAuraRenderer;
+import net.artur.nacikmod.client.renderer.LastMagicAuraRenderer;
 import net.artur.nacikmod.entity.client.FireArrowModel;
 import net.artur.nacikmod.entity.client.ModModelLayers;
 import net.artur.nacikmod.entity.client.LanserModel;
@@ -21,7 +22,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
-
 @Mod.EventBusSubscriber(modid = NacikMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ModEventBusClientEvents {
 
@@ -30,7 +30,6 @@ public class ModEventBusClientEvents {
         event.registerLayerDefinition(ModModelLayers.LANSER_LAYER, LanserModel::createBodyLayer);
         event.registerLayerDefinition(FireArrowModel.LAYER_LOCATION, FireArrowModel::createBodyLayer);
     }
-
 
     @SubscribeEvent
     public static void registerKeys(RegisterKeyMappingsEvent event) {
@@ -70,6 +69,7 @@ public class ModEventBusClientEvents {
         for (String skin : event.getSkins()) {
             PlayerRenderer renderer = event.getSkin(skin);
             renderer.addLayer(new ReleaseAuraRenderer(renderer));
+            renderer.addLayer(new LastMagicAuraRenderer(renderer));
         }
     }
 }

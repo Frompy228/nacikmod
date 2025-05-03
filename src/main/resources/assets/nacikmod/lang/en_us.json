@@ -7,6 +7,7 @@
   "effect.nacikmod.love":"Love",
   "effect.nacikmod.root":"Root",
   "effect.nacikmod.time_slow":"Time Slow",
+  "effect.nacikmod.mana_last_magic":"Last Release",
   "entity.nacikmod.lanser": "Lanser",
   "item.nacikmod.lanser_spawn_egg": "Lanser Spawn Egg",
   "item.nacikmod.magic_armor": "Magic Armor",
@@ -23,6 +24,7 @@
   "item.nacikmod.magic_circuit": "Magic Circuit",
   "item.nacikmod.magic_healing": "Magic Healing",
   "item.nacikmod.release": "Release",
+  "item.nacikmod.last_magic": "Recent Release",
   "item.nacikmod.magic_circuit.desc1": "A magic chain that increases the player's maximum mana reserve by 50",
   "curios.identifier.artifact": "Artifact",
   "curios.identifier.ring": "Ring",
@@ -36,5 +38,10 @@
   "item.nacikmod.release.desc1": "Releasing magic to strengthen the body",
   "item.nacikmod.release.desc2": "Mana Cost: %d/ps | Power: %d",
   "item.nacikmod.release.active": "Active",
-  "item.nacikmod.release.inactive": "Inactive"
+  "item.nacikmod.release.inactive": "Inactive",
+  "item.nacikmod.last_magic.desc1": "I don't care anymore",
+  "item.nacikmod.last_magic.desc2": "Takes everything in return for incredible power. Disappears after use",
+  "item.nacikmod.last_magic.desc3": "Cost: Life, Mana",
+  "message.nacikmod.cannot_use_release_with_last_magic": "Cannot use Release while Last Magic is active",
+  "message.nacikmod.cannot_use_last_magic_with_release": "Cannot use Last Magic while Release is active"
 }

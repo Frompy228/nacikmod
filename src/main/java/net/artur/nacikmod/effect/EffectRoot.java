@@ -29,13 +29,18 @@ public class EffectRoot extends MobEffect {
     private static final UUID SPEED_MODIFIER_ID = UUID.fromString("7f0b6d12-1b7a-4f3f-a9d3-3f0e9a7a5b1f");
 
     public EffectRoot() {
-        super(MobEffectCategory.HARMFUL, 0x5A0D0D);
+        super(MobEffectCategory.HARMFUL, 0x964B00);
         this.addAttributeModifier(
                 Attributes.MOVEMENT_SPEED,
                 SPEED_MODIFIER_ID.toString(),
                 -0.5D,
                 AttributeModifier.Operation.MULTIPLY_TOTAL
         );
+    }
+
+    @Override
+    public boolean isBeneficial() {
+        return false;
     }
 
     @Override
@@ -115,7 +120,6 @@ public class EffectRoot extends MobEffect {
             }
         });
     }
-
     @Override
     public boolean isDurationEffectTick(int duration, int amplifier) {
         return true;

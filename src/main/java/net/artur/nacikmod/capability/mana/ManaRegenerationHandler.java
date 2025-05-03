@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @Mod.EventBusSubscriber
 public class ManaRegenerationHandler {
-    private static final int MANA_REGEN_AMOUNT = 100; // Сколько маны восстанавливаем
+    private static final int MANA_REGEN_AMOUNT = 1; // Сколько маны восстанавливаем
     private static final int TICKS_PER_SECOND = 20; // Количество тиков в секунду
     private static final Map<UUID, Integer> tickCounter = new HashMap<>(); // Отслеживаем тики для каждого игрока
 
