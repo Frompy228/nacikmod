@@ -10,6 +10,5 @@ public interface IMana {
     void setMaxMana(int amount);
     void addMaxMana(int amount);
 
-    void regenerateMana();
     void regenerateMana(int amount);
 }

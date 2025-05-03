@@ -45,12 +45,6 @@ public class Mana implements IMana {
         setMaxMana(this.maxMana + amount);
     }
 
-    @Override
-    public void regenerateMana() {
-        if (this.mana < this.maxMana) {
-            this.mana = Math.min(this.mana + 1, this.maxMana);
-        }
-    }
 
     public void regenerateMana(int amount) {
         if (this.mana < this.maxMana) {
