@@ -7,6 +7,7 @@
   "effect.nacikmod.love":"Любовь",
   "effect.nacikmod.root":"Привязка",
   "effect.nacikmod.time_slow":"Замедление времени",
+  "effect.nacikmod.mana_last_magic":"Последние высвобождение",
   "entity.nacikmod.lanser": "Диармайд",
   "item.nacikmod.lanser_spawn_egg": "Яйцо призыва Диармайда",
   "item.nacikmod.magic_armor": "Магическая броня",
@@ -23,6 +24,7 @@
   "item.nacikmod.magic_circuit": "Магическая цепь",
   "item.nacikmod.magic_healing": "Магическое исцеление",
   "item.nacikmod.release": "Высвобождение",
+  "item.nacikmod.last_magic": "Последние высвобождение",
   "item.nacikmod.magic_circuit.desc1": "Магическая цепь увеличивающая максимальный запас маны игрока на 50",
   "curios.identifier.artifact": "Артефакт",
   "curios.identifier.ring": "Кольцо",
@@ -36,5 +38,8 @@
   "item.nacikmod.release.desc1": "Освобождение магии для усиления тела",
   "item.nacikmod.release.desc2": "Затраты Маны: %d/ps | Сила: %d",
   "item.nacikmod.release.active": "Активировано",
-  "item.nacikmod.release.inactive": "Деактивировано"
+  "item.nacikmod.release.inactive": "Деактивировано",
+  "item.nacikmod.last_magic.desc1": "Мне уже наплевать",
+  "item.nacikmod.last_magic.desc2": "Забирает все взамен на невероятную силу. Исчезает после использования",
+  "item.nacikmod.last_magic.desc3": "Затраты: Жизнь, Мана"
 }

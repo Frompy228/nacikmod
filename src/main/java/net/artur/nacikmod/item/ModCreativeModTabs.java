@@ -30,6 +30,7 @@ public class ModCreativeModTabs {
                         pOutput.accept(ModItems.MAGIC_CIRCUIT.get());
                         pOutput.accept(ModItems.LANSER_SPAWN_EGG.get());
                         pOutput.accept(ModItems.MAGIC_HEALING.get());
+                        pOutput.accept(ModItems.RELEASE.get());
                     })
                     .build());
 

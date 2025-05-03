@@ -45,6 +45,9 @@ public class LootTableHandler {
             LootItem.Builder<?> ringOfTime = LootItem.lootTableItem(ModItems.RING_OF_TIME.get())
                     .setWeight(2)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+            LootItem.Builder<?> lastMagic = LootItem.lootTableItem(ModItems.LAST_MAGIC.get())
+                    .setWeight(1)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
             // Создаём пул лута
             LootPool pool = LootPool.lootPool()
@@ -57,6 +60,7 @@ public class LootTableHandler {
                     .add(magicCharm)
                     .add(magicSeal)
                     .add(manaCrystal)
+                    .add(lastMagic)
                     .build();
 
 

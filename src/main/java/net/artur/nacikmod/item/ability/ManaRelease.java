@@ -11,9 +11,14 @@ import net.minecraftforge.fml.common.Mod;
 import net.artur.nacikmod.NacikMod;
 import net.artur.nacikmod.item.Release;
 import net.artur.nacikmod.registry.ModAttributes;
+import net.artur.nacikmod.registry.ModEffects;
 import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.ChatFormatting;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -27,6 +32,7 @@ public class ManaRelease {
     private static final UUID DAMAGE_MODIFIER_UUID = UUID.fromString("1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d");
     private static final UUID ARMOR_MODIFIER_UUID = UUID.fromString("2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e");
     private static final UUID SPEED_MODIFIER_UUID = UUID.fromString("3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f");
+    private static final int RELEASE_EFFECT_DURATION = 20; // 1 second
 
     public static class Level {
         public final int damage;
@@ -49,14 +55,49 @@ public class ManaRelease {
         new Level(2, 6, 25, "Level 2", 0.025)
     };
 
+    @SubscribeEvent
+    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            // Проверяем все предметы Release в инвентаре
+            for (ItemStack stack : player.getInventory().items) {
+                if (stack.getItem() instanceof Release) {
+                    // Если предмет помечен как активный, но игрок не в списке активных
+                    if (stack.hasTag() && stack.getTag().getBoolean(ACTIVE_TAG) && !activeReleasePlayers.contains(player.getUUID())) {
+                        stack.getOrCreateTag().putBoolean(ACTIVE_TAG, false);
+                    }
+                }
+            }
+        }
+    }
+
     public static void startRelease(Player player) {
+        // Проверяем, не активен ли LastMagic
+        if (player.hasEffect(ModEffects.MANA_LAST_MAGIC.get())) {
+            if (player instanceof ServerPlayer) {
+                player.sendSystemMessage(Component.literal("Cannot use Release while Last Magic is active")
+                        .withStyle(ChatFormatting.AQUA));
+            }
+            // Важно: обновляем состояние всех предметов Release в инвентаре
+            for (ItemStack stack : player.getInventory().items) {
+                if (stack.getItem() instanceof Release) {
+                    stack.getOrCreateTag().putBoolean(ACTIVE_TAG, false);
+                }
+            }
+            return;
+        }
+
+        // Сначала добавляем игрока в список активных
+        activeReleasePlayers.add(player.getUUID());
+
+        // Применяем эффект силы как индикатор активной способности
+        player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, RELEASE_EFFECT_DURATION, 0, true, false));
+        
         for (ItemStack stack : player.getInventory().items) {
             if (stack.getItem() instanceof Release) {
                 stack.getOrCreateTag().putBoolean(ACTIVE_TAG, true);
                 if (!stack.hasTag() || !stack.getTag().contains(LEVEL_TAG)) {
                     stack.getOrCreateTag().putInt(LEVEL_TAG, 0);
                 }
-                activeReleasePlayers.add(player.getUUID());
                 applyModifiers(player, getCurrentLevel(stack));
                 break;
             }
@@ -64,13 +105,18 @@ public class ManaRelease {
     }
 
     public static void stopRelease(Player player) {
+        // Сначала удаляем игрока из списка активных
+        activeReleasePlayers.remove(player.getUUID());
+        
+        // Удаляем эффект силы
+        player.removeEffect(MobEffects.DAMAGE_BOOST);
+        
+        // Затем обновляем все предметы Release в инвентаре
         for (ItemStack stack : player.getInventory().items) {
             if (stack.getItem() instanceof Release) {
                 stack.getOrCreateTag().putBoolean(ACTIVE_TAG, false);
-                break;
             }
         }
-        activeReleasePlayers.remove(player.getUUID());
         removeModifiers(player);
     }
 
@@ -147,49 +193,85 @@ public class ManaRelease {
                 return getCurrentLevel(stack);
             }
         }
-        return LEVELS[0]; // Возвращаем первый уровень по умолчанию
+        return LEVELS[0];
     }
 
     public static boolean isReleaseActive(Player player) {
-        return activeReleasePlayers.contains(player.getUUID());
+        return activeReleasePlayers.contains(player.getUUID()) && 
+               player.hasEffect(MobEffects.DAMAGE_BOOST);
     }
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (!(event.player instanceof ServerPlayer player)) return;
         if (event.phase != TickEvent.Phase.END) return;
-        if (player.tickCount % 20 != 0) return; // Check every second
+        if (player.tickCount % 20 != 0) return;
 
-        // Check if player has the item in inventory
+        // Проверяем наличие LastMagic эффекта
+        if (player.hasEffect(ModEffects.MANA_LAST_MAGIC.get())) {
+            // Если LastMagic активен, отключаем Release
+            if (activeReleasePlayers.contains(player.getUUID())) {
+                stopRelease(player);
+            }
+            // Обновляем состояние всех предметов Release
+            for (ItemStack stack : player.getInventory().items) {
+                if (stack.getItem() instanceof Release) {
+                    stack.getOrCreateTag().putBoolean(ACTIVE_TAG, false);
+                }
+            }
+            return;
+        }
+
+        // Проверяем все предметы Release в инвентаре
         boolean hasActiveItem = false;
         ItemStack releaseItem = null;
         for (ItemStack stack : player.getInventory().items) {
-            if (stack.getItem() instanceof Release && 
-                stack.hasTag() && 
-                stack.getTag().getBoolean(ACTIVE_TAG)) {
-                hasActiveItem = true;
-                releaseItem = stack;
-                break;
+            if (stack.getItem() instanceof Release) {
+                if (stack.hasTag() && stack.getTag().getBoolean(ACTIVE_TAG)) {
+                    hasActiveItem = true;
+                    releaseItem = stack;
+                } else if (activeReleasePlayers.contains(player.getUUID())) {
+                    // Если предмет помечен как неактивный, но игрок в списке активных
+                    stack.getOrCreateTag().putBoolean(ACTIVE_TAG, false);
+                }
             }
         }
 
-        // If item is not in inventory, disable effect
-        if (!hasActiveItem && activeReleasePlayers.contains(player.getUUID())) {
+        // Если нет активного предмета или эффекта, но игрок в списке активных
+        if ((!hasActiveItem || !player.hasEffect(MobEffects.DAMAGE_BOOST)) && 
+            activeReleasePlayers.contains(player.getUUID())) {
             stopRelease(player);
             return;
         }
 
-        // If effect is active and item is in inventory
+        // Если эффект активен и предмет есть в инвентаре
         if (activeReleasePlayers.contains(player.getUUID()) && releaseItem != null) {
             Level currentLevel = getCurrentLevel(releaseItem);
             // Check if player has enough mana
             player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
                 if (mana.getMana() >= currentLevel.manaCost) {
                     mana.removeMana(currentLevel.manaCost);
+                    // Обновляем эффект силы
+                    player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, RELEASE_EFFECT_DURATION, 0, true, false));
                 } else {
                     stopRelease(player);
                 }
             });
+        }
+    }
+
+    @SubscribeEvent
+    public static void onItemPickup(EntityItemPickupEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        
+        ItemStack pickedStack = event.getItem().getItem();
+        if (pickedStack.getItem() instanceof Release) {
+            // Если игрок не в списке активных, но предмет помечен как активный
+            if (!activeReleasePlayers.contains(player.getUUID()) && 
+                pickedStack.hasTag() && 
+                pickedStack.getTag().getBoolean(ACTIVE_TAG)) {
+                pickedStack.getOrCreateTag().putBoolean(ACTIVE_TAG, false);
+            }
         }
     }
 }

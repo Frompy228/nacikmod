@@ -47,6 +47,14 @@ public class Mana implements IMana {
 
     @Override
     public void regenerateMana() {
-        addMana(1); // Простая регенерация
+        if (this.mana < this.maxMana) {
+            this.mana = Math.min(this.mana + 1, this.maxMana);
+        }
+    }
+
+    public void regenerateMana(int amount) {
+        if (this.mana < this.maxMana) {
+            this.mana = Math.min(this.mana + amount, this.maxMana);
+        }
     }
 }

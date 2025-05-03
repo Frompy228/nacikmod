@@ -47,4 +47,11 @@ public class EffectTimeSlow extends MobEffect {
     public boolean isDurationEffectTick(int duration, int amplifier) {
         return true;  // Обновляется каждый тик
     }
+
+    @Override
+    public boolean isBeneficial() {
+        return false; // Указываем, что эффект положительный
+    }
+
+
 }

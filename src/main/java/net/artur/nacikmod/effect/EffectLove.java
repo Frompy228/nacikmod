@@ -31,9 +31,8 @@ public class EffectLove extends MobEffect {
     public boolean isDurationEffectTick(int duration, int amplifier) {
         return true; // Эффект обновляется каждую секунду
     }
-
-
-
-
-
+    @Override
+    public boolean isBeneficial() {
+        return false; // Указываем, что эффект положительный
+    }
 }

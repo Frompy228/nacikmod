@@ -24,5 +24,6 @@ public class ModEffects {
             EFFECTS.register("time_slow", EffectTimeSlow::new);
     public static final RegistryObject<MobEffect> ROOT =
             EFFECTS.register("root", EffectRoot::new);
-
+    public static final RegistryObject<MobEffect> MANA_LAST_MAGIC =
+            EFFECTS.register("mana_last_magic", EffectManaLastMagic::new);
 }
