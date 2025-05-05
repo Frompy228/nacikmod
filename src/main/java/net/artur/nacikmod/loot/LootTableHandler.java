@@ -23,36 +23,41 @@ public class LootTableHandler {
         if (tableName.getPath().startsWith("chests/")) {
 
             LootItem.Builder<?> magicCircuit = LootItem.lootTableItem(ModItems.MAGIC_CIRCUIT.get())
-                    .setWeight(30)
-                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2)));
+                    .setWeight(35)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3)));
 
             LootItem.Builder<?> magicArmor = LootItem.lootTableItem(ModItems.MAGIC_ARMOR.get())
-                    .setWeight(5)
+                    .setWeight(6)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
             LootItem.Builder<?> magicCharm = LootItem.lootTableItem(ModItems.MAGIC_CHARM.get())
-                    .setWeight(7)
+                    .setWeight(8)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
             LootItem.Builder<?> manaCrystal = LootItem.lootTableItem(ModItems.MANA_CRYSTAL.get())
-                    .setWeight(3)
+                    .setWeight(4)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
             LootItem.Builder<?> magicSeal = LootItem.lootTableItem(ModItems.MAGIC_SEAL.get())
-                    .setWeight(9)
+                    .setWeight(10)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
             LootItem.Builder<?> ringOfTime = LootItem.lootTableItem(ModItems.RING_OF_TIME.get())
-                    .setWeight(2)
+                    .setWeight(3)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+            
             LootItem.Builder<?> lastMagic = LootItem.lootTableItem(ModItems.LAST_MAGIC.get())
                     .setWeight(1)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
+            LootItem.Builder<?> bloodShoot = LootItem.lootTableItem(ModItems.BLOOD_SHOOT.get())
+                    .setWeight(3)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
             // Создаём пул лута
             LootPool pool = LootPool.lootPool()
                     .name("nacikmod_loot_pool")
-                    .setRolls(UniformGenerator.between(0, 2))
+                    .setRolls(UniformGenerator.between(1, 2))
                     .when(LootItemRandomChanceCondition.randomChance(0.1f))
                     .add(magicCircuit)
                     .add(magicArmor)
@@ -61,6 +66,7 @@ public class LootTableHandler {
                     .add(magicSeal)
                     .add(manaCrystal)
                     .add(lastMagic)
+                    .add(bloodShoot)
                     .build();
 
 

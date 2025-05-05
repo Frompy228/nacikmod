@@ -22,6 +22,7 @@ public class ModCreativeModTabs {
                     .displayItems((pParameters, pOutput) -> {
                         pOutput.accept(ModItems.LANS_OF_NACII.get());
                         pOutput.accept(ModItems.LANS_OF_PROTECTION.get());
+                        pOutput.accept(ModItems.MANA_SWORD.get());
                         pOutput.accept(ModItems.MAGIC_CHARM.get());
                         pOutput.accept(ModItems.MAGIC_ARMOR.get());
                         pOutput.accept(ModItems.RING_OF_TIME.get());
@@ -31,6 +32,7 @@ public class ModCreativeModTabs {
                         pOutput.accept(ModItems.LANSER_SPAWN_EGG.get());
                         pOutput.accept(ModItems.MAGIC_HEALING.get());
                         pOutput.accept(ModItems.RELEASE.get());
+                        pOutput.accept(ModItems.MAGIC_WEAPONS.get());
                     })
                     .build());
 

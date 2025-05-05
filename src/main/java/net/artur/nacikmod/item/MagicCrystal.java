@@ -20,7 +20,7 @@ import java.awt.*;
 
 public class MagicCrystal extends Item {
     private static final String MANA_TAG = "StoredMana";
-    private static final int MAX_STORAGE = 1000; // Максимальное количество маны в кристалле
+    private static final int MAX_STORAGE = 1500; // Максимальное количество маны в кристалле
 
     public MagicCrystal() {
         super(new Item.Properties()
@@ -43,7 +43,7 @@ public class MagicCrystal extends Item {
                     // Забираем ману из кристалла в игрока
                     if (storedMana > 0 && playerManaAmount < playerMana.getMaxMana()) {
                         int maxCanReceive = playerMana.getMaxMana() - playerManaAmount; // Сколько игрок может принять
-                        int transferAmount = Math.min(storedMana, Math.min(maxCanReceive, 50)); // Переносим не больше 50 и не больше свободного места
+                        int transferAmount = Math.min(storedMana, Math.min(maxCanReceive, 100)); // Переносим не больше 50 и не больше свободного места
 
                         playerMana.addMana(transferAmount);
                         setStoredMana(stack, storedMana - transferAmount);
@@ -51,7 +51,7 @@ public class MagicCrystal extends Item {
                 } else {
                     // Передаём ману из игрока в кристалл
                     if (playerManaAmount > 0 && storedMana < MAX_STORAGE) {
-                        int transferAmount = Math.min(playerManaAmount, 50);
+                        int transferAmount = Math.min(playerManaAmount, 100);
                         playerMana.removeMana(transferAmount);
                         setStoredMana(stack, storedMana + transferAmount);
                     }

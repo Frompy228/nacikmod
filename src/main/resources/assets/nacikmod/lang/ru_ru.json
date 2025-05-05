@@ -25,6 +25,9 @@
   "item.nacikmod.magic_healing": "Магическое исцеление",
   "item.nacikmod.release": "Высвобождение",
   "item.nacikmod.last_magic": "Последние высвобождение",
+  "item.nacikmod.mana_sword": "Меч Маны",
+  "item.nacikmod.magic_weapons": "Магическое оружие",
+  "item.nacikmod.blood_shoot": "Выстрел кровью",
   "item.nacikmod.magic_circuit.desc1": "Магическая цепь увеличивающая максимальный запас маны игрока на 50",
   "curios.identifier.artifact": "Артефакт",
   "curios.identifier.ring": "Кольцо",
@@ -41,5 +44,15 @@
   "item.nacikmod.release.inactive": "Деактивировано",
   "item.nacikmod.last_magic.desc1": "Мне уже наплевать",
   "item.nacikmod.last_magic.desc2": "Забирает все взамен на невероятную силу. Исчезает после использования",
-  "item.nacikmod.last_magic.desc3": "Затраты: Жизнь, Мана"
+  "item.nacikmod.last_magic.desc3": "Затраты: Жизнь, Мана",
+  "item.nacikmod.mana_sword.desc1": "Меч, черпающий силу из маны",
+  "item.nacikmod.mana_sword.bonus_damage": "Дополнительный урон: %d",
+  "item.nacikmod.magic_weapons.desc1": "Создает меч из маны",
+  "item.nacikmod.magic_weapons.desc2": "Затраты маны: 100",
+  "item.nacikmod.magic_weapons.desc3": "Right-click чтобы выстрелить снарядом из меча маны",
+  "item.nacikmod.magic_weapons.desc4": "Shift + Right-click чтобы создать меч из маны",
+  "item.nacikmod.magic_weapons.desc5": "Дополнительный урон: %d",
+  "item.nacikmod.blood_shoot.desc1": "Использует кровь владельца для нанесения урона",
+  "item.nacikmod.blood_shoot.desc2": "Урон: %d",
+  "item.nacikmod.blood_shoot.desc3": "Затраты: 3HP"
 }

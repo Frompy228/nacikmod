@@ -14,6 +14,5 @@ public class ModAttributes {
 
 
     public static final RegistryObject<Attribute> BONUS_ARMOR = ATTRIBUTES.register("bonus_armor",
-            () -> new RangedAttribute("attribute.nacikmod.bonus_armor", 0.0, 0.0, 2048.0).setSyncable(true));
-
+            () -> new RangedAttribute("attribute.name.nacikmod.bonus_armor", 0.0D, 0.0D, 1024.0D).setSyncable(true));
 }
