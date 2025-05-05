@@ -31,7 +31,7 @@ public class EffectManaLastMagic extends MobEffect {
         
         // Добавляем модификаторы атрибутов в конструкторе
         this.addAttributeModifier(Attributes.ATTACK_DAMAGE, DAMAGE_MODIFIER_UUID.toString(),
-                10.0, AttributeModifier.Operation.ADDITION);
+                15.0, AttributeModifier.Operation.ADDITION);
         this.addAttributeModifier(ModAttributes.BONUS_ARMOR.get(), ARMOR_MODIFIER_UUID.toString(),
                 20.0, AttributeModifier.Operation.ADDITION);
         this.addAttributeModifier(Attributes.MOVEMENT_SPEED, SPEED_MODIFIER_UUID.toString(),
@@ -59,17 +59,17 @@ public class EffectManaLastMagic extends MobEffect {
     public void applyEffectTick(LivingEntity entity, int amplifier) {
         if (!entity.level().isClientSide && entity.isAlive() && entity instanceof Player player) {
             player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
-                mana.addMaxMana(10000);
+                mana.addMaxMana(1000);
                 mana.regenerateMana(1000);
             });
 
             // Добавляем положительные эффекты без частиц
-            player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 40, 1, false, false)); // Сопротивление II
-            player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 40, 1, false, false)); // Сила II
-            player.addEffect(new MobEffectInstance(MobEffects.JUMP, 40, 1, false, false)); // Прыгучесть II
-            player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 40, 1, false, false)); // Ускорение II
-            player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 40, 3, false, false)); // Регенерация II
-            player.addEffect(new MobEffectInstance(MobEffects.SATURATION, 40, 1, false, false)); // Насыщение
+            player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 40, 1, false, false));
+            player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 40, 2, false, false));
+            player.addEffect(new MobEffectInstance(MobEffects.JUMP, 40, 1, false, false));
+            player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 40, 2, false, false)); 
+            player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 40, 2, false, false));
+            player.addEffect(new MobEffectInstance(MobEffects.SATURATION, 40, 1, false, false));
 
             // Удаляем все отрицательные эффекты
             player.getActiveEffects().stream()
@@ -82,7 +82,7 @@ public class EffectManaLastMagic extends MobEffect {
     public void removeAttributeModifiers(LivingEntity entity, net.minecraft.world.entity.ai.attributes.AttributeMap attributes, int amplifier) {
         super.removeAttributeModifiers(entity, attributes, amplifier);
 
-        if (!entity.level().isClientSide && entity.isAlive() && entity instanceof Player player) {
+        if (!entity.level().isClientSide && entity instanceof Player player) {
             player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
                 mana.setMaxMana(0);
                 mana.setMana(0);

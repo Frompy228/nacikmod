@@ -12,12 +12,17 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.MobEffectEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import top.theillusivec4.curios.api.CuriosApi;
-
+import net.artur.nacikmod.effect.EffectManaLastMagic;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.artur.nacikmod.capability.mana.ManaProvider;
+import net.artur.nacikmod.registry.ModEffects;
+import net.minecraft.world.item.ItemStack;
+import net.artur.nacikmod.item.ManaSword;
 
 @Mod.EventBusSubscriber(modid = NacikMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ModEventBusEventsForge {
@@ -41,9 +46,40 @@ public class ModEventBusEventsForge {
 
         if (attribute != null) {
             double bonusArmor = attribute.getValue();
-            double reductionPercentage = Math.min(bonusArmor * 0.015, 0.9);
+            double reductionPercentage = Math.min(bonusArmor * 0.02, 0.9);
             float reducedDamage = (float) (event.getAmount() * (1 - reductionPercentage));
             event.setAmount(reducedDamage);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onLivingHurt(LivingHurtEvent event) {
+        if (event.getSource().getEntity() instanceof Player player) {
+            // Проверяем, держит ли игрок ManaSword
+            ItemStack heldItem = player.getMainHandItem();
+            if (heldItem.getItem() instanceof ManaSword) {
+                // Получаем дополнительный урон из NBT
+                if (heldItem.hasTag() && heldItem.getTag().contains("ManaDamage")) {
+                    int manaDamage = heldItem.getTag().getInt("ManaDamage");
+                    // Добавляем дополнительный урон к базовому
+                    event.setAmount(event.getAmount() + manaDamage);
+                }
+            }
+            AttackHandler.onAttack(event.getEntity(), player);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onLivingDeath(LivingDeathEvent event) {
+        if (event.getEntity() instanceof Player player) {
+            // Проверяем, есть ли у игрока эффект LastMagic
+            if (player.hasEffect(ModEffects.MANA_LAST_MAGIC.get())) {
+                // Сбрасываем ману
+                player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
+                    mana.setMaxMana(0);
+                    mana.setMana(0);
+                });
+            }
         }
     }
 }

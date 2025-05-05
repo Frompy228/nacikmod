@@ -17,8 +17,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.ChatFormatting;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -32,7 +30,7 @@ public class ManaRelease {
     private static final UUID DAMAGE_MODIFIER_UUID = UUID.fromString("1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d");
     private static final UUID ARMOR_MODIFIER_UUID = UUID.fromString("2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e");
     private static final UUID SPEED_MODIFIER_UUID = UUID.fromString("3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f");
-    private static final int RELEASE_EFFECT_DURATION = 20; // 1 second
+    private static final int MANA_CHECK_INTERVAL = 20;
 
     public static class Level {
         public final int damage;
@@ -52,7 +50,7 @@ public class ManaRelease {
 
     public static final Level[] LEVELS = {
         new Level(1, 4, 15, "Level 1", 0.0),
-        new Level(2, 6, 25, "Level 2", 0.025)
+        new Level(2, 6, 25, "Level 2", 0.02)
     };
 
     @SubscribeEvent
@@ -88,9 +86,6 @@ public class ManaRelease {
 
         // Сначала добавляем игрока в список активных
         activeReleasePlayers.add(player.getUUID());
-
-        // Применяем эффект силы как индикатор активной способности
-        player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, RELEASE_EFFECT_DURATION, 0, true, false));
         
         for (ItemStack stack : player.getInventory().items) {
             if (stack.getItem() instanceof Release) {
@@ -107,9 +102,6 @@ public class ManaRelease {
     public static void stopRelease(Player player) {
         // Сначала удаляем игрока из списка активных
         activeReleasePlayers.remove(player.getUUID());
-        
-        // Удаляем эффект силы
-        player.removeEffect(MobEffects.DAMAGE_BOOST);
         
         // Затем обновляем все предметы Release в инвентаре
         for (ItemStack stack : player.getInventory().items) {
@@ -197,15 +189,14 @@ public class ManaRelease {
     }
 
     public static boolean isReleaseActive(Player player) {
-        return activeReleasePlayers.contains(player.getUUID()) && 
-               player.hasEffect(MobEffects.DAMAGE_BOOST);
+        return activeReleasePlayers.contains(player.getUUID());
     }
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (!(event.player instanceof ServerPlayer player)) return;
         if (event.phase != TickEvent.Phase.END) return;
-        if (player.tickCount % 20 != 0) return;
+        if (player.tickCount % MANA_CHECK_INTERVAL != 0) return;
 
         // Проверяем наличие LastMagic эффекта
         if (player.hasEffect(ModEffects.MANA_LAST_MAGIC.get())) {
@@ -237,9 +228,8 @@ public class ManaRelease {
             }
         }
 
-        // Если нет активного предмета или эффекта, но игрок в списке активных
-        if ((!hasActiveItem || !player.hasEffect(MobEffects.DAMAGE_BOOST)) && 
-            activeReleasePlayers.contains(player.getUUID())) {
+        // Если нет активного предмета, но игрок в списке активных
+        if (!hasActiveItem && activeReleasePlayers.contains(player.getUUID())) {
             stopRelease(player);
             return;
         }
@@ -251,8 +241,6 @@ public class ManaRelease {
             player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
                 if (mana.getMana() >= currentLevel.manaCost) {
                     mana.removeMana(currentLevel.manaCost);
-                    // Обновляем эффект силы
-                    player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, RELEASE_EFFECT_DURATION, 0, true, false));
                 } else {
                     stopRelease(player);
                 }

@@ -28,7 +28,8 @@ public class HealingOfShallowWounds {
     private static final int BASE_HEALING = 1;
     private static final int MANA_THRESHOLD = 750;
     private static final String ACTIVE_TAG = "active";
-    private static final int HEALING_EFFECT_DURATION = 20; // 1 second
+    private static final int HEALING_INTERVAL = 100; // 5 seconds
+    private static final int MANA_CONSUMPTION_INTERVAL = 20; // 1 second
 
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
@@ -56,9 +57,6 @@ public class HealingOfShallowWounds {
                 break;
             }
         }
-
-        // Применяем эффект регенерации
-        player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, HEALING_EFFECT_DURATION, 0, true, false));
     }
 
     public static void stopHealing(Player player) {
@@ -71,14 +69,10 @@ public class HealingOfShallowWounds {
                 stack.getOrCreateTag().putBoolean(ACTIVE_TAG, false);
             }
         }
-
-        // Удаляем эффект регенерации
-        player.removeEffect(MobEffects.REGENERATION);
     }
 
     public static boolean isHealingActive(Player player) {
-        return activeHealingPlayers.contains(player.getUUID()) && 
-               player.hasEffect(MobEffects.REGENERATION);
+        return activeHealingPlayers.contains(player.getUUID());
     }
 
     public static float calculateHealingAmount(Player player) {
@@ -95,7 +89,6 @@ public class HealingOfShallowWounds {
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (!(event.player instanceof ServerPlayer player)) return;
         if (event.phase != TickEvent.Phase.END) return;
-        if (player.tickCount % 20 != 0) return;
 
         // Проверяем все предметы MagicHealing в инвентаре
         boolean hasActiveItem = false;
@@ -110,9 +103,8 @@ public class HealingOfShallowWounds {
             }
         }
 
-        // Если нет активного предмета или эффекта, но игрок в списке активных
-        if ((!hasActiveItem || !player.hasEffect(MobEffects.REGENERATION)) && 
-            activeHealingPlayers.contains(player.getUUID())) {
+        // Если нет активного предмета, но игрок в списке активных
+        if (!hasActiveItem && activeHealingPlayers.contains(player.getUUID())) {
             stopHealing(player);
             return;
         }
@@ -122,10 +114,16 @@ public class HealingOfShallowWounds {
             // Check if player has enough mana
             player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
                 if (mana.getMana() >= MANA_COST_PER_SECOND) {
-                    mana.removeMana(MANA_COST_PER_SECOND);
+                    // Consume mana every second
+                    if (player.tickCount % MANA_CONSUMPTION_INTERVAL == 0) {
+                        mana.removeMana(MANA_COST_PER_SECOND);
+                    }
                     
-                    // Обновляем эффект регенерации
-                    player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, HEALING_EFFECT_DURATION, 0, true, false));
+                    // Heal every 5 seconds
+                    if (player.tickCount % HEALING_INTERVAL == 0) {
+                        float healingAmount = calculateHealingAmount(player);
+                        player.heal(healingAmount);
+                    }
                 } else {
                     stopHealing(player);
                 }

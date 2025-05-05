@@ -25,6 +25,9 @@
   "item.nacikmod.magic_healing": "Magic Healing",
   "item.nacikmod.release": "Release",
   "item.nacikmod.last_magic": "Recent Release",
+  "item.nacikmod.mana_sword": "Mana Sword",
+  "item.nacikmod.magic_weapons": "Magic Weapons",
+  "item.nacikmod.blood_shoot": "Blood Shoot",
   "item.nacikmod.magic_circuit.desc1": "A magic chain that increases the player's maximum mana reserve by 50",
   "curios.identifier.artifact": "Artifact",
   "curios.identifier.ring": "Ring",
@@ -42,6 +45,14 @@
   "item.nacikmod.last_magic.desc1": "I don't care anymore",
   "item.nacikmod.last_magic.desc2": "Takes everything in return for incredible power. Disappears after use",
   "item.nacikmod.last_magic.desc3": "Cost: Life, Mana",
-  "message.nacikmod.cannot_use_release_with_last_magic": "Cannot use Release while Last Magic is active",
-  "message.nacikmod.cannot_use_last_magic_with_release": "Cannot use Last Magic while Release is active"
+  "item.nacikmod.mana_sword.desc1": "A sword that draws power from mana",
+  "item.nacikmod.mana_sword.bonus_damage": "Bonus Damage: %d",
+  "item.nacikmod.magic_weapons.desc1": "Creates a sword from mana",
+  "item.nacikmod.magic_weapons.desc2": "Mana Cost: 100",
+  "item.nacikmod.magic_weapons.desc3": "Right-click to shoot a mana sword projectile",
+  "item.nacikmod.magic_weapons.desc4": "Shift + Right-click to create a mana sword",
+  "item.nacikmod.magic_weapons.desc5": "Bonus Damage: %d",
+  "item.nacikmod.blood_shoot.desc1": "Uses the owner's blood to deal damage",
+  "item.nacikmod.blood_shoot.desc2": "Damage: %d",
+  "item.nacikmod.blood_shoot.desc3": "Cost: 3HP"
 }

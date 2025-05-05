@@ -18,7 +18,7 @@ public class Release extends Item {
     private static final String ACTIVE_TAG = "active";
 
     public Release(Properties properties) {
-        super(properties);
+        super(properties.stacksTo(1));
     }
 
     @Override

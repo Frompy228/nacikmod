@@ -1,7 +1,9 @@
 package net.artur.nacikmod.registry;
 
 import net.artur.nacikmod.entity.custom.LanserEntity;
+import net.artur.nacikmod.entity.projectiles.BloodShootProjectile;
 import net.artur.nacikmod.entity.projectiles.FireArrowEntity;
+import net.artur.nacikmod.entity.projectiles.ManaSwordProjectile;
 import net.artur.nacikmod.NacikMod;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
@@ -30,6 +32,22 @@ public class ModEntities {
                             .updateInterval(2)
                             .build("fire_arrow")
             );
+
+    public static final RegistryObject<EntityType<ManaSwordProjectile>> MANA_SWORD_PROJECTILE =
+            ENTITY_TYPES.register("mana_sword_projectile",
+                    () -> EntityType.Builder.<ManaSwordProjectile>of((type, level) -> new ManaSwordProjectile(type, level), MobCategory.MISC)
+                            .sized(0.6F, 0.6F)
+                            .clientTrackingRange(4)
+                            .updateInterval(20)
+                            .build("mana_sword_projectile"));
+
+    public static final RegistryObject<EntityType<BloodShootProjectile>> BLOOD_SHOOT_PROJECTILE =
+            ENTITY_TYPES.register("blood_shoot_projectile",
+                    () -> EntityType.Builder.<BloodShootProjectile>of((type, level) -> new BloodShootProjectile(type, level), MobCategory.MISC)
+                            .sized(0.6F, 0.6F)
+                            .clientTrackingRange(4)
+                            .updateInterval(20)
+                            .build("blood_shoot_projectile"));
 
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);
