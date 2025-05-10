@@ -1,6 +1,7 @@
 package net.artur.nacikmod.item;
 
 import net.artur.nacikmod.capability.mana.ManaProvider;
+import net.artur.nacikmod.capability.root.RootProvider;
 import net.artur.nacikmod.network.ModMessages;
 import net.artur.nacikmod.network.ManaSyncPacket;
 import net.artur.nacikmod.network.PacketSyncEffect;
@@ -77,6 +78,12 @@ public class MagicSeal extends Item {
 
         for (LivingEntity entity : entities) {
             if (entity == owner || !entity.isAlive()) continue;
+
+            // Принудительно обновляем координаты перед наложением эффекта
+            entity.getCapability(RootProvider.ROOT_CAPABILITY).ifPresent(data -> {
+                data.setPendingData(owner.blockPosition(), level.dimension());
+                data.forceCommitData();
+            });
 
             MobEffectInstance effect = new MobEffectInstance(
                     ModEffects.ROOT.get(),

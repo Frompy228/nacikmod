@@ -9,11 +9,14 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.artur.nacikmod.registry.ModEntities;
 import net.artur.nacikmod.registry.ModItems;
+import net.artur.nacikmod.registry.ModEffects;
+import net.minecraft.world.effect.MobEffectInstance;
 
 public class BloodShootProjectile extends ThrowableItemProjectile {
     private final float damage;
     private int lifetime = 0;
     private static final int MAX_LIFETIME = 200; // 10 seconds (20 ticks * 10)
+    private static final int EFFECT_DURATION = 100; // 5 seconds (20 ticks * 5)
 
     public BloodShootProjectile(Level level, LivingEntity shooter, float damage) {
         super(ModEntities.BLOOD_SHOOT_PROJECTILE.get(), shooter, level);
@@ -34,6 +37,18 @@ public class BloodShootProjectile extends ThrowableItemProjectile {
     protected void onHitEntity(EntityHitResult entityHitResult) {
         if (!this.level().isClientSide) {
             if (entityHitResult.getEntity() instanceof LivingEntity livingEntity) {
+                // First apply effect
+                if (!livingEntity.hasEffect(ModEffects.BLOOD_EXPLOSION.get())) {
+                    livingEntity.addEffect(new MobEffectInstance(
+                        ModEffects.BLOOD_EXPLOSION.get(),
+                        EFFECT_DURATION,
+                        0, // Always level 0
+                        true,
+                        false // show particles
+                    ));
+                }
+                
+                // Then apply damage
                 livingEntity.hurt(this.damageSources().thrown(this, this.getOwner()), damage);
             }
         }

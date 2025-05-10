@@ -33,6 +33,6 @@ public class EffectLove extends MobEffect {
     }
     @Override
     public boolean isBeneficial() {
-        return false; // Указываем, что эффект положительный
+        return false;
     }
 }

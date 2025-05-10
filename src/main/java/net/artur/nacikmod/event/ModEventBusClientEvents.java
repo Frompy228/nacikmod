@@ -3,13 +3,7 @@ package net.artur.nacikmod.event;
 import net.artur.nacikmod.NacikMod;
 import net.artur.nacikmod.client.renderer.ReleaseAuraRenderer;
 import net.artur.nacikmod.client.renderer.LastMagicAuraRenderer;
-import net.artur.nacikmod.entity.client.FireArrowModel;
-import net.artur.nacikmod.entity.client.ModModelLayers;
-import net.artur.nacikmod.entity.client.LanserModel;
-import net.artur.nacikmod.entity.client.MovementSealLayer;
-import net.artur.nacikmod.entity.client.ProjectileManaSwordModel;
-import net.artur.nacikmod.entity.client.BloodShootProjectileModel;
-import net.artur.nacikmod.entity.client.BloodShootProjectileRenderer;
+import net.artur.nacikmod.entity.client.*;
 import net.artur.nacikmod.gui.TimeStopOverlay;
 import net.artur.nacikmod.item.MagicCrystal;
 import net.artur.nacikmod.registry.ModEntities;
@@ -25,7 +19,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraft.client.renderer.entity.EntityRenderers;
-import net.artur.nacikmod.entity.client.ManaSwordProjectileRenderer;
 
 @Mod.EventBusSubscriber(modid = NacikMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ModEventBusClientEvents {
@@ -63,6 +56,8 @@ public class ModEventBusClientEvents {
         event.enqueueWork(ModEventBusClientEvents::registerItemProperties);
         EntityRenderers.register(ModEntities.MANA_SWORD_PROJECTILE.get(), ManaSwordProjectileRenderer::new);
         EntityRenderers.register(ModEntities.BLOOD_SHOOT_PROJECTILE.get(), BloodShootProjectileRenderer::new);
+        EntityRenderers.register(ModEntities.LANSER.get(), LanserRender::new);
+        EntityRenderers.register(ModEntities.FIRE_ARROW.get(), FireArrowRenderer::new);
     }
 
     public static void registerItemProperties() {

@@ -25,24 +25,18 @@ public class RootEvents {
 
     @SubscribeEvent
     public static void onEffectAdded(MobEffectEvent.Added event) {
-        if (event.getEffectInstance().getEffect() instanceof EffectRoot
-                && event.getEntity() != null
-                && !event.getEntity().level().isClientSide()) {
+        updateRootData(event.getEntity());
+    }
 
-            event.getEntity().getCapability(RootProvider.ROOT_CAPABILITY).ifPresent(data -> {
-                data.setPendingData(
-                        event.getEntity().blockPosition(),
-                        event.getEntity().level().dimension()
-                );
+    @SubscribeEvent
+    public static void onEffectApplicable(MobEffectEvent.Applicable event) {
+        updateRootData(event.getEntity());
+    }
 
-                if (!(event.getEntity() instanceof ServerPlayer)) {
-                    data.forceCommitData();
-                } else {
-                    if (!data.isInitialized()) {
-                        data.commitData();
-                    }
-                }
-            });
+    @SubscribeEvent
+    public static void onEffectExpired(MobEffectEvent.Expired event) {
+        if (event.getEffectInstance().getEffect() instanceof EffectRoot) {
+            updateRootData(event.getEntity());
         }
     }
 
@@ -53,6 +47,18 @@ public class RootEvents {
                 && !event.getEntity().level().isClientSide()) {
 
             event.getEntity().getCapability(RootProvider.ROOT_CAPABILITY).ifPresent(IRootData::clear);
+        }
+    }
+
+    private static void updateRootData(LivingEntity entity) {
+        if (entity != null && !entity.level().isClientSide()) {
+            entity.getCapability(RootProvider.ROOT_CAPABILITY).ifPresent(data -> {
+                data.setPendingData(
+                        entity.blockPosition(),
+                        entity.level().dimension()
+                );
+                data.forceCommitData();
+            });
         }
     }
 }

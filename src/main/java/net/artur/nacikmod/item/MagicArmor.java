@@ -60,10 +60,9 @@ public class MagicArmor extends Item implements ICurioItem {
             if (entity.hasEffect(ModEffects.LOVE.get())) {
                 entity.removeEffect(ModEffects.LOVE.get());
             }
-            if (entity.hasEffect(MobEffects.POISON)){
+            if (entity.hasEffect(MobEffects.POISON)) {
                 entity.removeEffect(MobEffects.POISON);
             }
-
         }
     }
     

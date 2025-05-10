@@ -8,6 +8,7 @@
   "effect.nacikmod.root":"Привязка",
   "effect.nacikmod.time_slow":"Замедление времени",
   "effect.nacikmod.mana_last_magic":"Последние высвобождение",
+  "effect.nacikmod.blood_explosion":"Взрыв крови",
   "entity.nacikmod.lanser": "Диармайд",
   "item.nacikmod.lanser_spawn_egg": "Яйцо призыва Диармайда",
   "item.nacikmod.magic_armor": "Магическая броня",
@@ -39,7 +40,7 @@
   "item.nacikmod.magic_healing.desc1": "Правильный способ использования исцеляющей магии",
   "item.nacikmod.magic_healing.desc2": "Затраты маны: 10/с | Сила лечения: %d",
   "item.nacikmod.release.desc1": "Освобождение магии для усиления тела",
-  "item.nacikmod.release.desc2": "Затраты Маны: %d/ps | Сила: %d",
+  "item.nacikmod.release.desc2": "Затраты Маны: %d/с | Сила: %d",
   "item.nacikmod.release.active": "Активировано",
   "item.nacikmod.release.inactive": "Деактивировано",
   "item.nacikmod.last_magic.desc1": "Мне уже наплевать",
@@ -54,5 +55,6 @@
   "item.nacikmod.magic_weapons.desc5": "Дополнительный урон: %d",
   "item.nacikmod.blood_shoot.desc1": "Использует кровь владельца для нанесения урона",
   "item.nacikmod.blood_shoot.desc2": "Урон: %d",
-  "item.nacikmod.blood_shoot.desc3": "Затраты: 3HP"
+  "item.nacikmod.blood_shoot.desc3": "Затраты: %d",
+  "item.nacikmod.blood_shoot.desc4": "Затраты маны: 75"
 }
