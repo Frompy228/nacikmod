@@ -23,6 +23,7 @@ import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.registry.ModEffects;
 import net.minecraft.world.item.ItemStack;
 import net.artur.nacikmod.item.ManaSword;
+import net.artur.nacikmod.effect.EffectBloodExplosion;
 
 @Mod.EventBusSubscriber(modid = NacikMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ModEventBusEventsForge {
@@ -46,7 +47,7 @@ public class ModEventBusEventsForge {
 
         if (attribute != null) {
             double bonusArmor = attribute.getValue();
-            double reductionPercentage = Math.min(bonusArmor * 0.02, 0.9);
+            double reductionPercentage = Math.min(bonusArmor * 0.025, 0.9);
             float reducedDamage = (float) (event.getAmount() * (1 - reductionPercentage));
             event.setAmount(reducedDamage);
         }
@@ -71,10 +72,17 @@ public class ModEventBusEventsForge {
 
     @SubscribeEvent
     public static void onLivingDeath(LivingDeathEvent event) {
-        if (event.getEntity() instanceof Player player) {
-            // Проверяем, есть ли у игрока эффект LastMagic
+        LivingEntity entity = event.getEntity();
+        
+        // Check for Blood Explosion effect
+        if (entity.hasEffect(ModEffects.BLOOD_EXPLOSION.get())) {
+            // Trigger the effect's remove method to cause explosion
+            entity.removeEffect(ModEffects.BLOOD_EXPLOSION.get());
+        }
+        
+        // Existing mana check code
+        if (entity instanceof Player player) {
             if (player.hasEffect(ModEffects.MANA_LAST_MAGIC.get())) {
-                // Сбрасываем ману
                 player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
                     mana.setMaxMana(0);
                     mana.setMana(0);

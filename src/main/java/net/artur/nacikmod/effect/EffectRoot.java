@@ -48,25 +48,28 @@ public class EffectRoot extends MobEffect {
         if (entity.level().isClientSide()) return;
 
         entity.getCapability(RootProvider.ROOT_CAPABILITY).ifPresent(data -> {
-            // Проверка и фиксация данных
-            if (!data.isInitialized() && data.getPendingPosition() != null) {
-                data.commitData();
+            // Проверяем и обновляем координаты при каждом тике
+            BlockPos currentPos = entity.blockPosition();
+            ResourceKey<Level> currentDim = entity.level().dimension();
+
+            // Если координаты не установлены, устанавливаем их
+            if (data.getCommittedPosition() == null || data.getCommittedDimension() == null) {
+                data.setPendingData(currentPos, currentDim);
+                data.forceCommitData();
+                return;
             }
 
-            // Используем только зафиксированные данные
             BlockPos targetPos = data.getCommittedPosition();
             ResourceKey<Level> targetDim = data.getCommittedDimension();
 
-            if (targetPos == null || targetDim == null) return;
-
             // Проверка измерения
-            if (!entity.level().dimension().equals(targetDim)) {
+            if (!currentDim.equals(targetDim)) {
                 teleportToHomeDimension(entity, targetDim, targetPos);
                 return;
             }
 
             // Проверка расстояния
-            if (entity.blockPosition().distSqr(targetPos) > MAX_DISTANCE * MAX_DISTANCE) {
+            if (currentPos.distSqr(targetPos) > MAX_DISTANCE * MAX_DISTANCE) {
                 teleportWithinDimension(entity, targetPos);
             }
         });

@@ -26,4 +26,6 @@ public class ModEffects {
             EFFECTS.register("root", EffectRoot::new);
     public static final RegistryObject<MobEffect> MANA_LAST_MAGIC =
             EFFECTS.register("mana_last_magic", EffectManaLastMagic::new);
+    public static final RegistryObject<MobEffect> BLOOD_EXPLOSION =
+            EFFECTS.register("blood_explosion", EffectBloodExplosion::new);
 }

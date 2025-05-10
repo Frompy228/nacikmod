@@ -1,8 +1,9 @@
 package net.artur.nacikmod;
 
-
 import com.mojang.logging.LogUtils;
 import net.artur.nacikmod.capability.mana.ManaSyncOnDeath;
+import net.artur.nacikmod.capability.reward.RewardEvents;
+import net.artur.nacikmod.capability.reward.RewardSyncOnDeath;
 import net.artur.nacikmod.entity.client.FireArrowRenderer;
 import net.artur.nacikmod.entity.client.LanserRender;
 import net.artur.nacikmod.item.ModCreativeModTabs;
@@ -24,7 +25,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 import top.theillusivec4.curios.api.CuriosApi;
 
-
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(NacikMod.MOD_ID)
 public class NacikMod
@@ -44,6 +44,8 @@ public class NacikMod
         ModAttributes.ATTRIBUTES.register(modEventBus);
         ModMessages.register();
         MinecraftForge.EVENT_BUS.register(ManaSyncOnDeath.class);
+        MinecraftForge.EVENT_BUS.register(RewardEvents.class);
+        MinecraftForge.EVENT_BUS.register(RewardSyncOnDeath.class);
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
         ModCreativeModTabs.register(modEventBus);
@@ -54,22 +56,6 @@ public class NacikMod
     private void commonSetup(final FMLCommonSetupEvent event)
     {
 
-    }
-
-
-    // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
-    @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-    public static class ClientModEvents
-    {
-        @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event)
-        {
-            EntityRenderers.register(ModEntities.LANSER.get(), LanserRender::new);
-            EntityRenderers.register(ModEntities.FIRE_ARROW.get(), FireArrowRenderer::new);
-
-
-
-        }
     }
 
 }

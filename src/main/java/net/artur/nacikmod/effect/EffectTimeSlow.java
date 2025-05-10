@@ -50,7 +50,7 @@ public class EffectTimeSlow extends MobEffect {
 
     @Override
     public boolean isBeneficial() {
-        return false; // Указываем, что эффект положительный
+        return false;
     }
 
 

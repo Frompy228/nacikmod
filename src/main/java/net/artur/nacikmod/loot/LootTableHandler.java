@@ -23,7 +23,7 @@ public class LootTableHandler {
         if (tableName.getPath().startsWith("chests/")) {
 
             LootItem.Builder<?> magicCircuit = LootItem.lootTableItem(ModItems.MAGIC_CIRCUIT.get())
-                    .setWeight(35)
+                    .setWeight(40)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3)));
 
             LootItem.Builder<?> magicArmor = LootItem.lootTableItem(ModItems.MAGIC_ARMOR.get())
@@ -58,7 +58,7 @@ public class LootTableHandler {
             LootPool pool = LootPool.lootPool()
                     .name("nacikmod_loot_pool")
                     .setRolls(UniformGenerator.between(1, 2))
-                    .when(LootItemRandomChanceCondition.randomChance(0.1f))
+                    .when(LootItemRandomChanceCondition.randomChance(0.07f))
                     .add(magicCircuit)
                     .add(magicArmor)
                     .add(ringOfTime)

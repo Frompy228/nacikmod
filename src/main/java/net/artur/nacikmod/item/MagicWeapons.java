@@ -89,7 +89,7 @@ public class MagicWeapons extends Item {
                 // Создаем и запускаем снаряд
                 ManaSwordProjectile projectile = new ManaSwordProjectile(level, player, (float)manaDamage);
                 projectile.setPos(player.getX(), player.getEyeY() - 0.1, player.getZ());
-                projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.5F, 1.0F);
+                projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.5F, 0.0F);
                 level.addFreshEntity(projectile);
 
                 // Устанавливаем кулдаун
