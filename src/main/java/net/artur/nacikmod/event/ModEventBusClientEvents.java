@@ -1,6 +1,8 @@
 package net.artur.nacikmod.event;
 
 import net.artur.nacikmod.NacikMod;
+import net.artur.nacikmod.armor.models.LeonidHelmetModel;
+import net.artur.nacikmod.client.renderer.LeonidHelmetRenderer;
 import net.artur.nacikmod.client.renderer.ReleaseAuraRenderer;
 import net.artur.nacikmod.client.renderer.LastMagicAuraRenderer;
 import net.artur.nacikmod.entity.client.*;
@@ -8,6 +10,8 @@ import net.artur.nacikmod.gui.TimeStopOverlay;
 import net.artur.nacikmod.item.MagicCrystal;
 import net.artur.nacikmod.registry.ModEntities;
 import net.artur.nacikmod.registry.ModItems;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
@@ -20,15 +24,18 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 
+
 @Mod.EventBusSubscriber(modid = NacikMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ModEventBusClientEvents {
 
     @SubscribeEvent
     public static void registerLayer(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(ModModelLayers.LANSER_LAYER, LanserModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.LEONID_LAYER, LeonidModel::createBodyLayer);
         event.registerLayerDefinition(FireArrowModel.LAYER_LOCATION, FireArrowModel::createBodyLayer);
         event.registerLayerDefinition(ProjectileManaSwordModel.LAYER_LOCATION, ProjectileManaSwordModel::createBodyLayer);
         event.registerLayerDefinition(BloodShootProjectileModel.LAYER_LOCATION, BloodShootProjectileModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.LEONID_HELMET_LAYER, () -> LeonidHelmetModel.createBodyLayer(new CubeDeformation(0.0F)));
     }
 
     @SubscribeEvent
@@ -53,11 +60,15 @@ public class ModEventBusClientEvents {
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
-        event.enqueueWork(ModEventBusClientEvents::registerItemProperties);
-        EntityRenderers.register(ModEntities.MANA_SWORD_PROJECTILE.get(), ManaSwordProjectileRenderer::new);
-        EntityRenderers.register(ModEntities.BLOOD_SHOOT_PROJECTILE.get(), BloodShootProjectileRenderer::new);
-        EntityRenderers.register(ModEntities.LANSER.get(), LanserRender::new);
-        EntityRenderers.register(ModEntities.FIRE_ARROW.get(), FireArrowRenderer::new);
+        event.enqueueWork(() -> {
+            ModEventBusClientEvents.registerItemProperties();
+            EntityRenderers.register(ModEntities.MANA_SWORD_PROJECTILE.get(), ManaSwordProjectileRenderer::new);
+            EntityRenderers.register(ModEntities.BLOOD_SHOOT_PROJECTILE.get(), BloodShootProjectileRenderer::new);
+            EntityRenderers.register(ModEntities.LANSER.get(), LanserRender::new);
+            EntityRenderers.register(ModEntities.LEONID.get(), LeonidRender::new);
+            EntityRenderers.register(ModEntities.FIRE_ARROW.get(), FireArrowRenderer::new);
+
+        });
     }
 
     public static void registerItemProperties() {

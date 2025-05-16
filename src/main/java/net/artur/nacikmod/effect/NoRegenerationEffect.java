@@ -39,8 +39,5 @@ public class NoRegenerationEffect extends MobEffect {
             }
         }
     }
-    @Override
-    public boolean isBeneficial() {
-        return false;
-    }
+
 }

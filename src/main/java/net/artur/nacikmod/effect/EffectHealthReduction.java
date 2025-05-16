@@ -31,8 +31,4 @@ public class EffectHealthReduction extends MobEffect {
             entity.setHealth(entity.getMaxHealth()); // Гарантируем, что текущее здоровье не превышает новое макс. ХП
         }
     }
-    @Override
-    public boolean isBeneficial() {
-        return false;
-    }
 }

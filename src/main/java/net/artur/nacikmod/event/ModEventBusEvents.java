@@ -2,6 +2,7 @@ package net.artur.nacikmod.event;
 
 import net.artur.nacikmod.NacikMod;
 import net.artur.nacikmod.entity.custom.LanserEntity;
+import net.artur.nacikmod.entity.custom.LeonidEntity;
 import net.artur.nacikmod.network.ModMessages;
 import net.artur.nacikmod.registry.ModEntities;
 import net.minecraft.world.entity.SpawnPlacements;
@@ -22,9 +23,12 @@ public class ModEventBusEvents {
     @SubscribeEvent
     public static void registerAttributes(EntityAttributeCreationEvent event) {
         event.put(ModEntities.LANSER.get(), LanserEntity.createAttributes().build());
+        event.put(ModEntities.LEONID.get(), LeonidEntity.createAttributes().build());
     }
+
     @SubscribeEvent
     public static void entitySpawnRestriction(SpawnPlacementRegisterEvent event) {
         event.register(ModEntities.LANSER.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
+        event.register(ModEntities.LEONID.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
     }
 }

@@ -1,6 +1,7 @@
 package net.artur.nacikmod.registry;
 
 import net.artur.nacikmod.entity.custom.LanserEntity;
+import net.artur.nacikmod.entity.custom.LeonidEntity;
 import net.artur.nacikmod.entity.projectiles.BloodShootProjectile;
 import net.artur.nacikmod.entity.projectiles.FireArrowEntity;
 import net.artur.nacikmod.entity.projectiles.ManaSwordProjectile;
@@ -22,6 +23,13 @@ public class ModEntities {
                     EntityType.Builder.of(LanserEntity::new, MobCategory.MONSTER)
                             .sized(0.6f, 1.8f)
                             .build("lanser")
+            );
+
+    public static final RegistryObject<EntityType<LeonidEntity>> LEONID =
+            ENTITY_TYPES.register("leonid", () ->
+                    EntityType.Builder.of(LeonidEntity::new, MobCategory.MONSTER)
+                            .sized(0.6f, 1.8f)
+                            .build("leonid")
             );
 
     public static final RegistryObject<EntityType<FireArrowEntity>> FIRE_ARROW =

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "nacikmod:hiraishin_without_seal"
+    },
+    {
+      "item": "nacikmod:magic_seal"
+    },
+    {
+      "item": "nacikmod:mana_crystal"
+    },
+    {
+      "item": "nacikmod:shard_artifact"
+    }
+  ],
+  "result": {
+    "item": "nacikmod:hiraishin",
+    "count": 1
+  }
+}
