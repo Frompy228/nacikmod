@@ -1,14 +1,17 @@
 package net.artur.nacikmod.event;
 
 import net.artur.nacikmod.NacikMod;
+import net.artur.nacikmod.capability.reward.PlayerRewardsProvider;
 import net.artur.nacikmod.item.MagicCharm;
 import net.artur.nacikmod.registry.ModAttributes;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.MobEffectEvent;
@@ -47,7 +50,7 @@ public class ModEventBusEventsForge {
 
         if (attribute != null) {
             double bonusArmor = attribute.getValue();
-            double reductionPercentage = Math.min(bonusArmor * 0.025, 0.9);
+            double reductionPercentage = Math.min(bonusArmor * 0.03, 0.9);
             float reducedDamage = (float) (event.getAmount() * (1 - reductionPercentage));
             event.setAmount(reducedDamage);
         }
@@ -73,13 +76,13 @@ public class ModEventBusEventsForge {
     @SubscribeEvent
     public static void onLivingDeath(LivingDeathEvent event) {
         LivingEntity entity = event.getEntity();
-        
+
         // Check for Blood Explosion effect
         if (entity.hasEffect(ModEffects.BLOOD_EXPLOSION.get())) {
             // Trigger the effect's remove method to cause explosion
             entity.removeEffect(ModEffects.BLOOD_EXPLOSION.get());
         }
-        
+
         // Existing mana check code
         if (entity instanceof Player player) {
             if (player.hasEffect(ModEffects.MANA_LAST_MAGIC.get())) {
@@ -90,4 +93,13 @@ public class ModEventBusEventsForge {
             }
         }
     }
+    @SubscribeEvent
+    public static void onEffectRemove(MobEffectEvent.Remove event) {
+        if (event.getEffect().equals(ModEffects.HIRAISHIN_MARK.get()) ||
+                event.getEffect().equals(ModEffects.MANA_LAST_MAGIC.get())) {
+            event.setCanceled(true);
+        }
+    }
+
+
 }

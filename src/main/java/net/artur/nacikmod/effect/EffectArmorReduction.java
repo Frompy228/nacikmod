@@ -24,8 +24,4 @@ public class EffectArmorReduction extends MobEffect {
         return true; // Эффект обновляется каждую секунду
 
     }
-    @Override
-    public boolean isBeneficial() {
-        return false;
-    }
 }

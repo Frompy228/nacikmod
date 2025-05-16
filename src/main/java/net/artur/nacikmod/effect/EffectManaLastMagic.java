@@ -95,9 +95,4 @@ public class EffectManaLastMagic extends MobEffect {
     public boolean isDurationEffectTick(int duration, int amplifier) {
         return duration % 20 == 0; // Эффект применяется каждую секунду
     }
-
-    @Override
-    public boolean isBeneficial() {
-        return true; // Указываем, что эффект положительный
-    }
 }

@@ -37,12 +37,6 @@ public class EffectRoot extends MobEffect {
                 AttributeModifier.Operation.MULTIPLY_TOTAL
         );
     }
-
-    @Override
-    public boolean isBeneficial() {
-        return false;
-    }
-
     @Override
     public void applyEffectTick(LivingEntity entity, int amplifier) {
         if (entity.level().isClientSide()) return;

@@ -64,9 +64,4 @@ public class EffectBloodExplosion extends MobEffect {
             }
         }
     }
-
-    @Override
-    public boolean isBeneficial() {
-        return false; // This is a harmful effect
-    }
 }

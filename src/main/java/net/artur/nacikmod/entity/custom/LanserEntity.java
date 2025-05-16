@@ -33,6 +33,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.curios.api.CuriosApi;
@@ -128,6 +129,7 @@ public class LanserEntity extends HeroSouls {
                 .add(Attributes.MAX_HEALTH, 100.0)
                 .add(Attributes.ATTACK_DAMAGE, 6.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.8)
+                .add(ForgeMod.SWIM_SPEED.get(), 1.5) // Увеличиваем скорость плавания в 1.5 раза
                 .add(Attributes.FOLLOW_RANGE, 32.0);
     }
 
@@ -324,9 +326,9 @@ public class LanserEntity extends HeroSouls {
         Random random = new Random(); // Генератор случайных чисел
 
         // Шанс дропа в процентах (0.0 - 1.0)
-        double chanceProtectionLans = 0.6;
-        double chanceNaciiLans = 0.6;
-        double chanceCircuit = 0.9;
+        double chanceProtectionLans = 0.25;
+        double chanceNaciiLans = 0.25;
+        double chanceCircuit = 0.25;
 
         // Логика дропа с шансом
         if (random.nextDouble() < chanceProtectionLans) {
@@ -338,7 +340,7 @@ public class LanserEntity extends HeroSouls {
         }
 
         if (random.nextDouble() < chanceCircuit) {
-            this.spawnAtLocation(new ItemStack(ModItems.MAGIC_CIRCUIT.get(), 3));
+            this.spawnAtLocation(new ItemStack(ModItems.MAGIC_CIRCUIT.get(), 12));
         }
     }
 

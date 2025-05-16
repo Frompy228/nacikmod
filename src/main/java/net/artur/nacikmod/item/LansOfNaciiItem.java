@@ -1,5 +1,6 @@
 package net.artur.nacikmod.item;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -18,12 +19,13 @@ import net.artur.nacikmod.registry.ModEffects;
 import java.util.UUID;
 import net.minecraft.world.InteractionHand;
 
+
 public class LansOfNaciiItem extends SwordItem {
     private static final UUID ENTITY_REACH_MODIFIER_ID = UUID.fromString("9f2b5c42-38ff-4eb1-a79c-2c2b59a2efdf");
     private final Multimap<Attribute, AttributeModifier> attributeModifiers;
 
     public LansOfNaciiItem() {
-        super(new CustomTier(), 7, -3f, new Item.Properties().fireResistant());
+        super(new CustomTier(), 7, -3f, new Item.Properties().fireResistant().rarity(ShardArtifact.RED));
 
         // Создаём список атрибутов (увеличиваем ДАЛЬНОСТЬ удара по сущностям)
         ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();

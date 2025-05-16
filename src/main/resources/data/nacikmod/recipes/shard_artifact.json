@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "tag": "nacikmod:artifact_swords"
+    }
+  ],
+  "result": {
+    "item": "nacikmod:shard_artifact",
+    "count": 1
+  }
+} 

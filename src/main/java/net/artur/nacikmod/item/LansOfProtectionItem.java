@@ -23,7 +23,7 @@ public class LansOfProtectionItem extends SwordItem {
     private final Multimap<Attribute, AttributeModifier> attributeModifiers;
 
     public LansOfProtectionItem() {
-        super(new CustomTier(), 7, -3f, new Item.Properties().fireResistant());
+        super(new CustomTier(), 7, -3f, new Item.Properties().fireResistant().rarity(ShardArtifact.RED));
 
         // Создаём атрибуты (увеличиваем дальность атаки)
         ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();

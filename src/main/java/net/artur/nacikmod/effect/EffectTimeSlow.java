@@ -48,10 +48,4 @@ public class EffectTimeSlow extends MobEffect {
         return true;  // Обновляется каждый тик
     }
 
-    @Override
-    public boolean isBeneficial() {
-        return false;
-    }
-
-
 }

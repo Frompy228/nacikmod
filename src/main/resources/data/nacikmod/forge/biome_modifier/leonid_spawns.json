@@ -1,0 +1,13 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": [
+    "minecraft:desert",
+    "minecraft:badlands"
+  ],
+  "spawners": {
+    "type": "nacikmod:leonid",
+    "weight": 6,
+    "minCount": 1,
+    "maxCount": 1
+  }
+}

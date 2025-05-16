@@ -23,27 +23,27 @@ public class LootTableHandler {
         if (tableName.getPath().startsWith("chests/")) {
 
             LootItem.Builder<?> magicCircuit = LootItem.lootTableItem(ModItems.MAGIC_CIRCUIT.get())
-                    .setWeight(40)
+                    .setWeight(100)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3)));
 
             LootItem.Builder<?> magicArmor = LootItem.lootTableItem(ModItems.MAGIC_ARMOR.get())
-                    .setWeight(6)
-                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
-
-            LootItem.Builder<?> magicCharm = LootItem.lootTableItem(ModItems.MAGIC_CHARM.get())
-                    .setWeight(8)
-                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
-
-            LootItem.Builder<?> manaCrystal = LootItem.lootTableItem(ModItems.MANA_CRYSTAL.get())
-                    .setWeight(4)
-                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
-
-            LootItem.Builder<?> magicSeal = LootItem.lootTableItem(ModItems.MAGIC_SEAL.get())
                     .setWeight(10)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
+            LootItem.Builder<?> magicCharm = LootItem.lootTableItem(ModItems.MAGIC_CHARM.get())
+                    .setWeight(11)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
+            LootItem.Builder<?> manaCrystal = LootItem.lootTableItem(ModItems.MANA_CRYSTAL.get())
+                    .setWeight(7)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
+            LootItem.Builder<?> magicSeal = LootItem.lootTableItem(ModItems.MAGIC_SEAL.get())
+                    .setWeight(13)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
             LootItem.Builder<?> ringOfTime = LootItem.lootTableItem(ModItems.RING_OF_TIME.get())
-                    .setWeight(3)
+                    .setWeight(5)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
             
             LootItem.Builder<?> lastMagic = LootItem.lootTableItem(ModItems.LAST_MAGIC.get())
@@ -51,7 +51,11 @@ public class LootTableHandler {
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
             LootItem.Builder<?> bloodShoot = LootItem.lootTableItem(ModItems.BLOOD_SHOOT.get())
-                    .setWeight(3)
+                    .setWeight(7)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
+            LootItem.Builder<?> hiraishinWithoutSeal = LootItem.lootTableItem(ModItems.HIRAISHIN_WITHOUT_SEAL.get())
+                    .setWeight(2)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
             // Создаём пул лута
@@ -67,6 +71,7 @@ public class LootTableHandler {
                     .add(manaCrystal)
                     .add(lastMagic)
                     .add(bloodShoot)
+                    .add(hiraishinWithoutSeal)
                     .build();
 
 
