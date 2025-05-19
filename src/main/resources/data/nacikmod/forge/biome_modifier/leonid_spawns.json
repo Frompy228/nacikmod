@@ -2,7 +2,12 @@
   "type": "forge:add_spawns",
   "biomes": [
     "minecraft:desert",
-    "minecraft:badlands"
+    "minecraft:beach",
+    "minecraft:badlands",
+    "minecraft:plains",
+    "minecraft:flower_forest",
+    "minecraft:eroded_badlands",
+    "minecraft:wooded_badlands"
   ],
   "spawners": {
     "type": "nacikmod:leonid",

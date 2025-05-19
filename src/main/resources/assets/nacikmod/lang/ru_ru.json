@@ -1,6 +1,6 @@
 {
   "item.nacikmod.lans_of_protection": "Копье Защиты",
-  "item.nacikmod.lans_of_nacii": "Копьё Здоровья",
+  "item.nacikmod.lans_of_nacii": "Копье Здоровья",
   "effect.nacikmod.no_regen": "Антихил",
   "effect.nacikmod.health_reduction": "Неизличимые раны",
   "effect.nacikmod.armor_reduction": "Разрушение брони",
@@ -15,6 +15,7 @@
   "effect.nacikmod.roar":"Рев",
   "item.nacikmod.lanser_spawn_egg": "Яйцо призыва Диармайда",
   "item.nacikmod.leonid_spawn_egg": "Яйцо призыва Леонида",
+  "item.nacikmod.spartan_spawn_egg": "Яйцо призыва Спартанца",
   "item.nacikmod.magic_armor": "Магическая броня",
   "item.nacikmod.magic_armor.desc1": "Дает владельцу дополнительную магическую броню, которая защищает от любовных воздействий и от ядов",
   "item.nacikmod.ring_of_time": "Кольцо времени",

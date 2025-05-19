@@ -1,5 +1,6 @@
 package net.artur.nacikmod.capability.mana;
 
+import net.artur.nacikmod.entity.custom.LeonidEntity;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -12,6 +13,9 @@ public class ManaEvents {
     @SubscribeEvent
     public static void onAttachCapabilitiesPlayer(AttachCapabilitiesEvent<Entity> event) {
         if (event.getObject() instanceof Player) {
+            event.addCapability(new ResourceLocation("nacikmod", "mana"), new ManaProvider());
+        }
+        if (event.getObject() instanceof LeonidEntity) {
             event.addCapability(new ResourceLocation("nacikmod", "mana"), new ManaProvider());
         }
     }

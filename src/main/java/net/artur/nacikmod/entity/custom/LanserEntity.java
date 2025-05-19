@@ -46,7 +46,6 @@ import java.util.Random;
 public class LanserEntity extends HeroSouls {
 
     private boolean attackWithMainHand = true; // Флаг для чередования атак
-    private int manaRegenTimer = 0; // Таймер для регенерации маны
 
 
     public LanserEntity(EntityType<? extends HeroSouls> entityType, Level level) {
@@ -55,14 +54,6 @@ public class LanserEntity extends HeroSouls {
 
     @Override
     public void tick() {
-        // Ограничение amplifier эффекта TIME_SLOW
-        MobEffectInstance timeSlowEffect = this.getEffect(ModEffects.TIME_SLOW.get());
-        if (timeSlowEffect != null && timeSlowEffect.getAmplifier() > 2) {
-            // Заменяем эффект amplifier=2, если текущий amplifier > 2
-            this.removeEffect(ModEffects.TIME_SLOW.get());
-            this.addEffect(new MobEffectInstance(ModEffects.TIME_SLOW.get(), timeSlowEffect.getDuration(), 2));
-        }
-
         super.tick();
 
 
@@ -129,7 +120,7 @@ public class LanserEntity extends HeroSouls {
                 .add(Attributes.MAX_HEALTH, 100.0)
                 .add(Attributes.ATTACK_DAMAGE, 6.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.8)
-                .add(ForgeMod.SWIM_SPEED.get(), 1.5) // Увеличиваем скорость плавания в 1.5 раза
+                .add(ForgeMod.SWIM_SPEED.get(), 2) // Увеличиваем скорость плавания в 1.5 раза
                 .add(Attributes.FOLLOW_RANGE, 32.0);
     }
 
@@ -280,18 +271,18 @@ public class LanserEntity extends HeroSouls {
             }
 
             if (weapon.getItem() == ModItems.LANS_OF_PROTECTION.get()) {
-                double baseDamage = lanser.getAttributeValue(Attributes.ATTACK_DAMAGE) + 1;
-                double armor = target.getArmorValue();
-                double bonusDamage = baseDamage * (armor / 45.0);
-                double totalDamage = baseDamage + bonusDamage;
-                target.hurt(lanser.damageSources().mobAttack(lanser), (float) totalDamage);
-
+                // Получаем реально нанесенный урон
+                double damageDealt = target.getMaxHealth() - target.getHealth();
+                
+                // Проверяем, есть ли уже эффект снижения брони
                 MobEffectInstance existingEffect = target.getEffect(ModEffects.ARMOR_REDUCTION.get());
-                int newAmplifier = (int) Math.floor(totalDamage / 9);
+                int newAmplifier = (int) Math.floor(damageDealt / 3);
+                
                 if (existingEffect != null) {
                     newAmplifier += existingEffect.getAmplifier();
                 }
-                target.addEffect(new MobEffectInstance(ModEffects.ARMOR_REDUCTION.get(), 240, newAmplifier));
+
+                target.addEffect(new MobEffectInstance(ModEffects.ARMOR_REDUCTION.get(), 900, newAmplifier));
             }
         }
     }

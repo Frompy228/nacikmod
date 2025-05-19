@@ -3,6 +3,7 @@ package net.artur.nacikmod.event;
 import net.artur.nacikmod.NacikMod;
 import net.artur.nacikmod.entity.custom.LanserEntity;
 import net.artur.nacikmod.entity.custom.LeonidEntity;
+import net.artur.nacikmod.entity.custom.SpartanEntity;
 import net.artur.nacikmod.network.ModMessages;
 import net.artur.nacikmod.registry.ModEntities;
 import net.minecraft.world.entity.SpawnPlacements;
@@ -24,6 +25,7 @@ public class ModEventBusEvents {
     public static void registerAttributes(EntityAttributeCreationEvent event) {
         event.put(ModEntities.LANSER.get(), LanserEntity.createAttributes().build());
         event.put(ModEntities.LEONID.get(), LeonidEntity.createAttributes().build());
+        event.put(ModEntities.SPARTAN.get(), SpartanEntity.createAttributes().build());
     }
 
     @SubscribeEvent

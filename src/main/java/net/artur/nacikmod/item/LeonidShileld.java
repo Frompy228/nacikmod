@@ -15,6 +15,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraftforge.event.entity.living.ShieldBlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.artur.nacikmod.registry.ModItems;
 import java.util.UUID;
 
 @Mod.EventBusSubscriber
@@ -27,7 +28,7 @@ public class LeonidShileld extends ShieldItem {
 
     @Override
     public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
-        return repair.getItem() instanceof ShieldItem;
+        return repair.getItem() == ModItems.SHARD_OF_ARTIFACT.get() || repair.getItem() instanceof LeonidShileld;
     }
 
     @SubscribeEvent
@@ -42,7 +43,7 @@ public class LeonidShileld extends ShieldItem {
                     (LivingEntity) event.getDamageSource().getEntity() : null;
                 
                 if (attacker != null) {
-                    float reflectedDamage = event.getBlockedDamage() * 0.4f;
+                    float reflectedDamage = event.getBlockedDamage() * 0.6f;
                     attacker.hurt(player.damageSources().playerAttack(player), reflectedDamage);
                 }
             }

@@ -5,7 +5,8 @@
     "minecraft:flower_forest",
     "minecraft:cherry_grove",
     "minecraft:meadow",
-    "minecraft:savanna"
+    "minecraft:savanna",
+    "minecraft:savanna_plateau"
   ],
   "spawners": {
     "type": "nacikmod:lanser",

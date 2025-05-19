@@ -5,6 +5,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.ArmorItem.Type;
+import net.artur.nacikmod.registry.ModItems;
 
 public class LeonidArmorMaterial implements ArmorMaterial {
     private static final int[] BASE_DURABILITY = new int[] {13, 15, 16, 11};
@@ -12,7 +13,7 @@ public class LeonidArmorMaterial implements ArmorMaterial {
 
     @Override
     public int getDurabilityForType(Type type) {
-        return BASE_DURABILITY[type.getSlot().getIndex()] * 50;
+        return BASE_DURABILITY[type.getSlot().getIndex()] * 80;
     }
 
     @Override
@@ -27,12 +28,12 @@ public class LeonidArmorMaterial implements ArmorMaterial {
 
     @Override
     public SoundEvent getEquipSound() {
-        return SoundEvents.ARMOR_EQUIP_DIAMOND;
+        return SoundEvents.ARMOR_EQUIP_NETHERITE;
     }
 
     @Override
     public Ingredient getRepairIngredient() {
-        return Ingredient.EMPTY;
+        return Ingredient.of(ModItems.SHARD_OF_ARTIFACT.get());
     }
 
     @Override

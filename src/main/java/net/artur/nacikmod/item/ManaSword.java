@@ -17,7 +17,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import java.util.List;
 
 public class ManaSword extends SwordItem {
-    private static final int MAX_DURABILITY = 3;
+    private static final int MAX_DURABILITY = 2;
     private static final float BASE_DAMAGE = 2f;
     private static final float ATTACK_SPEED = -2.4f;
     private static final String MANA_DAMAGE_TAG = "ManaDamage";

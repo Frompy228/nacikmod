@@ -1,5 +1,6 @@
 package net.artur.nacikmod.item;
 
+import net.artur.nacikmod.registry.ModItems;
 import net.minecraft.world.entity.HumanoidArm;
 import net.artur.nacikmod.registry.ModEffects;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,7 +24,7 @@ public class LansOfProtectionItem extends SwordItem {
     private final Multimap<Attribute, AttributeModifier> attributeModifiers;
 
     public LansOfProtectionItem() {
-        super(new CustomTier(), 7, -3f, new Item.Properties().fireResistant().rarity(ShardArtifact.RED));
+        super(new CustomTier(), 7, -2.9f, new Item.Properties().fireResistant().rarity(ShardArtifact.RED));
 
         // Создаём атрибуты (увеличиваем дальность атаки)
         ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
@@ -51,18 +52,17 @@ public class LansOfProtectionItem extends SwordItem {
             boolean success = super.hurtEnemy(stack, target, attacker);
             if (!success) return false;
 
-            double baseDamage = attacker.getAttributeValue(Attributes.ATTACK_DAMAGE) + 1;
-            double armor = target.getArmorValue();
-            double bonusDamage = baseDamage * (armor / 45.0);
-            double totalDamage = baseDamage + bonusDamage;
-            target.hurt(attacker.damageSources().playerAttack((Player) attacker), (float) totalDamage);
-
+            // Получаем реально нанесенный урон
+            double damageDealt = target.getMaxHealth() - target.getHealth();
+            
             // Проверяем, есть ли уже эффект снижения брони
             MobEffectInstance existingEffect = target.getEffect(ModEffects.ARMOR_REDUCTION.get());
-            int newAmplifier = (int) Math.floor(totalDamage / 9);
+            int newAmplifier = (int) Math.floor(damageDealt / 3);
+            
             if (existingEffect != null) {
                 newAmplifier += existingEffect.getAmplifier();
             }
+
             target.addEffect(new MobEffectInstance(ModEffects.ARMOR_REDUCTION.get(), 240, newAmplifier));
 
             if (attacker instanceof Player player) {
@@ -107,7 +107,7 @@ public class LansOfProtectionItem extends SwordItem {
         public int getEnchantmentValue() { return 25; }
         @Override
         public Ingredient getRepairIngredient() {
-            return Ingredient.of(Items.NETHERITE_INGOT); // Ремонт незеритом
+            return Ingredient.of(ModItems.SHARD_OF_ARTIFACT.get()); // Ремонт незеритом
         }
     }
 }
