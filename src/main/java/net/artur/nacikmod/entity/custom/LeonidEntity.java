@@ -75,7 +75,7 @@ public class LeonidEntity extends HeroSouls {
                 .add(Attributes.ARMOR,15)
                 .add(Attributes.ARMOR_TOUGHNESS,10)
                 .add(Attributes.MAX_HEALTH, 150.0) // Больше здоровья чем у базового HeroSouls
-                .add(Attributes.ATTACK_DAMAGE, 13.0) // Больше урона
+                .add(Attributes.ATTACK_DAMAGE, 15.0) // Больше урона
                 .add(Attributes.MOVEMENT_SPEED, 0.4) // Быстрее базового HeroSouls
                 .add(Attributes.FOLLOW_RANGE, 40.0) // Больший радиус обнаружения
                 .add(ForgeMod.SWIM_SPEED.get(), 2); // Увеличиваем скорость плавания в 1.5 раза
@@ -135,15 +135,7 @@ public class LeonidEntity extends HeroSouls {
                 if (attackCooldown <= 0) {
                     leonid.swing(InteractionHand.MAIN_HAND);
 
-                    // Получаем урон оружия
-                    ItemStack weapon = leonid.getMainHandItem();
-                    float weaponDamage = 0;
-                    if (weapon.getItem() instanceof SwordItem sword) {
-                        weaponDamage = sword.getDamage();
-                    }
-
-                    // Базовый урон моба + урон оружия
-                    float totalDamage = (float) leonid.getAttributeValue(Attributes.ATTACK_DAMAGE) + weaponDamage;
+                    float totalDamage = (float) leonid.getAttributeValue(Attributes.ATTACK_DAMAGE);
 
                     // Наносим урон с учетом оружия
                     target.hurt(leonid.damageSources().mobAttack(leonid), totalDamage);

@@ -40,6 +40,8 @@ public class ModCreativeModTabs {
                         pOutput.accept(ModItems.MAGIC_HEALING.get());
                         pOutput.accept(ModItems.RELEASE.get());
                         pOutput.accept(ModItems.MAGIC_WEAPONS.get());
+                        pOutput.accept(ModItems.GRAVITY.get());
+                        pOutput.accept(ModItems.SHINRA_TENSEI.get());
                     })
                     .build());
 

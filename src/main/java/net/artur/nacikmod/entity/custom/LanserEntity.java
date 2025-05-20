@@ -115,10 +115,11 @@ public class LanserEntity extends HeroSouls {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(ModAttributes.BONUS_ARMOR.get(),10)
+                .add(ModAttributes.BONUS_ARMOR.get(),12)
                 .add(Attributes.ARMOR, 20)
-                .add(Attributes.MAX_HEALTH, 100.0)
-                .add(Attributes.ATTACK_DAMAGE, 6.0)
+                .add(Attributes.ARMOR_TOUGHNESS, 5)
+                .add(Attributes.MAX_HEALTH, 115.0)
+                .add(Attributes.ATTACK_DAMAGE, 15.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.8)
                 .add(ForgeMod.SWIM_SPEED.get(), 2) // Увеличиваем скорость плавания в 1.5 раза
                 .add(Attributes.FOLLOW_RANGE, 32.0);
@@ -233,7 +234,7 @@ public class LanserEntity extends HeroSouls {
             }
 
             // Если можем атаковать – атакуем
-            if (attackCooldown <= 0 && squaredDistance <= maxDistance * maxDistance) {
+            if (attackCooldown <= 0 && squaredDistance <= maxDistance * maxDistance && lanser.hasLineOfSight(target)) {
                 InteractionHand attackHand = lanser.attackWithMainHand ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
                 lanser.swing(attackHand);
 

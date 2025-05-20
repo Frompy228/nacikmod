@@ -4,5 +4,11 @@
       "nacikmod:roar"
     ],
     "subtitle": "subtitles.nacikmod.roar"
+  },
+  "gravity": {
+    "sounds": [
+      "nacikmod:gravity"
+    ],
+    "subtitle": "subtitles.nacikmod.gravity"
   }
 } 

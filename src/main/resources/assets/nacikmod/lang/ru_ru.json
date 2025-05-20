@@ -13,6 +13,7 @@
   "entity.nacikmod.lanser": "Диармайд",
   "entity.nacikmod.leonid": "Леонид",
   "effect.nacikmod.roar":"Рев",
+  "effect.nacikmod.enhanced_gravity":"Усиленная гравитация",
   "item.nacikmod.lanser_spawn_egg": "Яйцо призыва Диармайда",
   "item.nacikmod.leonid_spawn_egg": "Яйцо призыва Леонида",
   "item.nacikmod.spartan_spawn_egg": "Яйцо призыва Спартанца",
@@ -39,6 +40,8 @@
   "item.nacikmod.shard_artifact": "Осколок Артефакта",
   "item.nacikmod.leonid_helmet": "Шлем Леонида",
   "item.nacikmod.leonid_shield": "Щит Леонида",
+  "item.nacikmod.gravity": "Гравитация",
+  "item.nacikmod.shinra_tensei": "Шинра Тенсей",
   "item.nacikmod.magic_circuit.desc1": "Магическая цепь увеличивающая максимальный запас маны игрока на 50",
   "curios.identifier.artifact": "Артефакт",
   "curios.identifier.ring": "Кольцо",
@@ -72,5 +75,11 @@
   "item.nacikmod.hiraishin.desc3": "Right-click чтобы телепортироваться к отмеченной сущности",
   "item.nacikmod.hiraishin.desc4": "Shift + Right-click чтобы выбрать цель",
   "item.nacikmod.hiraishin.desc5": "Владелец: %d",
-  "item.nacikmod.leonid_helmet.desc1": "Шлем героический души наделяющий владельца силой"
+  "item.nacikmod.leonid_helmet.desc1": "Шлем героический души наделяющий владельца силой",
+  "item.nacikmod.gravity.desc1": "Позволяет управлять гравитацией",
+  "item.nacikmod.gravity.desc2": "Затраты маны полета: 10/ps | Затраты маны: 200 | Радиус эффекта: 10",
+  "item.nacikmod.shinra_tensei.desc1": "Уничтожает все на своем пути",
+  "item.nacikmod.shinra_tensei.desc2": "Затраты маны: 15000",
+  "item.nacikmod.gravity.active": "Активировано",
+  "item.nacikmod.gravity.inactive": "Деактивировано"
 }

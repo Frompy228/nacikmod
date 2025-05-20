@@ -58,6 +58,10 @@ public class LootTableHandler {
                     .setWeight(2)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
+            LootItem.Builder<?> gravity = LootItem.lootTableItem(ModItems.GRAVITY.get())
+                    .setWeight(1)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
             // Создаём пул лута
             LootPool pool = LootPool.lootPool()
                     .name("nacikmod_loot_pool")
@@ -72,6 +76,7 @@ public class LootTableHandler {
                     .add(lastMagic)
                     .add(bloodShoot)
                     .add(hiraishinWithoutSeal)
+                    .add(gravity)
                     .build();
 
 
