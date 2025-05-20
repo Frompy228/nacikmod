@@ -32,4 +32,6 @@ public class ModEffects {
             EFFECTS.register("hiraishin_mark", EffectHiraishinMark::new);
     public static final RegistryObject<MobEffect> ROAR =
             EFFECTS.register("roar", EffectRoar::new);
+    public static final RegistryObject<MobEffect> ENHANCED_GRAVITY =
+            EFFECTS.register("enhanced_gravity", EffectEnhancedGravity::new);
 }

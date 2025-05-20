@@ -25,6 +25,8 @@ public class PlayerRewardsProvider implements ICapabilityProvider, ICapabilitySe
         CompoundTag tag = new CompoundTag();
         tag.putBoolean("SpawnReward", rewards.hasReceivedSpawnReward());
         tag.putBoolean("TimeReward", rewards.hasReceivedTimeReward());
+        tag.putBoolean("24hReward", rewards.hasReceived24hReward());
+        tag.putBoolean("ShinraTenseiReward", rewards.hasReceivedShinraTenseiReward());
         return tag;
     }
 
@@ -32,6 +34,8 @@ public class PlayerRewardsProvider implements ICapabilityProvider, ICapabilitySe
     public void deserializeNBT(CompoundTag tag) {
         rewards.setReceivedSpawnReward(tag.getBoolean("SpawnReward"));
         rewards.setReceivedTimeReward(tag.getBoolean("TimeReward"));
+        rewards.setReceived24hReward(tag.getBoolean("24hReward"));
+        rewards.setReceivedShinraTenseiReward(tag.getBoolean("ShinraTenseiReward"));
     }
 
     // Сохранение наград после смерти
@@ -45,6 +49,8 @@ public class PlayerRewardsProvider implements ICapabilityProvider, ICapabilitySe
         oldRewardsCap.ifPresent(oldRewards -> newRewardsCap.ifPresent(newRewards -> {
             newRewards.setReceivedSpawnReward(oldRewards.hasReceivedSpawnReward());
             newRewards.setReceivedTimeReward(oldRewards.hasReceivedTimeReward());
+            newRewards.setReceived24hReward(oldRewards.hasReceived24hReward());
+            newRewards.setReceivedShinraTenseiReward(oldRewards.hasReceivedShinraTenseiReward());
         }));
     }
 } 

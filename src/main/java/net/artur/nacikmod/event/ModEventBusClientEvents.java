@@ -32,6 +32,7 @@ public class ModEventBusClientEvents {
     public static void registerLayer(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(ModModelLayers.LANSER_LAYER, LanserModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.LEONID_LAYER, LeonidModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.SPARTAN_LAYER, SpartanModel::createBodyLayer);
         event.registerLayerDefinition(FireArrowModel.LAYER_LOCATION, FireArrowModel::createBodyLayer);
         event.registerLayerDefinition(ProjectileManaSwordModel.LAYER_LOCATION, ProjectileManaSwordModel::createBodyLayer);
         event.registerLayerDefinition(BloodShootProjectileModel.LAYER_LOCATION, BloodShootProjectileModel::createBodyLayer);
@@ -66,8 +67,8 @@ public class ModEventBusClientEvents {
             EntityRenderers.register(ModEntities.BLOOD_SHOOT_PROJECTILE.get(), BloodShootProjectileRenderer::new);
             EntityRenderers.register(ModEntities.LANSER.get(), LanserRender::new);
             EntityRenderers.register(ModEntities.LEONID.get(), LeonidRender::new);
+            EntityRenderers.register(ModEntities.SPARTAN.get(), SpartanRender::new);
             EntityRenderers.register(ModEntities.FIRE_ARROW.get(), FireArrowRenderer::new);
-
         });
     }
 

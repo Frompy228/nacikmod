@@ -1,20 +1,22 @@
 package net.artur.nacikmod.entity.custom;
 
 import net.artur.nacikmod.entity.MobClass.HeroSouls;
-import net.artur.nacikmod.registry.ModAttributes;
-import net.artur.nacikmod.registry.ModItems;
-import net.artur.nacikmod.registry.ModSounds;
-import net.artur.nacikmod.registry.ModEffects;
+import net.artur.nacikmod.registry.*;
 import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.capability.mana.IMana;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -36,6 +38,8 @@ import java.util.List;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.levelgen.Heightmap;
 
 public class LeonidEntity extends HeroSouls {
     private int shieldBlockCooldown = 0;
@@ -45,6 +49,11 @@ public class LeonidEntity extends HeroSouls {
     private float lastHealth;
     private boolean[] thresholdCrossed = new boolean[3]; // Для отслеживания пересечения порогов 75%, 50%, 25%
     private static final int MAX_MANA = 5000;
+    private static final int SPARTAN_SPAWN_MANA_COST = 5000;
+    private static final int SPARTAN_SPAWN_RADIUS = 2;
+    private int regenerationTick = 0;
+    private static final int REGENERATION_INTERVAL = 300;
+    private boolean hasSpawnedSpartans = false;
 
     public LeonidEntity(EntityType<? extends HeroSouls> entityType, Level level) {
         super(entityType, level);
@@ -58,8 +67,6 @@ public class LeonidEntity extends HeroSouls {
         for (int i = 0; i < thresholdCrossed.length; i++) {
             thresholdCrossed[i] = false;
         }
-
-
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -69,21 +76,29 @@ public class LeonidEntity extends HeroSouls {
                 .add(Attributes.ARMOR_TOUGHNESS,10)
                 .add(Attributes.MAX_HEALTH, 150.0) // Больше здоровья чем у базового HeroSouls
                 .add(Attributes.ATTACK_DAMAGE, 15.0) // Больше урона
-                .add(Attributes.MOVEMENT_SPEED, 0.3) // Быстрее базового HeroSouls
+                .add(Attributes.MOVEMENT_SPEED, 0.4) // Быстрее базового HeroSouls
                 .add(Attributes.FOLLOW_RANGE, 40.0) // Больший радиус обнаружения
-                .add(ForgeMod.SWIM_SPEED.get(), 1.5); // Увеличиваем скорость плавания в 1.5 раза
+                .add(ForgeMod.SWIM_SPEED.get(), 2); // Увеличиваем скорость плавания в 1.5 раза
     }
 
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new CustomMeleeAttackGoal(this, 1.3D));
+        this.goalSelector.addGoal(1, new CustomMeleeAttackGoal(this, 1D));
         this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 0.8D));
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
 
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Monster.class, true));
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this, SpartanEntity.class).setAlertOthers(LeonidEntity.class));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Mob.class, 10, true, false, this::isValidTarget));
+    }
+
+    private boolean isValidTarget(LivingEntity entity) {
+        return !(entity instanceof Animal) &&
+                !(entity instanceof WaterAnimal) &&
+                !(entity instanceof LeonidEntity) &&
+                !(entity instanceof SpartanEntity);
     }
 
     static class CustomMeleeAttackGoal extends Goal {
@@ -119,20 +134,12 @@ public class LeonidEntity extends HeroSouls {
             if (distanceSqr <= ATTACK_RANGE * ATTACK_RANGE && leonid.hasLineOfSight(target)) {
                 if (attackCooldown <= 0) {
                     leonid.swing(InteractionHand.MAIN_HAND);
-                    
-                    // Получаем урон оружия
-                    ItemStack weapon = leonid.getMainHandItem();
-                    float weaponDamage = 0;
-                    if (weapon.getItem() instanceof SwordItem sword) {
-                        weaponDamage = sword.getDamage();
-                    }
-                    
-                    // Базовый урон моба + урон оружия
-                    float totalDamage = (float) leonid.getAttributeValue(Attributes.ATTACK_DAMAGE) + weaponDamage;
-                    
+
+                    float totalDamage = (float) leonid.getAttributeValue(Attributes.ATTACK_DAMAGE);
+
                     // Наносим урон с учетом оружия
                     target.hurt(leonid.damageSources().mobAttack(leonid), totalDamage);
-                    
+
                     attackCooldown = 15;
                 } else {
                     attackCooldown--;
@@ -148,7 +155,7 @@ public class LeonidEntity extends HeroSouls {
     public void tick() {
         super.tick();
 
-        // Обновляем кулдаун щита
+
         if (shieldBlockCooldown > 0) {
             shieldBlockCooldown--;
             if (shieldBlockCooldown <= 0) {
@@ -156,10 +163,32 @@ public class LeonidEntity extends HeroSouls {
             }
         }
 
+        // Регенерация здоровья
+        regenerationTick++;
+        if (regenerationTick >= REGENERATION_INTERVAL) {
+            if (this.getHealth() < this.getMaxHealth()) {
+                this.heal(5.0f);
+            }
+            regenerationTick = 0;
+        }
+
         // Проверяем пересечение порогов здоровья
         float currentHealth = this.getHealth();
         float maxHealth = this.getMaxHealth();
         float healthPercentage = (currentHealth / maxHealth) * 100;
+
+        // Спавним спартанцев при 50% здоровья только на серверной стороне
+        if (healthPercentage <= 50 && !hasSpawnedSpartans && !this.level().isClientSide) {
+            this.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
+                if (mana.getMana() >= SPARTAN_SPAWN_MANA_COST) {
+                    // Спавним 4 спартанца по углам квадрата
+                    spawnSpartans();
+                    // Тратим ману
+                    mana.removeMana(SPARTAN_SPAWN_MANA_COST);
+                    hasSpawnedSpartans = true;
+                }
+            });
+        }
 
         // Проверяем каждый порог
         if (healthPercentage <= 75 && !thresholdCrossed[0]) {
@@ -177,7 +206,10 @@ public class LeonidEntity extends HeroSouls {
 
         // Сбрасываем флаги, если здоровье восстановилось выше порогов
         if (healthPercentage > 75) thresholdCrossed[0] = false;
-        if (healthPercentage > 50) thresholdCrossed[1] = false;
+        if (healthPercentage > 50) {
+            thresholdCrossed[1] = false;
+            hasSpawnedSpartans = false; // Сбрасываем флаг спавна, чтобы можно было спавнить снова
+        }
         if (healthPercentage > 25) thresholdCrossed[2] = false;
 
         lastHealth = currentHealth;
@@ -186,21 +218,51 @@ public class LeonidEntity extends HeroSouls {
     private void applyRoarEffect() {
         // Получаем все сущности в радиусе 6 блоков
         AABB area = new AABB(
-            this.getX() - 6, this.getY() - 6, this.getZ() - 6,
-            this.getX() + 6, this.getY() + 6, this.getZ() + 6
+                this.getX() - 6, this.getY() - 6, this.getZ() - 6,
+                this.getX() + 6, this.getY() + 6, this.getZ() + 6
         );
-        
+
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, area);
-        
+
         for (LivingEntity target : entities) {
-            if (target != this) {
+            // Не применяем эффект к самому Леониду и спартанцам
+            if (target != this && !(target instanceof SpartanEntity)) {
                 target.addEffect(new MobEffectInstance(ModEffects.ROAR.get(), 80, 0, false, false));
             }
         }
-        
+
         // Проигрываем звук рева
         this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
-            ModSounds.ROAR.get(), SoundSource.HOSTILE, 1.0f, 1.0f);
+                ModSounds.ROAR.get(), SoundSource.HOSTILE, 1.0f, 1.0f);
+    }
+
+    private void spawnSpartans() {
+        if (this.level().isClientSide) return;
+
+        // Получаем позицию Леонида
+        double x = this.getX();
+        double y = this.getY();
+        double z = this.getZ();
+
+        // Спавним спартанцев по углам квадрата
+        spawnSpartanAt(x - SPARTAN_SPAWN_RADIUS, y, z - SPARTAN_SPAWN_RADIUS); // Левый задний угол
+        spawnSpartanAt(x + SPARTAN_SPAWN_RADIUS, y, z - SPARTAN_SPAWN_RADIUS); // Правый задний угол
+        spawnSpartanAt(x - SPARTAN_SPAWN_RADIUS, y, z + SPARTAN_SPAWN_RADIUS); // Левый передний угол
+        spawnSpartanAt(x + SPARTAN_SPAWN_RADIUS, y, z + SPARTAN_SPAWN_RADIUS); // Правый передний угол
+    }
+
+    private void spawnSpartanAt(double x, double y, double z) {
+        if (this.level() instanceof ServerLevel serverLevel) {
+            SpartanEntity spartan = ModEntities.SPARTAN.get().create(serverLevel);
+            if (spartan != null) {
+                spartan.setPos(x, y, z);
+                spartan.setTarget(this.getTarget()); // Устанавливаем цель спартанца
+                // Вызываем finalizeSpawn для инициализации спартанца
+                spartan.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(spartan.blockPosition()),
+                        MobSpawnType.MOB_SUMMONED, null, null);
+                serverLevel.addFreshEntity(spartan);
+            }
+        }
     }
 
     @Override
@@ -209,13 +271,13 @@ public class LeonidEntity extends HeroSouls {
         Entity attacker = source.getEntity();
         if (attacker != null && this.isUsingItem() && this.getUsedItemHand() == InteractionHand.OFF_HAND &&
                 this.getOffhandItem().getItem() == ModItems.LEONID_SHIELD.get() && !shieldBlockedHit) {
-            
+
             // Проверяем, что атакующий находится спереди
             Vec3 attackerPos = attacker.position();
             Vec3 thisPos = this.position();
             Vec3 lookVec = this.getLookAngle();
             Vec3 toAttacker = attackerPos.subtract(thisPos).normalize();
-            
+
             // Если атакующий спереди (угол меньше 90 градусов)
             if (lookVec.dot(toAttacker) > 0) {
                 // Уменьшаем урон на 80%
@@ -238,7 +300,7 @@ public class LeonidEntity extends HeroSouls {
         if (isHurt) {
             if (attacker instanceof LivingEntity livingAttacker && livingAttacker != this) {
                 this.setTarget(livingAttacker);
-                
+
                 // Поднимаем щит при получении урона, если щит не на перезарядке
                 if (this.getOffhandItem().getItem() == ModItems.LEONID_SHIELD.get() && shieldBlockCooldown <= 0) {
                     this.startUsingItem(InteractionHand.OFF_HAND);
@@ -309,5 +371,13 @@ public class LeonidEntity extends HeroSouls {
                     60 // Количество опыта
             ));
         }
+    }
+
+    @Override
+    public boolean isAlliedTo(Entity entity) {
+        if (entity instanceof LeonidEntity || entity instanceof SpartanEntity) {
+            return true;
+        }
+        return super.isAlliedTo(entity);
     }
 }

@@ -20,7 +20,7 @@ import java.awt.*;
 
 public class MagicCrystal extends Item {
     private static final String MANA_TAG = "StoredMana";
-    private static final int MAX_STORAGE = 1500; // Максимальное количество маны в кристалле
+    private static final int MAX_STORAGE = 3000; // Максимальное количество маны в кристалле
 
     public MagicCrystal() {
         super(new Item.Properties()

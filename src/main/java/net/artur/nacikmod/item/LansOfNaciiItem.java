@@ -1,5 +1,6 @@
 package net.artur.nacikmod.item;
 
+import net.artur.nacikmod.registry.ModItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
@@ -25,7 +26,7 @@ public class LansOfNaciiItem extends SwordItem {
     private final Multimap<Attribute, AttributeModifier> attributeModifiers;
 
     public LansOfNaciiItem() {
-        super(new CustomTier(), 7, -3f, new Item.Properties().fireResistant().rarity(ShardArtifact.RED));
+        super(new CustomTier(), 7, -2.9f, new Item.Properties().fireResistant().rarity(ShardArtifact.RED));
 
         // Создаём список атрибутов (увеличиваем ДАЛЬНОСТЬ удара по сущностям)
         ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
@@ -118,7 +119,7 @@ public class LansOfNaciiItem extends SwordItem {
 
         @Override
         public Ingredient getRepairIngredient() {
-            return Ingredient.of(Items.NETHERITE_INGOT); // Ремонт незеритом
+            return Ingredient.of(ModItems.SHARD_OF_ARTIFACT.get()); // Ремонт незеритом
         }
     }
 }

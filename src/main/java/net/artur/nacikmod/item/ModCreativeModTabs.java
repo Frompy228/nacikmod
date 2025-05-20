@@ -36,9 +36,12 @@ public class ModCreativeModTabs {
                         pOutput.accept(ModItems.SHARD_OF_ARTIFACT.get());
                         pOutput.accept(ModItems.LANSER_SPAWN_EGG.get());
                         pOutput.accept(ModItems.LEONID_SPAWN_EGG.get());
+                        pOutput.accept(ModItems.SPARTAN_SPAWN_EGG.get());
                         pOutput.accept(ModItems.MAGIC_HEALING.get());
                         pOutput.accept(ModItems.RELEASE.get());
                         pOutput.accept(ModItems.MAGIC_WEAPONS.get());
+                        pOutput.accept(ModItems.GRAVITY.get());
+                        pOutput.accept(ModItems.SHINRA_TENSEI.get());
                     })
                     .build());
 

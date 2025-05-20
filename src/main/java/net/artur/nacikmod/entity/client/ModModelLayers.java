@@ -22,4 +22,8 @@ public class ModModelLayers {
     @OnlyIn(Dist.CLIENT)
     public static final ModelLayerLocation LEONID_LAYER = new ModelLayerLocation(
             new ResourceLocation(NacikMod.MOD_ID, "leonid_layer"), "main");
+
+    @OnlyIn(Dist.CLIENT)
+    public static final ModelLayerLocation SPARTAN_LAYER = new ModelLayerLocation(
+            new ResourceLocation(NacikMod.MOD_ID, "spartan_layer"), "main");
 }

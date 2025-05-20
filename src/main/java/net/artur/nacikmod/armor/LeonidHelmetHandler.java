@@ -1,4 +1,4 @@
-package net.artur.nacikmod.event;
+package net.artur.nacikmod.armor;
 
 import net.artur.nacikmod.item.LeonidHelmet;
 import net.artur.nacikmod.registry.ModAttributes;

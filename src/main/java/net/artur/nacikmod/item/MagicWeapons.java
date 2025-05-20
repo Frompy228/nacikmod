@@ -71,7 +71,7 @@ public class MagicWeapons extends Item {
                         .withStyle(ChatFormatting.GREEN));
 
                 // Устанавливаем кулдаун
-                player.getCooldowns().addCooldown(this, 20);
+                player.getCooldowns().addCooldown(this, 140);
             } else {
                 // Режим стрельбы
                 if (!player.getCapability(ManaProvider.MANA_CAPABILITY).map(mana -> mana.getMana() >= PROJECTILE_MANA_COST).orElse(false)) {
@@ -89,7 +89,7 @@ public class MagicWeapons extends Item {
                 // Создаем и запускаем снаряд
                 ManaSwordProjectile projectile = new ManaSwordProjectile(level, player, (float)manaDamage);
                 projectile.setPos(player.getX(), player.getEyeY() - 0.1, player.getZ());
-                projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.5F, 0.0F);
+                projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 2F, 0.0F);
                 level.addFreshEntity(projectile);
 
                 // Устанавливаем кулдаун

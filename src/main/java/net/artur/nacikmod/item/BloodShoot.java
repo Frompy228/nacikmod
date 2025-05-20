@@ -55,7 +55,7 @@ public class BloodShoot extends Item {
             // Create and launch projectile
             BloodShootProjectile projectile = new BloodShootProjectile(level, player, damage);
             projectile.setPos(player.getX(), player.getEyeY() - 0.1, player.getZ());
-            projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 2F, 0.0F);
+            projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 2.5F, 0.0F);
             level.addFreshEntity(projectile);
 
             // Set cooldown

@@ -1,4 +1,4 @@
-package net.artur.nacikmod.loot;
+package net.artur.nacikmod.datagen;
 
 import net.artur.nacikmod.NacikMod;
 import net.artur.nacikmod.registry.ModItems;
@@ -24,7 +24,7 @@ public class LootTableHandler {
 
             LootItem.Builder<?> magicCircuit = LootItem.lootTableItem(ModItems.MAGIC_CIRCUIT.get())
                     .setWeight(100)
-                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3)));
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 4)));
 
             LootItem.Builder<?> magicArmor = LootItem.lootTableItem(ModItems.MAGIC_ARMOR.get())
                     .setWeight(10)
@@ -58,6 +58,10 @@ public class LootTableHandler {
                     .setWeight(2)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
+            LootItem.Builder<?> gravity = LootItem.lootTableItem(ModItems.GRAVITY.get())
+                    .setWeight(1)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
             // Создаём пул лута
             LootPool pool = LootPool.lootPool()
                     .name("nacikmod_loot_pool")
@@ -72,6 +76,7 @@ public class LootTableHandler {
                     .add(lastMagic)
                     .add(bloodShoot)
                     .add(hiraishinWithoutSeal)
+                    .add(gravity)
                     .build();
 
 

@@ -26,6 +26,7 @@ public class ModItems {
     public static final RegistryObject<Item> LANS_OF_PROTECTION = ITEMS.register("lans_of_protection", LansOfProtectionItem::new);
     public static final RegistryObject<Item> HIRAISHIN = ITEMS.register("hiraishin", Hiraishin::new);
     public static final RegistryObject<Item> HIRAISHIN_WITHOUT_SEAL = ITEMS.register("hiraishin_without_seal", HiraishinWithoutSeal::new);
+    public static final RegistryObject<Item> SPEAR = ITEMS.register("spear", Spear::new);
     public static final RegistryObject<Item> MAGIC_ARMOR = ITEMS.register("magic_armor", MagicArmor::new);
     public static final RegistryObject<Item> MAGIC_CHARM = ITEMS.register("magic_charm", MagicCharm::new);
     public static final RegistryObject<Item> MANA_CRYSTAL = ITEMS.register("mana_crystal", MagicCrystal::new);
@@ -39,6 +40,8 @@ public class ModItems {
     public static final RegistryObject<Item> MANA_SWORD = ITEMS.register("mana_sword", () -> new ManaSword(Tiers.WOOD, new Item.Properties()));
     public static final RegistryObject<Item> MAGIC_WEAPONS = ITEMS.register("magic_weapons", () -> new MagicWeapons(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> BLOOD_SHOOT = ITEMS.register("blood_shoot", () -> new BloodShoot(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> SHINRA_TENSEI = ITEMS.register("shinra_tensei", () -> new ShinraTensei(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> GRAVITY = ITEMS.register("gravity", () -> new Gravity(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LEONID_HELMET = ITEMS.register("leonid_helmet", () -> new LeonidHelmet(new LeonidArmorMaterial(), new Item.Properties()));
     public static final RegistryObject<Item> LEONID_SHIELD = ITEMS.register("leonid_shield", () -> new LeonidShileld(new Item.Properties()));
     public static final RegistryObject<Item> LANSER_SPAWN_EGG = ITEMS.register("lanser_spawn_egg",
@@ -46,5 +49,8 @@ public class ModItems {
                     new Item.Properties()));
     public static final RegistryObject<Item> LEONID_SPAWN_EGG = ITEMS.register("leonid_spawn_egg",
             ()-> new ForgeSpawnEggItem(ModEntities.LEONID, 0xf2bf13, 0xda0000,
+                    new Item.Properties()));
+    public static final RegistryObject<Item> SPARTAN_SPAWN_EGG = ITEMS.register("spartan_spawn_egg",
+            ()-> new ForgeSpawnEggItem(ModEntities.SPARTAN, 0xf2bf13, 0xda0000,
                     new Item.Properties()));
 }
