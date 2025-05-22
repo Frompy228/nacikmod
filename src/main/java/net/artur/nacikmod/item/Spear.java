@@ -20,7 +20,7 @@ public class Spear extends SwordItem {
     private final Multimap<Attribute, AttributeModifier> attributeModifiers;
 
     public Spear() {
-        super(Tiers.IRON, 6, -2.0f, new Item.Properties().fireResistant());
+        super(Tiers.IRON, 6, -2.0f, new Item.Properties());
 
         // Create attribute modifiers for entity reach, damage and attack speed
         ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
@@ -41,36 +41,5 @@ public class Spear extends SwordItem {
         return super.getDefaultAttributeModifiers(slot);
     }
 
-    private static class CustomTier implements Tier {
-        @Override
-        public int getUses() {
-            return 2500;
-        }
-
-        @Override
-        public float getSpeed() {
-            return 2.0f;
-        }
-
-        @Override
-        public float getAttackDamageBonus() {
-            return 6.0f;
-        }
-
-        @Override
-        public int getLevel() {
-            return 3;
-        }
-
-        @Override
-        public int getEnchantmentValue() {
-            return 15;
-        }
-
-        @Override
-        public Ingredient getRepairIngredient() {
-            return Ingredient.of(ModItems.SHARD_OF_ARTIFACT.get());
-        }
-    }
 }
 

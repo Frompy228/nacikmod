@@ -26,4 +26,12 @@ public class ModModelLayers {
     @OnlyIn(Dist.CLIENT)
     public static final ModelLayerLocation SPARTAN_LAYER = new ModelLayerLocation(
             new ResourceLocation(NacikMod.MOD_ID, "spartan_layer"), "main");
+
+    @OnlyIn(Dist.CLIENT)
+    public static final ModelLayerLocation DARK_SPHERE_LAYER = new ModelLayerLocation(
+            new ResourceLocation(NacikMod.MOD_ID, "dark_sphere"), "main");
+
+    @OnlyIn(Dist.CLIENT)
+    public static final ModelLayerLocation BERSERKER_LAYER = new ModelLayerLocation(
+            new ResourceLocation(NacikMod.MOD_ID, "berserker_layer"), "main");
 }

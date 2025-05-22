@@ -24,7 +24,7 @@ public class LootTableHandler {
 
             LootItem.Builder<?> magicCircuit = LootItem.lootTableItem(ModItems.MAGIC_CIRCUIT.get())
                     .setWeight(100)
-                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 4)));
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5)));
 
             LootItem.Builder<?> magicArmor = LootItem.lootTableItem(ModItems.MAGIC_ARMOR.get())
                     .setWeight(10)
@@ -62,10 +62,18 @@ public class LootTableHandler {
                     .setWeight(1)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
+            LootItem.Builder<?> darkSphere = LootItem.lootTableItem(ModItems.DARK_SPHERE.get())
+                    .setWeight(2)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
+            LootItem.Builder<?> sensoryRain = LootItem.lootTableItem(ModItems.SENSORY_RAIN.get())
+                    .setWeight(1)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
             // Создаём пул лута
             LootPool pool = LootPool.lootPool()
                     .name("nacikmod_loot_pool")
-                    .setRolls(UniformGenerator.between(1, 2))
+                    .setRolls(UniformGenerator.between(1, 3))
                     .when(LootItemRandomChanceCondition.randomChance(0.07f))
                     .add(magicCircuit)
                     .add(magicArmor)
@@ -77,6 +85,8 @@ public class LootTableHandler {
                     .add(bloodShoot)
                     .add(hiraishinWithoutSeal)
                     .add(gravity)
+                    .add(darkSphere)
+                    .add(sensoryRain)
                     .build();
 
 

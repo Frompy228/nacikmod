@@ -1,0 +1,17 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": [
+    "minecraft:plains",
+    "minecraft:bamboo_jungle",
+    "minecraft:basalt_deltas",
+    "minecraft:jungle",
+    "minecraft:sparse_jungle",
+    "minecraft:snowy_taiga"
+  ],
+  "spawners": {
+    "type": "nacikmod:berserker",
+    "weight": 4,
+    "minCount": 1,
+    "maxCount": 1
+  }
+}

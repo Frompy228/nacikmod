@@ -17,6 +17,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.registry.ModEffects;
+import net.artur.nacikmod.registry.ModItems;
 import net.artur.nacikmod.registry.ModSounds;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -25,6 +26,9 @@ import net.artur.nacikmod.NacikMod;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import org.jetbrains.annotations.Nullable;
+import top.theillusivec4.curios.api.CuriosApi;
+import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
+import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
 
 import java.util.HashSet;
 import java.util.List;
@@ -34,9 +38,9 @@ import java.util.UUID;
 @Mod.EventBusSubscriber(modid = NacikMod.MOD_ID)
 public class Gravity extends Item {
     private static final int MANA_COST_PER_SECOND = 10;
-    private static final int MANA_COST_EFFECT = 200;
+    private static final int MANA_COST_EFFECT = 500;
     private static final int EFFECT_RADIUS = 10;
-    private static final int EFFECT_DURATION = 200; // 10 seconds (20 ticks * 10)
+    private static final int EFFECT_DURATION = 80;
     private static final String ACTIVE_TAG = "active";
     private static final Set<UUID> activeFlyingPlayers = new HashSet<>();
 
@@ -113,6 +117,27 @@ public class Gravity extends Item {
         boolean isShiftKeyDown = player.isShiftKeyDown();
 
         if (!level.isClientSide) {
+            // Проверяем наличие Dark Sphere в слотах Curios используя новый API
+            boolean hasDarkSphere = CuriosApi.getCuriosInventory(player)
+                    .map(handler -> {
+                        for (ICurioStacksHandler stacksHandler : handler.getCurios().values()) {
+                            for (int i = 0; i < stacksHandler.getSlots(); i++) {
+                                ItemStack stack = stacksHandler.getStacks().getStackInSlot(i);
+                                if (stack.getItem() == ModItems.DARK_SPHERE.get()) {
+                                    return true;
+                                }
+                            }
+                        }
+                        return false;
+                    })
+                    .orElse(false);
+
+            if (!hasDarkSphere) {
+                player.sendSystemMessage(Component.literal("You need Dark Sphere to use this ability!")
+                        .withStyle(ChatFormatting.RED));
+                return InteractionResultHolder.fail(itemStack);
+            }
+
             if (isShiftKeyDown) {
                 // Применение эффекта усиленной гравитации
                 if (!player.getCapability(ManaProvider.MANA_CAPABILITY).map(mana -> mana.getMana() >= MANA_COST_EFFECT).orElse(false)) {

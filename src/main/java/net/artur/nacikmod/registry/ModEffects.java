@@ -34,4 +34,6 @@ public class ModEffects {
             EFFECTS.register("roar", EffectRoar::new);
     public static final RegistryObject<MobEffect> ENHANCED_GRAVITY =
             EFFECTS.register("enhanced_gravity", EffectEnhancedGravity::new);
+    public static final RegistryObject<MobEffect> SENSORY_RAIN =
+            EFFECTS.register("sensory_rain", EffectSensoryRain::new);
 }

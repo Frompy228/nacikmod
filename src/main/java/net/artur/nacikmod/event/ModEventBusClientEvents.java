@@ -1,7 +1,9 @@
 package net.artur.nacikmod.event;
 
 import net.artur.nacikmod.NacikMod;
+import net.artur.nacikmod.armor.models.DarkSphereModel;
 import net.artur.nacikmod.armor.models.LeonidHelmetModel;
+import net.artur.nacikmod.client.renderer.DarkSphereRenderer;
 import net.artur.nacikmod.client.renderer.LeonidHelmetRenderer;
 import net.artur.nacikmod.client.renderer.ReleaseAuraRenderer;
 import net.artur.nacikmod.client.renderer.LastMagicAuraRenderer;
@@ -23,6 +25,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraft.client.renderer.entity.EntityRenderers;
+import top.theillusivec4.curios.api.client.CuriosRendererRegistry;
 
 
 @Mod.EventBusSubscriber(modid = NacikMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
@@ -33,10 +36,12 @@ public class ModEventBusClientEvents {
         event.registerLayerDefinition(ModModelLayers.LANSER_LAYER, LanserModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.LEONID_LAYER, LeonidModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.SPARTAN_LAYER, SpartanModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.BERSERKER_LAYER, BerserkerModel::createBodyLayer);
         event.registerLayerDefinition(FireArrowModel.LAYER_LOCATION, FireArrowModel::createBodyLayer);
         event.registerLayerDefinition(ProjectileManaSwordModel.LAYER_LOCATION, ProjectileManaSwordModel::createBodyLayer);
         event.registerLayerDefinition(BloodShootProjectileModel.LAYER_LOCATION, BloodShootProjectileModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.LEONID_HELMET_LAYER, () -> LeonidHelmetModel.createBodyLayer(new CubeDeformation(0.0F)));
+        event.registerLayerDefinition(ModModelLayers.DARK_SPHERE_LAYER, DarkSphereModel::createBodyLayer);
     }
 
     @SubscribeEvent
@@ -68,7 +73,11 @@ public class ModEventBusClientEvents {
             EntityRenderers.register(ModEntities.LANSER.get(), LanserRender::new);
             EntityRenderers.register(ModEntities.LEONID.get(), LeonidRender::new);
             EntityRenderers.register(ModEntities.SPARTAN.get(), SpartanRender::new);
+            EntityRenderers.register(ModEntities.BERSERK.get(), BerserkerRender::new);
             EntityRenderers.register(ModEntities.FIRE_ARROW.get(), FireArrowRenderer::new);
+            
+            // Register Dark Sphere renderer
+            CuriosRendererRegistry.register(ModItems.DARK_SPHERE.get(), () -> new DarkSphereRenderer());
         });
     }
 

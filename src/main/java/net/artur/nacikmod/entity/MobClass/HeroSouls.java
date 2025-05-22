@@ -39,7 +39,6 @@ public class HeroSouls extends Monster {
     protected void registerGoals() {
         // Базовые цели
         this.goalSelector.addGoal(0, new FloatGoal(this)); // Плавание
-        this.goalSelector.addGoal(1, new HeroMeleeAttackGoal(this)); // Кастомная атака
         this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 0.8)); // Ходьба (избегание воды)
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f)); // Осмотр игрока
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this)); // Осмотр по сторонам
@@ -69,48 +68,7 @@ public class HeroSouls extends Monster {
         return this.attackRange;
     }
 
-    // Внутренний класс для кастомной атаки
-    static class HeroMeleeAttackGoal extends Goal {
-        private final HeroSouls hero;
-        private int attackCooldown = 20;
 
-        public HeroMeleeAttackGoal(HeroSouls mob) {
-            this.hero = mob;
-            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
-        }
-
-        @Override
-        public boolean canUse() {
-            return hero.getTarget() != null; // Атака, если есть цель
-        }
-
-        @Override
-        public void tick() {
-            LivingEntity target = hero.getTarget();
-            if (target == null) return;
-
-            // Перезарядка атаки
-            if (attackCooldown > 0) {
-                attackCooldown--;
-                return;
-            }
-
-            // Проверка дистанции для атаки
-            double attackRange = hero.getAttackRange();
-            if (hero.distanceToSqr(target) <= attackRange * attackRange) {
-                // Атака одной или обеими руками
-                if (hero.canUseBothHands()) {
-                    hero.swing(InteractionHand.MAIN_HAND);
-                    hero.swing(InteractionHand.OFF_HAND);
-                    hero.doHurtTarget(target);
-                } else {
-                    hero.swing(InteractionHand.MAIN_HAND);
-                    hero.doHurtTarget(target);
-                }
-                attackCooldown = 20; // Сброс перезарядки
-            }
-        }
-    }
 
     // Звуки
     @Override

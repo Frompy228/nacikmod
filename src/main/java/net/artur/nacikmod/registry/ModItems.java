@@ -27,6 +27,7 @@ public class ModItems {
     public static final RegistryObject<Item> HIRAISHIN = ITEMS.register("hiraishin", Hiraishin::new);
     public static final RegistryObject<Item> HIRAISHIN_WITHOUT_SEAL = ITEMS.register("hiraishin_without_seal", HiraishinWithoutSeal::new);
     public static final RegistryObject<Item> SPEAR = ITEMS.register("spear", Spear::new);
+    public static final RegistryObject<Item> DUBINKA = ITEMS.register("dubinka", () -> new Dubinka());
     public static final RegistryObject<Item> MAGIC_ARMOR = ITEMS.register("magic_armor", MagicArmor::new);
     public static final RegistryObject<Item> MAGIC_CHARM = ITEMS.register("magic_charm", MagicCharm::new);
     public static final RegistryObject<Item> MANA_CRYSTAL = ITEMS.register("mana_crystal", MagicCrystal::new);
@@ -42,8 +43,10 @@ public class ModItems {
     public static final RegistryObject<Item> BLOOD_SHOOT = ITEMS.register("blood_shoot", () -> new BloodShoot(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> SHINRA_TENSEI = ITEMS.register("shinra_tensei", () -> new ShinraTensei(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> GRAVITY = ITEMS.register("gravity", () -> new Gravity(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> SENSORY_RAIN = ITEMS.register("sensory_rain", () -> new SensoryRain(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LEONID_HELMET = ITEMS.register("leonid_helmet", () -> new LeonidHelmet(new LeonidArmorMaterial(), new Item.Properties()));
     public static final RegistryObject<Item> LEONID_SHIELD = ITEMS.register("leonid_shield", () -> new LeonidShileld(new Item.Properties()));
+    public static final RegistryObject<Item> DARK_SPHERE = ITEMS.register("dark_sphere", () -> new DarkSphere(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LANSER_SPAWN_EGG = ITEMS.register("lanser_spawn_egg",
             ()-> new ForgeSpawnEggItem(ModEntities.LANSER, 0x5b107e, 0xCF6A84,
                     new Item.Properties()));
@@ -52,5 +55,8 @@ public class ModItems {
                     new Item.Properties()));
     public static final RegistryObject<Item> SPARTAN_SPAWN_EGG = ITEMS.register("spartan_spawn_egg",
             ()-> new ForgeSpawnEggItem(ModEntities.SPARTAN, 0xf2bf13, 0xda0000,
+                    new Item.Properties()));
+    public static final RegistryObject<Item> BERSERKER_SPAWN_EGG = ITEMS.register("berserker_spawn_egg",
+            ()-> new ForgeSpawnEggItem(ModEntities.BERSERK, 0x897765, 0x474d5d,
                     new Item.Properties()));
 }

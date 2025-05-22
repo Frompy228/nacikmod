@@ -117,9 +117,9 @@ public class LanserEntity extends HeroSouls {
         return Monster.createMonsterAttributes()
                 .add(ModAttributes.BONUS_ARMOR.get(),12)
                 .add(Attributes.ARMOR, 20)
-                .add(Attributes.ARMOR_TOUGHNESS, 5)
+                .add(Attributes.ARMOR_TOUGHNESS, 10)
                 .add(Attributes.MAX_HEALTH, 115.0)
-                .add(Attributes.ATTACK_DAMAGE, 15.0)
+                .add(Attributes.ATTACK_DAMAGE, 20.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.8)
                 .add(ForgeMod.SWIM_SPEED.get(), 2) // Увеличиваем скорость плавания в 1.5 раза
                 .add(Attributes.FOLLOW_RANGE, 32.0);
@@ -319,7 +319,7 @@ public class LanserEntity extends HeroSouls {
 
         // Шанс дропа в процентах (0.0 - 1.0)
         double chanceProtectionLans = 0.25;
-        double chanceNaciiLans = 0.25;
+        double chanceNaciiLans = 0.15;
         double chanceCircuit = 0.25;
 
         // Логика дропа с шансом

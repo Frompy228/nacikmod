@@ -16,7 +16,11 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.item.ability.ShinraTenseiExplosion;
+import net.artur.nacikmod.registry.ModItems;
 import org.jetbrains.annotations.Nullable;
+import top.theillusivec4.curios.api.CuriosApi;
+import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
+import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
 
 import java.util.List;
 
@@ -34,6 +38,27 @@ public class ShinraTensei extends Item {
         ItemStack itemStack = player.getItemInHand(hand);
 
         if (!level.isClientSide) {
+            // Проверяем наличие Dark Sphere в слотах Curios используя новый API
+            boolean hasDarkSphere = CuriosApi.getCuriosInventory(player)
+                    .map(handler -> {
+                        for (ICurioStacksHandler stacksHandler : handler.getCurios().values()) {
+                            for (int i = 0; i < stacksHandler.getSlots(); i++) {
+                                ItemStack stack = stacksHandler.getStacks().getStackInSlot(i);
+                                if (stack.getItem() == ModItems.DARK_SPHERE.get()) {
+                                    return true;
+                                }
+                            }
+                        }
+                        return false;
+                    })
+                    .orElse(false);
+
+            if (!hasDarkSphere) {
+                player.sendSystemMessage(Component.literal("You need Dark Sphere to use this ability!")
+                        .withStyle(ChatFormatting.RED));
+                return InteractionResultHolder.fail(itemStack);
+            }
+
             if (!player.getCapability(ManaProvider.MANA_CAPABILITY).map(mana -> mana.getMana() >= MANA_COST).orElse(false)) {
                 player.sendSystemMessage(Component.literal("Not enough mana!")
                         .withStyle(ChatFormatting.RED));
@@ -41,7 +66,7 @@ public class ShinraTensei extends Item {
             }
 
             // Create explosion at target location
-            HitResult hitResult = player.pick(100.0D, 0.0F, false);
+            HitResult hitResult = player.pick(150.0D, 0.0F, false);
             Vec3 targetPos;
             
             if (hitResult.getType() == HitResult.Type.BLOCK) {
