@@ -12,6 +12,7 @@ import net.artur.nacikmod.gui.TimeStopOverlay;
 import net.artur.nacikmod.item.MagicCrystal;
 import net.artur.nacikmod.registry.ModEntities;
 import net.artur.nacikmod.registry.ModItems;
+import net.artur.nacikmod.util.ModItemProperties;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
@@ -42,6 +43,7 @@ public class ModEventBusClientEvents {
         event.registerLayerDefinition(BloodShootProjectileModel.LAYER_LOCATION, BloodShootProjectileModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.LEONID_HELMET_LAYER, () -> LeonidHelmetModel.createBodyLayer(new CubeDeformation(0.0F)));
         event.registerLayerDefinition(ModModelLayers.DARK_SPHERE_LAYER, DarkSphereModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.MANA_ARROW_LAYER, ManaArrowModel::createBodyLayer);
     }
 
     @SubscribeEvent
@@ -67,6 +69,7 @@ public class ModEventBusClientEvents {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
+            ModItemProperties.addCustomItemProperties();
             ModEventBusClientEvents.registerItemProperties();
             EntityRenderers.register(ModEntities.MANA_SWORD_PROJECTILE.get(), ManaSwordProjectileRenderer::new);
             EntityRenderers.register(ModEntities.BLOOD_SHOOT_PROJECTILE.get(), BloodShootProjectileRenderer::new);
@@ -75,6 +78,7 @@ public class ModEventBusClientEvents {
             EntityRenderers.register(ModEntities.SPARTAN.get(), SpartanRender::new);
             EntityRenderers.register(ModEntities.BERSERK.get(), BerserkerRender::new);
             EntityRenderers.register(ModEntities.FIRE_ARROW.get(), FireArrowRenderer::new);
+            EntityRenderers.register(ModEntities.MANA_ARROW.get(), ManaArrowRenderer::new);
             
             // Register Dark Sphere renderer
             CuriosRendererRegistry.register(ModItems.DARK_SPHERE.get(), () -> new DarkSphereRenderer());

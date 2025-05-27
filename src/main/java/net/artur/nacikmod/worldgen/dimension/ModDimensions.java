@@ -71,7 +71,7 @@ public class ModDimensions {
         NoiseBasedChunkGenerator wrappedChunkGenerator = new NoiseBasedChunkGenerator(
                 new FixedBiomeSource(biomeRegistry.getOrThrow(Biomes.DESERT)),
                 noiseGenSettings.getOrThrow(NoiseGeneratorSettings.OVERWORLD));
-        
+
 
         LevelStem stem = new LevelStem(dimTypes.getOrThrow(ModDimensions.SPARTA_DIM_TYPE), wrappedChunkGenerator);
 

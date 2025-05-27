@@ -1,0 +1,6 @@
+{
+    "parent": "nacikmod:item/magic_bow",
+    "textures": {
+        "layer0": "nacikmod:item/magic_bow_pulling_1"
+    }
+}

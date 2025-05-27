@@ -25,6 +25,7 @@ public class ModCreativeModTabs {
                         pOutput.accept(ModItems.HIRAISHIN_WITHOUT_SEAL.get());
                         pOutput.accept(ModItems.HIRAISHIN.get());
                         pOutput.accept(ModItems.MANA_SWORD.get());
+                        pOutput.accept(ModItems.MAGIC_BOW.get());
                         pOutput.accept(ModItems.LEONID_SHIELD.get());
                         pOutput.accept(ModItems.LEONID_HELMET.get());
                         pOutput.accept(ModItems.MAGIC_CHARM.get());

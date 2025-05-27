@@ -108,18 +108,18 @@ public class LanserEntity extends HeroSouls {
 
         // Устанавливаем атрибут BONUS_ARMOR вручную
         AttributeInstance attribute = this.getAttribute(ModAttributes.BONUS_ARMOR.get());
-        attribute.setBaseValue(10.0);
+        attribute.setBaseValue(15.0);
         return data;
     }
 
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(ModAttributes.BONUS_ARMOR.get(),12)
+                .add(ModAttributes.BONUS_ARMOR.get(),15)
                 .add(Attributes.ARMOR, 20)
                 .add(Attributes.ARMOR_TOUGHNESS, 10)
                 .add(Attributes.MAX_HEALTH, 115.0)
-                .add(Attributes.ATTACK_DAMAGE, 20.0)
+                .add(Attributes.ATTACK_DAMAGE, 22.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.8)
                 .add(ForgeMod.SWIM_SPEED.get(), 2) // Увеличиваем скорость плавания в 1.5 раза
                 .add(Attributes.FOLLOW_RANGE, 32.0);
@@ -165,7 +165,7 @@ public class LanserEntity extends HeroSouls {
             lanser.hurtMarked = true; // Обновляем движение
 
             // Лечение на 25 HP
-            lanser.heal(25.0F);
+            lanser.heal(35.0F);
 
             // Увеличение скорости на 0.1
             double newSpeed = baseSpeed + 0.1;
@@ -248,7 +248,7 @@ public class LanserEntity extends HeroSouls {
                 }
 
                 lanser.attackWithMainHand = !lanser.attackWithMainHand;
-                attackCooldown = 20;
+                attackCooldown = 15;
             } else {
                 attackCooldown--;
             }

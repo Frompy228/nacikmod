@@ -9,6 +9,7 @@ import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Animal;
@@ -50,7 +51,7 @@ public class SpartanEntity extends HeroSouls {
                 .add(Attributes.ARMOR, 5)
                 .add(Attributes.ARMOR_TOUGHNESS, 5)
                 .add(Attributes.MAX_HEALTH, 40.0)
-                .add(Attributes.ATTACK_DAMAGE, 10.0)
+                .add(Attributes.ATTACK_DAMAGE, 12.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.35)
                 .add(ForgeMod.SWIM_SPEED.get(), 2)
                 .add(Attributes.FOLLOW_RANGE, 35.0);
@@ -190,6 +191,8 @@ public class SpartanEntity extends HeroSouls {
         this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ModItems.SPEAR.get()));
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(ModItems.LEONID_SHIELD.get()));
 
+        AttributeInstance attribute = this.getAttribute(ModAttributes.BONUS_ARMOR.get());
+        attribute.setBaseValue(5.0);
         return data;
     }
 

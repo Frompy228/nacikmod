@@ -23,8 +23,8 @@ public class LootTableHandler {
         if (tableName.getPath().startsWith("chests/")) {
 
             LootItem.Builder<?> magicCircuit = LootItem.lootTableItem(ModItems.MAGIC_CIRCUIT.get())
-                    .setWeight(100)
-                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5)));
+                    .setWeight(140)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2)));
 
             LootItem.Builder<?> magicArmor = LootItem.lootTableItem(ModItems.MAGIC_ARMOR.get())
                     .setWeight(10)
@@ -39,7 +39,7 @@ public class LootTableHandler {
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
             LootItem.Builder<?> magicSeal = LootItem.lootTableItem(ModItems.MAGIC_SEAL.get())
-                    .setWeight(13)
+                    .setWeight(14)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
             LootItem.Builder<?> ringOfTime = LootItem.lootTableItem(ModItems.RING_OF_TIME.get())
@@ -73,8 +73,8 @@ public class LootTableHandler {
             // Создаём пул лута
             LootPool pool = LootPool.lootPool()
                     .name("nacikmod_loot_pool")
-                    .setRolls(UniformGenerator.between(1, 3))
-                    .when(LootItemRandomChanceCondition.randomChance(0.07f))
+                    .setRolls(UniformGenerator.between(1, 2))
+                    .when(LootItemRandomChanceCondition.randomChance(0.08f))
                     .add(magicCircuit)
                     .add(magicArmor)
                     .add(ringOfTime)

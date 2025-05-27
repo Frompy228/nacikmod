@@ -41,7 +41,7 @@ public class BerserkerEntity extends HeroSouls {
     private int roarCooldown = 0;
     private static final int REGENERATION_INTERVAL = 20; // 1 секунда
     private static final float REGENERATION_AMOUNT = 2.0f;
-    private static final double BASE_ATTACK_DAMAGE = 20;
+    private static final double BASE_ATTACK_DAMAGE = 22;
     private static final double ENTITY_REACH = 5.0D; // Достигаемость сущностей 5 блоков
     private static final int ROAR_COOLDOWN = 400; // 15 секунд (20 тиков * 15)
     private static final int ROAR_RADIUS = 2; // Радиус разрушения блоков
@@ -75,7 +75,7 @@ public class BerserkerEntity extends HeroSouls {
 
     static class CustomMeleeAttackGoal extends MeleeAttackGoal {
         private final BerserkerEntity berserker;
-        private static final double AREA_DAMAGE_RADIUS = 1; // Радиус урона по области
+        private static final double AREA_DAMAGE_RADIUS = 2; // Радиус урона по области
         private int attackCooldown = 0;
 
         public CustomMeleeAttackGoal(BerserkerEntity mob, double speedModifier) {
@@ -125,10 +125,10 @@ public class BerserkerEntity extends HeroSouls {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(ModAttributes.BONUS_ARMOR.get(), 24)
-                .add(Attributes.ARMOR, 40)
-                .add(Attributes.ARMOR_TOUGHNESS, 20)
-                .add(Attributes.MAX_HEALTH, 150.0)
+                .add(ModAttributes.BONUS_ARMOR.get(), 10)
+                .add(Attributes.ARMOR, 17)
+                .add(Attributes.ARMOR_TOUGHNESS, 15)
+                .add(Attributes.MAX_HEALTH, 100.0)
                 .add(Attributes.ATTACK_DAMAGE, BASE_ATTACK_DAMAGE)
                 .add(Attributes.MOVEMENT_SPEED, 0.3)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1)
@@ -253,9 +253,13 @@ public class BerserkerEntity extends HeroSouls {
     protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
         Random random = new Random(); // Генератор случайных чисел
         double chanceCircuit = 0.25;
+        double chanceMagicBow = 0.15;
 
         if (random.nextDouble() < chanceCircuit) {
             this.spawnAtLocation(new ItemStack(ModItems.MAGIC_CIRCUIT.get(), 30));
+        }
+        if (random.nextDouble() < chanceMagicBow) {
+            this.spawnAtLocation(new ItemStack(ModItems.MAGIC_BOW.get(), 1));
         }
     }
 

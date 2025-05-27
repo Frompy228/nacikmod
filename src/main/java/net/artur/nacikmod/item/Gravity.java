@@ -2,6 +2,7 @@ package net.artur.nacikmod.item;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -153,11 +154,40 @@ public class Gravity extends Item {
                 );
                 List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, area);
 
+                // Создаем эффект распространения партиклов
+                for (double radius = 0; radius <= EFFECT_RADIUS; radius += 0.5) {
+                    for (double angle = 0; angle < 360; angle += 10) {
+                        double x = player.getX() + radius * Math.cos(Math.toRadians(angle));
+                        double z = player.getZ() + radius * Math.sin(Math.toRadians(angle));
+                        
+                        ((ServerLevel) level).sendParticles(
+                            net.minecraft.core.particles.ParticleTypes.ENCHANTED_HIT,
+                            x, player.getY() + 0.2, z,
+                            1, 0, 0, 0, 0
+                        );
+                    }
+                }
+
                 // Применяем эффект ко всем сущностям кроме игрока
                 for (LivingEntity entity : entities) {
                     if (entity != player) {
                         entity.addEffect(new net.minecraft.world.effect.MobEffectInstance(
                             ModEffects.ENHANCED_GRAVITY.get(), EFFECT_DURATION, 0, false, false, false));
+                        
+                        // Добавляем партиклы
+                        for (int i = 0; i < 8; i++) {
+                            double offsetX = (entity.getRandom().nextDouble() - 0.5) * entity.getBbWidth();
+                            double offsetY = entity.getRandom().nextDouble() * entity.getBbHeight();
+                            double offsetZ = (entity.getRandom().nextDouble() - 0.5) * entity.getBbWidth();
+                            
+                            ((ServerLevel) level).sendParticles(
+                                net.minecraft.core.particles.ParticleTypes.ENCHANTED_HIT,
+                                entity.getX() + offsetX,
+                                entity.getY() + offsetY,
+                                entity.getZ() + offsetZ,
+                                1, 0, 0, 0, 0
+                            );
+                        }
                     }
                 }
 

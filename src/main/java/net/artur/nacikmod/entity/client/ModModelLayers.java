@@ -16,6 +16,10 @@ public class ModModelLayers {
             new ResourceLocation(NacikMod.MOD_ID, "fire_arrow"), "main");
             
     @OnlyIn(Dist.CLIENT)
+    public static final ModelLayerLocation MANA_ARROW_LAYER = new ModelLayerLocation(
+            new ResourceLocation(NacikMod.MOD_ID, "mana_arrow"), "main");
+
+    @OnlyIn(Dist.CLIENT)
     public static final ModelLayerLocation LEONID_HELMET_LAYER = new ModelLayerLocation(
             new ResourceLocation(NacikMod.MOD_ID, "leonid_helmet"), "main");
 

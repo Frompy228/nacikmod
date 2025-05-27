@@ -26,8 +26,11 @@ public class LastMagic extends Item {
         ItemStack itemStack = player.getItemInHand(hand);
         
         if (!level.isClientSide) {
-            // Активируем эффект (предмет будет удален внутри startLastMagic)
+            // Активируем эффект
             ManaLastMagic.startLastMagic(player);
+            
+            // Удаляем предмет после использования
+            itemStack.shrink(1);
             
             // Start cooldown to prevent spam
             player.getCooldowns().addCooldown(this, 20); // 1 second cooldown

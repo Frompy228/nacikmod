@@ -46,6 +46,7 @@
   "item.nacikmod.shinra_tensei": "Shinra Tensei",
   "item.nacikmod.sensory_rain": "Sensory Rain",
   "item.nacikmod.dark_sphere": "Dark Sphere",
+  "item.nacikmod.magic_bow": "Magic Bow",
   "item.nacikmod.magic_circuit.desc1": "A magic chain that increases the player's maximum mana reserve by 50",
   "curios.identifier.artifact": "Artifact",
   "curios.identifier.ring": "Ring",
@@ -89,5 +90,7 @@
   "item.nacikmod.sensory_rain.desc1": "Causes rain that enhances sensory abilities",
   "item.nacikmod.sensory_rain.desc2": "Mana Cost: 1000 | Effect Radius: 50",
   "item.nacikmod.dark_sphere.desc1": "A mysterious sphere that enhances mana regeneration",
-  "item.nacikmod.dark_sphere.desc2": "Mana Regeneration: +2"
+  "item.nacikmod.dark_sphere.desc2": "Mana Regeneration: +2",
+  "item.nacikmod.magic_bow.desc1": "A bow that shoots mana",
+  "item.nacikmod.magic_bow.desc2": "Mana Cost: 5"
 }

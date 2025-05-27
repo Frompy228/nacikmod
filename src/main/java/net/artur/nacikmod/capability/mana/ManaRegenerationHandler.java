@@ -15,7 +15,7 @@ import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
 
 @Mod.EventBusSubscriber
 public class ManaRegenerationHandler {
-    private static final int BASE_REGEN_AMOUNT = 100000000; // Базовая регенерация маны
+    private static final int BASE_REGEN_AMOUNT = 1; // Базовая регенерация маны
     private static final int REGEN_INTERVAL = 20; // Интервал регенерации в тиках (1 секунда)
     private static final int DARK_SPHERE_REGEN = 2; // Регенерация от Dark Sphere
 

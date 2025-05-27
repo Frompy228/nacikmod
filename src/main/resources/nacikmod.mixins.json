@@ -3,10 +3,12 @@
   "minVersion": "0.8",
   "package": "net.artur.nacikmod.mixin",
   "compatibilityLevel": "JAVA_17",
+  "refmap": "nacikmod.refmap.json",
   "mixins": [],
   "client": [
-    "HandMixin"
+    "MagicBowMixin"
   ],
+  "server": [],
   "injectors": {
     "defaultRequire": 1
   }
