@@ -25,8 +25,8 @@ import java.util.Map;
 @Mod.EventBusSubscriber(modid = NacikMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class HourlyRewardHandler {
     private static final int REQUIRED_PLAY_TIME = 2700; // 45 minutes
-    private static final int REQUIRED_24H_PLAY_TIME = 60; // 24 hours in seconds
-    private static final int REQUIRED_MAX_MANA = 15000; // Требуемая максимальная мана для Shinra Tensei
+    private static final int REQUIRED_24H_PLAY_TIME = 86400; // 24 hours in seconds
+    private static final int REQUIRED_MAX_MANA = 50000; // Требуемая максимальная мана для Shinra Tensei
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {

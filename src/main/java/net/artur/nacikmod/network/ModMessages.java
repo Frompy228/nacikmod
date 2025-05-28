@@ -8,13 +8,14 @@ import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
+import net.artur.nacikmod.NacikMod;
 
 import java.util.Optional;
 
 public class ModMessages {
     private static final String PROTOCOL_VERSION = "1";
     public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
-            new ResourceLocation("nacikmod", "main"),
+            new ResourceLocation(NacikMod.MOD_ID, "main"),
             () -> PROTOCOL_VERSION,
             PROTOCOL_VERSION::equals,
             PROTOCOL_VERSION::equals
@@ -29,7 +30,7 @@ public class ModMessages {
                 CooldownSyncPacket::toBytes,
                 CooldownSyncPacket::new,
                 CooldownSyncPacket::handle,
-                Optional.of(NetworkDirection.PLAY_TO_CLIENT) // Направление
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT)
         );
 
         INSTANCE.registerMessage(packetId++,
@@ -47,27 +48,45 @@ public class ModMessages {
                 ManaSyncPacket::handle,
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT)
         );
+
         INSTANCE.registerMessage(packetId++,
                 PacketSyncEffect.class,
                 PacketSyncEffect::toBytes,
                 PacketSyncEffect::new,
                 PacketSyncEffect::handle,
-                Optional.of(NetworkDirection.PLAY_TO_CLIENT) // Клиент получает пакет
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT)
         );
 
+        INSTANCE.registerMessage(packetId++,
+                AbilityStatePacket.class,
+                AbilityStatePacket::encode,
+                AbilityStatePacket::decode,
+                AbilityStatePacket::handle,
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT)
+        );
     }
 
-    // Исправленный метод для CooldownSyncPacket
     public static void sendToClient(ServerPlayer player, CooldownSyncPacket packet) {
         INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), packet);
     }
 
-    // Остальные методы остаются без изменений
     public static void sendManaToClient(ServerPlayer player, int mana, int maxMana) {
         INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new ManaSyncPacket(mana, maxMana));
     }
 
     public static void sendToServer(TimeStopPacket packet) {
         INSTANCE.sendToServer(packet);
+    }
+
+    public static void sendAbilityStateToClient(ServerPlayer player, boolean isReleaseActive, boolean isLastMagicActive, int releaseLevel) {
+        INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), 
+            new AbilityStatePacket(isReleaseActive, isLastMagicActive, releaseLevel));
+    }
+
+    public static void sendAbilityStateToAllPlayers(ServerPlayer sourcePlayer, boolean isReleaseActive, boolean isLastMagicActive, int releaseLevel) {
+        if (sourcePlayer.level() != null) {
+            INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> sourcePlayer),
+                new AbilityStatePacket(isReleaseActive, isLastMagicActive, releaseLevel));
+        }
     }
 }

@@ -17,6 +17,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.ChatFormatting;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
+import net.artur.nacikmod.network.ModMessages;
+
 
 import java.util.HashSet;
 import java.util.Set;
@@ -24,7 +26,7 @@ import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = NacikMod.MOD_ID)
 public class ManaRelease {
-    private static final Set<UUID> activeReleasePlayers = new HashSet<>();
+    public static final Set<UUID> activeReleasePlayers = new HashSet<>();
     private static final String ACTIVE_TAG = "active";
     private static final String LEVEL_TAG = "level";
     private static final UUID DAMAGE_MODIFIER_UUID = UUID.fromString("1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d");
@@ -94,22 +96,40 @@ public class ManaRelease {
                     stack.getOrCreateTag().putInt(LEVEL_TAG, 0);
                 }
                 applyModifiers(player, getCurrentLevel(stack));
+                
+                // Отправляем пакет на клиент владельцу
+                if (player instanceof ServerPlayer serverPlayer) {
+                    ModMessages.sendAbilityStateToClient(serverPlayer, true, 
+                        player.hasEffect(ModEffects.MANA_LAST_MAGIC.get()),
+                        stack.getTag().getInt(LEVEL_TAG));
+                        
+                    // Отправляем пакет всем игрокам в мире
+                    ModMessages.sendAbilityStateToAllPlayers(serverPlayer, true,
+                        player.hasEffect(ModEffects.MANA_LAST_MAGIC.get()),
+                        stack.getTag().getInt(LEVEL_TAG));
+                }
                 break;
             }
         }
     }
 
     public static void stopRelease(Player player) {
-        // Сначала удаляем игрока из списка активных
+        if (!(player instanceof ServerPlayer)) return;
+
+        // Удаляем игрока из списка активных
         activeReleasePlayers.remove(player.getUUID());
-        
-        // Затем обновляем все предметы Release в инвентаре
-        for (ItemStack stack : player.getInventory().items) {
-            if (stack.getItem() instanceof Release) {
-                stack.getOrCreateTag().putBoolean(ACTIVE_TAG, false);
-            }
-        }
-        removeModifiers(player);
+
+        // Отправляем пакет на клиент владельцу
+        ModMessages.sendAbilityStateToClient((ServerPlayer) player,
+            false,
+            player.hasEffect(ModEffects.MANA_LAST_MAGIC.get()),
+            getCurrentLevel(player).damage);
+            
+        // Отправляем пакет всем игрокам в мире
+        ModMessages.sendAbilityStateToAllPlayers((ServerPlayer) player,
+            false,
+            player.hasEffect(ModEffects.MANA_LAST_MAGIC.get()),
+            getCurrentLevel(player).damage);
     }
 
     public static void switchLevel(Player player) {

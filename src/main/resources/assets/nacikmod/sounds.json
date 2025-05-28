@@ -10,5 +10,11 @@
       "nacikmod:gravity"
     ],
     "subtitle": "subtitles.nacikmod.gravity"
+  },
+  "berserker_roar": {
+    "sounds": [
+      "nacikmod:berserker_roar"
+    ],
+    "subtitle": "subtitles.nacikmod.berserker_roar"
   }
-} 
+}

@@ -16,6 +16,10 @@ public class ModModelLayers {
             new ResourceLocation(NacikMod.MOD_ID, "fire_arrow"), "main");
             
     @OnlyIn(Dist.CLIENT)
+    public static final ModelLayerLocation MANA_ARROW_LAYER = new ModelLayerLocation(
+            new ResourceLocation(NacikMod.MOD_ID, "mana_arrow"), "main");
+
+    @OnlyIn(Dist.CLIENT)
     public static final ModelLayerLocation LEONID_HELMET_LAYER = new ModelLayerLocation(
             new ResourceLocation(NacikMod.MOD_ID, "leonid_helmet"), "main");
 
@@ -26,4 +30,12 @@ public class ModModelLayers {
     @OnlyIn(Dist.CLIENT)
     public static final ModelLayerLocation SPARTAN_LAYER = new ModelLayerLocation(
             new ResourceLocation(NacikMod.MOD_ID, "spartan_layer"), "main");
+
+    @OnlyIn(Dist.CLIENT)
+    public static final ModelLayerLocation DARK_SPHERE_LAYER = new ModelLayerLocation(
+            new ResourceLocation(NacikMod.MOD_ID, "dark_sphere"), "main");
+
+    @OnlyIn(Dist.CLIENT)
+    public static final ModelLayerLocation BERSERKER_LAYER = new ModelLayerLocation(
+            new ResourceLocation(NacikMod.MOD_ID, "berserker_layer"), "main");
 }

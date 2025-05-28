@@ -2,17 +2,22 @@ package net.artur.nacikmod.capability.mana;
 
 import net.artur.nacikmod.capability.reward.PlayerRewardsProvider;
 import net.artur.nacikmod.network.ModMessages;
+import net.artur.nacikmod.registry.ModItems;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import top.theillusivec4.curios.api.CuriosApi;
+import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
+import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
 
 @Mod.EventBusSubscriber
 public class ManaRegenerationHandler {
     private static final int BASE_REGEN_AMOUNT = 1; // Базовая регенерация маны
     private static final int REGEN_INTERVAL = 20; // Интервал регенерации в тиках (1 секунда)
+    private static final int DARK_SPHERE_REGEN = 2; // Регенерация от Dark Sphere
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
@@ -50,11 +55,20 @@ public class ManaRegenerationHandler {
         player.getCapability(PlayerRewardsProvider.PLAYER_REWARDS_CAPABILITY).ifPresent(rewards -> {
             if (rewards.hasReceived24hReward()) {
                 regenAmount[0] += 2; // Добавляем +2 к регенерации
-                }
-            });
+            }
+        });
 
-        // Здесь можно добавить другие множители регенерации
-        // Например, от эффектов, предметов и т.д.
+        // Проверяем наличие Dark Sphere
+        CuriosApi.getCuriosInventory(player).ifPresent(handler -> {
+            for (ICurioStacksHandler stacksHandler : handler.getCurios().values()) {
+                for (int i = 0; i < stacksHandler.getSlots(); i++) {
+                    if (stacksHandler.getStacks().getStackInSlot(i).getItem() == ModItems.DARK_SPHERE.get()) {
+                        regenAmount[0] += DARK_SPHERE_REGEN;
+                        return;
+                    }
+                }
+            }
+        });
 
         return regenAmount[0];
     }

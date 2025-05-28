@@ -42,8 +42,17 @@ public class EffectEnhancedGravity extends MobEffect {
 
     @Override
     public void applyEffectTick(LivingEntity entity, int amplifier) {
-        if (!entity.level().isClientSide && entity.tickCount % DAMAGE_INTERVAL == 0) {
-            entity.hurt(entity.damageSources().generic(), DAMAGE_AMOUNT);
+        if (!entity.level().isClientSide) {
+            // Отменяем только текущий полет, не трогая возможность полета
+            if (entity instanceof net.minecraft.world.entity.player.Player player) {
+                player.getAbilities().flying = false;
+                player.onUpdateAbilities();
+            }
+
+            // Наносим урон каждую секунду
+            if (entity.tickCount % DAMAGE_INTERVAL == 0) {
+                entity.hurt(entity.damageSources().generic(), DAMAGE_AMOUNT);
+            }
         }
     }
 }

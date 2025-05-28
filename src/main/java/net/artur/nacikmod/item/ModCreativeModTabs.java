@@ -25,11 +25,13 @@ public class ModCreativeModTabs {
                         pOutput.accept(ModItems.HIRAISHIN_WITHOUT_SEAL.get());
                         pOutput.accept(ModItems.HIRAISHIN.get());
                         pOutput.accept(ModItems.MANA_SWORD.get());
+                        pOutput.accept(ModItems.MAGIC_BOW.get());
                         pOutput.accept(ModItems.LEONID_SHIELD.get());
                         pOutput.accept(ModItems.LEONID_HELMET.get());
                         pOutput.accept(ModItems.MAGIC_CHARM.get());
                         pOutput.accept(ModItems.MAGIC_ARMOR.get());
                         pOutput.accept(ModItems.RING_OF_TIME.get());
+                        pOutput.accept(ModItems.DARK_SPHERE.get());
                         pOutput.accept(ModItems.MANA_CRYSTAL.get());
                         pOutput.accept(ModItems.MAGIC_SEAL.get());
                         pOutput.accept(ModItems.MAGIC_CIRCUIT.get());
@@ -37,11 +39,13 @@ public class ModCreativeModTabs {
                         pOutput.accept(ModItems.LANSER_SPAWN_EGG.get());
                         pOutput.accept(ModItems.LEONID_SPAWN_EGG.get());
                         pOutput.accept(ModItems.SPARTAN_SPAWN_EGG.get());
+                        pOutput.accept(ModItems.BERSERKER_SPAWN_EGG.get());
                         pOutput.accept(ModItems.MAGIC_HEALING.get());
                         pOutput.accept(ModItems.RELEASE.get());
                         pOutput.accept(ModItems.MAGIC_WEAPONS.get());
                         pOutput.accept(ModItems.GRAVITY.get());
                         pOutput.accept(ModItems.SHINRA_TENSEI.get());
+                        pOutput.accept(ModItems.SENSORY_RAIN.get());
                     })
                     .build());
 

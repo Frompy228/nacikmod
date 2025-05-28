@@ -75,7 +75,7 @@ public class LeonidEntity extends HeroSouls {
                 .add(Attributes.ARMOR,15)
                 .add(Attributes.ARMOR_TOUGHNESS,10)
                 .add(Attributes.MAX_HEALTH, 150.0) // Больше здоровья чем у базового HeroSouls
-                .add(Attributes.ATTACK_DAMAGE, 15.0) // Больше урона
+                .add(Attributes.ATTACK_DAMAGE, 22.0) // Больше урона
                 .add(Attributes.MOVEMENT_SPEED, 0.4) // Быстрее базового HeroSouls
                 .add(Attributes.FOLLOW_RANGE, 40.0) // Больший радиус обнаружения
                 .add(ForgeMod.SWIM_SPEED.get(), 2); // Увеличиваем скорость плавания в 1.5 раза
@@ -140,7 +140,7 @@ public class LeonidEntity extends HeroSouls {
                     // Наносим урон с учетом оружия
                     target.hurt(leonid.damageSources().mobAttack(leonid), totalDamage);
 
-                    attackCooldown = 15;
+                    attackCooldown = 12;
                 } else {
                     attackCooldown--;
                 }
@@ -249,6 +249,11 @@ public class LeonidEntity extends HeroSouls {
         spawnSpartanAt(x + SPARTAN_SPAWN_RADIUS, y, z - SPARTAN_SPAWN_RADIUS); // Правый задний угол
         spawnSpartanAt(x - SPARTAN_SPAWN_RADIUS, y, z + SPARTAN_SPAWN_RADIUS); // Левый передний угол
         spawnSpartanAt(x + SPARTAN_SPAWN_RADIUS, y, z + SPARTAN_SPAWN_RADIUS); // Правый передний угол
+
+        spawnSpartanAt(x - SPARTAN_SPAWN_RADIUS, y, z - SPARTAN_SPAWN_RADIUS); // Левый задний угол
+        spawnSpartanAt(x + SPARTAN_SPAWN_RADIUS, y, z - SPARTAN_SPAWN_RADIUS); // Правый задний угол
+        spawnSpartanAt(x - SPARTAN_SPAWN_RADIUS, y, z + SPARTAN_SPAWN_RADIUS); // Левый передний угол
+        spawnSpartanAt(x + SPARTAN_SPAWN_RADIUS, y, z + SPARTAN_SPAWN_RADIUS); // Правый передний угол
     }
 
     private void spawnSpartanAt(double x, double y, double z) {
@@ -344,7 +349,7 @@ public class LeonidEntity extends HeroSouls {
 
         // Шанс дропа в процентах (0.0 - 1.0)
         double chanceLeonidShield = 0.25;
-        double chanceLeonidHelmet = 0.25;
+        double chanceLeonidHelmet = 0.12;
         double chanceCircuit = 0.25;
 
         // Логика дропа с шансом

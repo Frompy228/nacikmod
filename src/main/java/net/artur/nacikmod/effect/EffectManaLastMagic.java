@@ -33,7 +33,7 @@ public class EffectManaLastMagic extends MobEffect {
         this.addAttributeModifier(Attributes.ATTACK_DAMAGE, DAMAGE_MODIFIER_UUID.toString(),
                 15.0, AttributeModifier.Operation.ADDITION);
         this.addAttributeModifier(ModAttributes.BONUS_ARMOR.get(), ARMOR_MODIFIER_UUID.toString(),
-                20.0, AttributeModifier.Operation.ADDITION);
+                25.0, AttributeModifier.Operation.ADDITION);
         this.addAttributeModifier(Attributes.MOVEMENT_SPEED, SPEED_MODIFIER_UUID.toString(),
                 0.2, AttributeModifier.Operation.ADDITION);
         this.addAttributeModifier(Attributes.JUMP_STRENGTH, JUMP_MODIFIER_UUID.toString(),
@@ -45,7 +45,7 @@ public class EffectManaLastMagic extends MobEffect {
                 3.0, AttributeModifier.Operation.ADDITION);
         // Добавляем модификаторы здоровья и брони
         this.addAttributeModifier(Attributes.MAX_HEALTH, MAX_HEALTH_UUID.toString(),
-                100.0, AttributeModifier.Operation.ADDITION);
+                250.0, AttributeModifier.Operation.ADDITION);
         this.addAttributeModifier(Attributes.ARMOR, ARMOR_MODIFIER_UUID.toString(),
                 20.0, AttributeModifier.Operation.ADDITION);
         this.addAttributeModifier(Attributes.ARMOR_TOUGHNESS, ARMOR_TOUGHNESS_UUID.toString(),

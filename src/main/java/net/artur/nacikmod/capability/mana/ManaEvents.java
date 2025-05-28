@@ -1,5 +1,7 @@
 package net.artur.nacikmod.capability.mana;
 
+import net.artur.nacikmod.entity.custom.BerserkerEntity;
+import net.artur.nacikmod.entity.custom.LanserEntity;
 import net.artur.nacikmod.entity.custom.LeonidEntity;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -16,6 +18,12 @@ public class ManaEvents {
             event.addCapability(new ResourceLocation("nacikmod", "mana"), new ManaProvider());
         }
         if (event.getObject() instanceof LeonidEntity) {
+            event.addCapability(new ResourceLocation("nacikmod", "mana"), new ManaProvider());
+        }
+        if (event.getObject() instanceof LanserEntity) {
+            event.addCapability(new ResourceLocation("nacikmod", "mana"), new ManaProvider());
+        }
+        if (event.getObject() instanceof BerserkerEntity) {
             event.addCapability(new ResourceLocation("nacikmod", "mana"), new ManaProvider());
         }
     }
