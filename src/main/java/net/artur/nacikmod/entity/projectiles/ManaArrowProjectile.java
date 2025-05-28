@@ -14,7 +14,7 @@ import net.artur.nacikmod.registry.ModItems;
 public class ManaArrowProjectile extends ThrowableItemProjectile {
     private int lifetime = 0;
     private static final int MAX_LIFETIME = 200; // 10 seconds (20 ticks * 10)
-    private static final float BASE_DAMAGE = 6F; // Базовый урон как у обычной стрелы
+    private static final float BASE_DAMAGE = 4.5F; // Базовый урон как у обычной стрелы
     private static final float GRAVITY = 0.03F; // Небольшая гравитация
 
     public ManaArrowProjectile(Level level, LivingEntity shooter) {
@@ -38,7 +38,7 @@ public class ManaArrowProjectile extends ThrowableItemProjectile {
             if (entityHitResult.getEntity() instanceof LivingEntity livingEntity) {
                 // Получаем скорость стрелы
                 Vec3 velocity = this.getDeltaMovement();
-                double speed = velocity.length();
+                double speed = velocity.length() * 1.3;
                 
                 // Рассчитываем урон на основе скорости
                 float damage = (float) (BASE_DAMAGE * speed);
@@ -48,7 +48,7 @@ public class ManaArrowProjectile extends ThrowableItemProjectile {
                 
                 // Используем встроенный механизм откидывания
                 if (!this.isNoGravity()) {
-                    double knockbackStrength = 0.5D * speed; // Базовый множитель откидывания
+                    double knockbackStrength = 0.5D * speed * 0.8; // Базовый множитель откидывания
                     livingEntity.knockback(knockbackStrength, 
                         -velocity.x, // Инвертируем направление для отталкивания
                         -velocity.z);
