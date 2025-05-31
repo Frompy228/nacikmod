@@ -68,7 +68,7 @@ public class EffectManaLastMagic extends MobEffect {
             player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 40, 2, false, false));
             player.addEffect(new MobEffectInstance(MobEffects.JUMP, 40, 1, false, false));
             player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 40, 2, false, false)); 
-            player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 40, 2, false, false));
+            player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 40, 3, false, false));
             player.addEffect(new MobEffectInstance(MobEffects.SATURATION, 40, 1, false, false));
 
             // Удаляем все отрицательные эффекты

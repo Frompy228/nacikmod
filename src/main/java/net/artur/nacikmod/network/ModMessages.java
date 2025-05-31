@@ -78,15 +78,29 @@ public class ModMessages {
         INSTANCE.sendToServer(packet);
     }
 
+    // Отправка состояния способности конкретному игроку
     public static void sendAbilityStateToClient(ServerPlayer player, boolean isReleaseActive, boolean isLastMagicActive, int releaseLevel) {
         INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), 
-            new AbilityStatePacket(isReleaseActive, isLastMagicActive, releaseLevel));
+            new AbilityStatePacket(isReleaseActive, isLastMagicActive, releaseLevel, player.getId()));
     }
 
-    public static void sendAbilityStateToAllPlayers(ServerPlayer sourcePlayer, boolean isReleaseActive, boolean isLastMagicActive, int releaseLevel) {
-        if (sourcePlayer.level() != null) {
-            INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> sourcePlayer),
-                new AbilityStatePacket(isReleaseActive, isLastMagicActive, releaseLevel));
-        }
+    // Отправка состояния способности всем игрокам поблизости
+    public static void sendAbilityStateToNearbyPlayers(ServerPlayer sourcePlayer, boolean isReleaseActive, boolean isLastMagicActive, int releaseLevel) {
+        if (sourcePlayer.level() == null) return;
+        
+        // Сначала отправляем пакет владельцу
+        INSTANCE.send(PacketDistributor.PLAYER.with(() -> sourcePlayer),
+            new AbilityStatePacket(isReleaseActive, isLastMagicActive, releaseLevel, sourcePlayer.getId()));
+        
+        // Затем отправляем пакет всем остальным игрокам поблизости
+        sourcePlayer.level().players().stream()
+            .filter(player -> player instanceof ServerPlayer)
+            .map(player -> (ServerPlayer) player)
+            .filter(player -> player != sourcePlayer)
+            .filter(player -> player.distanceToSqr(sourcePlayer) <= 4096) // 64 blocks squared
+            .forEach(player -> {
+                INSTANCE.send(PacketDistributor.PLAYER.with(() -> player),
+                    new AbilityStatePacket(isReleaseActive, isLastMagicActive, releaseLevel, sourcePlayer.getId()));
+            });
     }
 }

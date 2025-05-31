@@ -65,7 +65,6 @@
   "item.nacikmod.last_magic.desc2": "Takes everything in return for incredible power. Disappears after use",
   "item.nacikmod.last_magic.desc3": "Cost: Life, Mana",
   "item.nacikmod.mana_sword.desc1": "A sword that draws power from mana",
-  "item.nacikmod.mana_sword.bonus_damage": "Bonus Damage: %d",
   "item.nacikmod.magic_weapons.desc1": "Creates a sword from mana",
   "item.nacikmod.magic_weapons.desc2": "Mana Cost: 100",
   "item.nacikmod.magic_weapons.desc3": "Right-click to shoot a mana sword projectile",

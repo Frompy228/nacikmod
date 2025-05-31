@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 public class MagicBow extends BowItem {
-    public static final int MAX_DRAW_DURATION = 15;
+    public static final int MAX_DRAW_DURATION = 14;
     private static final int MANA_COST = 5;
 
     public MagicBow() {
@@ -75,7 +75,7 @@ public class MagicBow extends BowItem {
                             ManaArrowProjectile manaArrow = new ManaArrowProjectile(level, player);
                             
                             // Рассчитываем скорость с учетом силы натяжения
-                            float velocity = power * 2.2F;
+                            float velocity = power * 2.4F;
                             
                             // Применяем зачарования
                             int powerLevel = stack.getEnchantmentLevel(Enchantments.POWER_ARROWS);

@@ -65,7 +65,6 @@
   "item.nacikmod.last_magic.desc2": "Забирает все взамен на невероятную силу. Исчезает после использования",
   "item.nacikmod.last_magic.desc3": "Затраты: Жизнь, Мана",
   "item.nacikmod.mana_sword.desc1": "Меч, черпающий силу из маны",
-  "item.nacikmod.mana_sword.bonus_damage": "Дополнительный урон: %d",
   "item.nacikmod.magic_weapons.desc1": "Создает меч из маны",
   "item.nacikmod.magic_weapons.desc2": "Затраты маны: 100",
   "item.nacikmod.magic_weapons.desc3": "Right-click чтобы выстрелить снарядом из меча маны",
