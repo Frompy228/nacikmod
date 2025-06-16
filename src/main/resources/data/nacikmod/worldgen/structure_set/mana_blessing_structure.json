@@ -1,0 +1,22 @@
+{
+
+  "structures": [
+    {
+      "structure": "nacikmod:mana_blessing_structure",
+      "weight": 1
+    }
+  ],
+  "placement": {
+
+    "salt": 1642136474,
+
+
+    "spacing": 60,
+
+
+    "separation": 30,
+
+
+    "type": "minecraft:random_spread"
+  }
+}

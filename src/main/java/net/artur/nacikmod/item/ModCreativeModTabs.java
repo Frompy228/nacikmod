@@ -35,6 +35,7 @@ public class ModCreativeModTabs {
                         pOutput.accept(ModItems.MANA_CRYSTAL.get());
                         pOutput.accept(ModItems.MAGIC_SEAL.get());
                         pOutput.accept(ModItems.MAGIC_CIRCUIT.get());
+                        pOutput.accept(ModItems.MANA_BLESSING.get());
                         pOutput.accept(ModItems.SHARD_OF_ARTIFACT.get());
                         pOutput.accept(ModItems.LANSER_SPAWN_EGG.get());
                         pOutput.accept(ModItems.LEONID_SPAWN_EGG.get());

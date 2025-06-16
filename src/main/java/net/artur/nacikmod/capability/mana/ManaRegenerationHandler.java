@@ -2,6 +2,7 @@ package net.artur.nacikmod.capability.mana;
 
 import net.artur.nacikmod.capability.reward.PlayerRewardsProvider;
 import net.artur.nacikmod.network.ModMessages;
+import net.artur.nacikmod.registry.ModEffects;
 import net.artur.nacikmod.registry.ModItems;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -18,6 +19,7 @@ public class ManaRegenerationHandler {
     private static final int BASE_REGEN_AMOUNT = 1; // Базовая регенерация маны
     private static final int REGEN_INTERVAL = 20; // Интервал регенерации в тиках (1 секунда)
     private static final int DARK_SPHERE_REGEN = 2; // Регенерация от Dark Sphere
+    private static final int MANA_BLESSING_REGEN = 1; // Регенерация от Mana Blessing
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
@@ -57,6 +59,10 @@ public class ManaRegenerationHandler {
                 regenAmount[0] += 2; // Добавляем +2 к регенерации
             }
         });
+
+        if (player.hasEffect(ModEffects.EFFECT_MANA_BLESSING.get())) {
+            regenAmount[0] += MANA_BLESSING_REGEN;
+        }
 
         // Проверяем наличие Dark Sphere
         CuriosApi.getCuriosInventory(player).ifPresent(handler -> {

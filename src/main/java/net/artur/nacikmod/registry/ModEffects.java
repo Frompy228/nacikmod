@@ -28,8 +28,8 @@ public class ModEffects {
             EFFECTS.register("mana_last_magic", EffectManaLastMagic::new);
     public static final RegistryObject<MobEffect> BLOOD_EXPLOSION =
             EFFECTS.register("blood_explosion", EffectBloodExplosion::new);
-    public static final RegistryObject<MobEffect> HIRAISHIN_MARK =
-            EFFECTS.register("hiraishin_mark", EffectHiraishinMark::new);
+    public static final RegistryObject<MobEffect> EFFECT_MANA_BLESSING =
+            EFFECTS.register("effect_mana_blessing", EffectManablessing::new);
     public static final RegistryObject<MobEffect> ROAR =
             EFFECTS.register("roar", EffectRoar::new);
     public static final RegistryObject<MobEffect> ENHANCED_GRAVITY =

@@ -46,10 +46,6 @@ public class ModEventBusClientEvents {
         event.registerLayerDefinition(ModModelLayers.MANA_ARROW_LAYER, ManaArrowModel::createBodyLayer);
     }
 
-    @SubscribeEvent
-    public static void registerKeys(RegisterKeyMappingsEvent event) {
-        event.register(KeyBindings.ABILITY_KEY);
-    }
 
     @SubscribeEvent
     public static void registerOverlays(RegisterGuiOverlaysEvent event) {
