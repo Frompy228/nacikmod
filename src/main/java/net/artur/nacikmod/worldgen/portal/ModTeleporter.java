@@ -24,38 +24,29 @@ public class ModTeleporter implements ITeleporter {
     public Entity placeEntity(Entity entity, ServerLevel currentWorld, ServerLevel destinationWorld,
                               float yaw, Function<Boolean, Entity> repositionEntity) {
         entity = repositionEntity.apply(false);
-        int y = 61;
-
+        
         if (!insideDimension) {
-            y = thisPos.getY();
+            // Телепортация из измерения
+            BlockPos destinationPos = new BlockPos(thisPos.getX(), thisPos.getY(), thisPos.getZ());
+            entity.setPos(destinationPos.getX(), destinationPos.getY(), destinationPos.getZ());
+            return entity;
         }
 
-        BlockPos destinationPos = new BlockPos(thisPos.getX(), y, thisPos.getZ());
-
-        int tries = 0;
-        while ((destinationWorld.getBlockState(destinationPos).getBlock() != Blocks.AIR) &&
-                !destinationWorld.getBlockState(destinationPos).canBeReplaced(Fluids.WATER) &&
-                (destinationWorld.getBlockState(destinationPos.above()).getBlock()  != Blocks.AIR) &&
-                !destinationWorld.getBlockState(destinationPos.above()).canBeReplaced(Fluids.WATER) && (tries < 25)) {
-            destinationPos = destinationPos.above(2);
-            tries++;
-        }
-
-        entity.setPos(destinationPos.getX(), destinationPos.getY(), destinationPos.getZ());
-
-        if (insideDimension) {
-            boolean doSetBlock = true;
-            for (BlockPos checkPos : BlockPos.betweenClosed(destinationPos.below(10).west(10),
-                    destinationPos.above(10).east(10))) {
-                if (destinationWorld.getBlockState(checkPos).getBlock() instanceof ModPortalBlock) {
-                    doSetBlock = false;
-                    break;
-                }
-            }
-            if (doSetBlock) {
-                destinationWorld.setBlock(destinationPos, ModBlocks.MOD_PORTAL.get().defaultBlockState(), 3);
+        // Телепортация в измерение
+        BlockPos platformPos = new BlockPos(0, 70, 0);
+        
+        // Создаем платформу 5x5
+        for (int x = -2; x <= 2; x++) {
+            for (int z = -2; z <= 2; z++) {
+                destinationWorld.setBlock(platformPos.offset(x, 0, z), Blocks.STONE.defaultBlockState(), 3);
             }
         }
+
+        // Размещаем портал на платформе
+        destinationWorld.setBlock(platformPos, ModBlocks.MOD_PORTAL.get().defaultBlockState(), 3);
+        
+        // Телепортируем игрока на платформу
+        entity.setPos(platformPos.getX() + 0.5, platformPos.getY() + 1, platformPos.getZ() + 0.5);
 
         return entity;
     }

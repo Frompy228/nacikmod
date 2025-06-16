@@ -4,8 +4,8 @@
     "type": "minecraft:noise",
     "biome_source": {
       "type": "minecraft:fixed",
-      "biome": "minecraft:desert"
+      "biome": "nacikmod:empty_biome"
     },
-    "settings": "minecraft:overworld"
+    "settings": "nacikmod:empty"
   }
 }
