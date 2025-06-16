@@ -27,7 +27,7 @@ import java.util.List;
 public class ShinraTensei extends Item {
     private static final int MANA_COST = 15000;
     private static final int EXPLOSION_RADIUS = 300;
-    private static final int COOLDOWN_TICKS = 400;
+    private static final int COOLDOWN_TICKS = 800;
 
     public ShinraTensei(Properties properties) {
         super(properties);

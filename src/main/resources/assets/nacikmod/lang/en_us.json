@@ -12,6 +12,7 @@
   "effect.nacikmod.hiraishin_mark":"Hiraishin Mark",
   "effect.nacikmod.roar":"Roar",
   "effect.nacikmod.enhanced_gravity":"Enhanced Gravity",
+  "effect.nacikmod.effect_mana_blessing":"Mana Blessing",
   "entity.nacikmod.lanser": "Lanser",
   "entity.nacikmod.leonid": "Leonid",
   "entity.nacikmod.berserker": "Berserker",
@@ -47,6 +48,7 @@
   "item.nacikmod.sensory_rain": "Sensory Rain",
   "item.nacikmod.dark_sphere": "Dark Sphere",
   "item.nacikmod.magic_bow": "Magic Bow",
+  "item.nacikmod.mana_blessing": "Mana Blessing",
   "item.nacikmod.magic_circuit.desc1": "A magic chain that increases the player's maximum mana reserve by 50",
   "curios.identifier.artifact": "Artifact",
   "curios.identifier.ring": "Ring",
@@ -65,7 +67,6 @@
   "item.nacikmod.last_magic.desc2": "Takes everything in return for incredible power. Disappears after use",
   "item.nacikmod.last_magic.desc3": "Cost: Life, Mana",
   "item.nacikmod.mana_sword.desc1": "A sword that draws power from mana",
-  "item.nacikmod.mana_sword.bonus_damage": "Bonus Damage: %d",
   "item.nacikmod.magic_weapons.desc1": "Creates a sword from mana",
   "item.nacikmod.magic_weapons.desc2": "Mana Cost: 100",
   "item.nacikmod.magic_weapons.desc3": "Right-click to shoot a mana sword projectile",
@@ -92,5 +93,6 @@
   "item.nacikmod.dark_sphere.desc1": "A mysterious sphere that enhances mana regeneration",
   "item.nacikmod.dark_sphere.desc2": "Mana Regeneration: +2",
   "item.nacikmod.magic_bow.desc1": "A bow that shoots mana",
-  "item.nacikmod.magic_bow.desc2": "Mana Cost: 5"
+  "item.nacikmod.magic_bow.desc2": "Mana Cost: 5",
+  "item.nacikmod.mana_blessing.desc1": "Bestows a mana blessing that enhances her regeneration"
 }

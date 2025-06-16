@@ -55,11 +55,14 @@ public class MagicWeapons extends Item {
                 // Создаем меч
                 ItemStack manaSword = new ItemStack(ModItems.MANA_SWORD.get());
 
-                // Вычисляем дополнительный урон на основе максимальной маны
+                // Вычисляем урон на основе максимальной маны
                 int manaDamage = calculateManaDamage(player);
 
-                // Сохраняем дополнительный урон в NBT
-                manaSword.getOrCreateTag().putInt("ManaDamage", manaDamage);
+                // Устанавливаем общий урон меча
+                manaSword.getOrCreateTag().putFloat("ManaSwordDamage", manaDamage + 2);
+
+                // Устанавливаем полную прочность (0 из 2)
+                manaSword.setDamageValue(0);
 
                 // Добавляем зачарование "Небесная кара" I уровня
                 manaSword.enchant(Enchantments.SMITE, 1);

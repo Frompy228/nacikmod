@@ -25,8 +25,8 @@ import java.util.UUID;
 public class HealingOfShallowWounds {
     private static final Set<UUID> activeHealingPlayers = new HashSet<>();
     private static final int MANA_COST_PER_SECOND = 10;
-    private static final int BASE_HEALING = 1;
-    private static final int MANA_THRESHOLD = 750;
+    private static final float BASE_HEALING = 1.0f;
+    private static final int MANA_THRESHOLD = 250;
     private static final String ACTIVE_TAG = "active";
     private static final int HEALING_INTERVAL = 100; // 5 seconds
     private static final int MANA_CONSUMPTION_INTERVAL = 20; // 1 second
@@ -79,8 +79,8 @@ public class HealingOfShallowWounds {
         return player.getCapability(ManaProvider.MANA_CAPABILITY)
                 .map(mana -> {
                     int maxMana = mana.getMaxMana();
-                    int additionalHealing = maxMana / MANA_THRESHOLD;
-                    return BASE_HEALING + additionalHealing;
+                    float additionalHealing = maxMana / (float)MANA_THRESHOLD;
+                    return Math.min(BASE_HEALING + additionalHealing, 5.0f);
                 })
                 .orElse(BASE_HEALING);
     }

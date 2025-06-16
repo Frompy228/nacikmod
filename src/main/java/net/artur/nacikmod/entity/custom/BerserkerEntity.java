@@ -247,6 +247,9 @@ public class BerserkerEntity extends HeroSouls {
                                         @Nullable CompoundTag dataTag) {
         SpawnGroupData data = super.finalizeSpawn(world, difficulty, reason, spawnData, dataTag);
         this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ModItems.DUBINKA.get()));
+
+        AttributeInstance attribute = this.getAttribute(ModAttributes.BONUS_ARMOR.get());
+        attribute.setBaseValue(10.0);
         return data;
     }
     @Override
@@ -256,7 +259,7 @@ public class BerserkerEntity extends HeroSouls {
         double chanceMagicBow = 0.15;
 
         if (random.nextDouble() < chanceCircuit) {
-            this.spawnAtLocation(new ItemStack(ModItems.MAGIC_CIRCUIT.get(), 30));
+            this.spawnAtLocation(new ItemStack(ModItems.MAGIC_CIRCUIT.get(), 20));
         }
         if (random.nextDouble() < chanceMagicBow) {
             this.spawnAtLocation(new ItemStack(ModItems.MAGIC_BOW.get(), 1));

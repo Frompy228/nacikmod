@@ -38,7 +38,7 @@ public class ManaArrowProjectile extends ThrowableItemProjectile {
             if (entityHitResult.getEntity() instanceof LivingEntity livingEntity) {
                 // Получаем скорость стрелы
                 Vec3 velocity = this.getDeltaMovement();
-                double speed = velocity.length() * 1.3;
+                double speed = velocity.length() * 1.4;
                 
                 // Рассчитываем урон на основе скорости
                 float damage = (float) (BASE_DAMAGE * speed);
@@ -48,7 +48,7 @@ public class ManaArrowProjectile extends ThrowableItemProjectile {
                 
                 // Используем встроенный механизм откидывания
                 if (!this.isNoGravity()) {
-                    double knockbackStrength = 0.5D * speed * 0.8; // Базовый множитель откидывания
+                    double knockbackStrength = 0.5D * speed * 0.7; // Базовый множитель откидывания
                     livingEntity.knockback(knockbackStrength, 
                         -velocity.x, // Инвертируем направление для отталкивания
                         -velocity.z);

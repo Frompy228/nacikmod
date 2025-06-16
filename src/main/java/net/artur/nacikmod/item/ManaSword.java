@@ -13,14 +13,21 @@ import net.minecraft.world.entity.player.Player;
 import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.ImmutableMultimap;
+import net.minecraft.world.entity.EquipmentSlot;
 
 import java.util.List;
+import java.util.UUID;
 
 public class ManaSword extends SwordItem {
     private static final int MAX_DURABILITY = 2;
-    private static final float BASE_DAMAGE = 2f;
+    private static final float BASE_DAMAGE = 1f;
     private static final float ATTACK_SPEED = -2.4f;
-    private static final String MANA_DAMAGE_TAG = "ManaDamage";
+    private static final String DAMAGE_TAG = "ManaSwordDamage";
 
     public ManaSword(Tier tier, Properties properties) {
         super(tier, (int)BASE_DAMAGE, ATTACK_SPEED, properties.durability(MAX_DURABILITY));
@@ -37,20 +44,31 @@ public class ManaSword extends SwordItem {
     }
 
     @Override
-    public float getDamage() {
-        return 0; // Базовый урон всегда 0
+    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
+        if (slot == EquipmentSlot.MAINHAND) {
+            ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
+            
+            // Получаем урон из NBT
+            float damage = stack.hasTag() && stack.getTag().contains(DAMAGE_TAG) ? 
+                stack.getTag().getFloat(DAMAGE_TAG) : BASE_DAMAGE;
+            
+            // Устанавливаем урон меча
+            builder.put(Attributes.ATTACK_DAMAGE, 
+                new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon damage", damage, AttributeModifier.Operation.ADDITION));
+            
+            // Базовая скорость атаки
+            builder.put(Attributes.ATTACK_SPEED, 
+                new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon speed", ATTACK_SPEED, AttributeModifier.Operation.ADDITION));
+            
+            return builder.build();
+        }
+        return super.getAttributeModifiers(slot, stack);
     }
 
     @Override
     public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         if (attacker instanceof Player player) {
-            // Получаем сохраненный урон из NBT
-            int damageBonus = stack.getOrCreateTag().getInt("DamageBonus");
-            
-            // Наносим урон
-            target.hurt(target.level().damageSources().playerAttack((Player) attacker), damageBonus);
-            
-            // Уменьшаем прочность меча
+            // Decrease durability
             stack.hurtAndBreak(1, attacker, (entity) -> {});
             return true;
         }
@@ -62,52 +80,43 @@ public class ManaSword extends SwordItem {
         super.appendHoverText(stack, level, tooltipComponents, isAdvanced);
 
         tooltipComponents.add(Component.translatable("item.nacikmod.mana_sword.desc1"));
-
-        // Добавляем информацию о дополнительном уроне
-        if (stack.hasTag() && stack.getTag().contains(MANA_DAMAGE_TAG)) {
-            int manaDamage = stack.getTag().getInt(MANA_DAMAGE_TAG);
-            if (manaDamage > 0) {
-                tooltipComponents.add(Component.translatable("item.nacikmod.mana_sword.bonus_damage", manaDamage)
-                        .withStyle(ChatFormatting.BLUE));
-            }
-        }
     }
 
     @Override
     public void onCraftedBy(ItemStack stack, Level level, Player player) {
         super.onCraftedBy(stack, level, player);
-        // Устанавливаем полную прочность
+        // Set full durability
         stack.setDamageValue(0);
     }
 
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        // Разрешаем только зачарование "Небесная кара", которое добавляется при создании
+        // Only allow Smite enchantment which is added on creation
         return enchantment == Enchantments.SMITE;
     }
 
     @Override
     public boolean isEnchantable(ItemStack stack) {
-        return false; // Запрещаем зачарование через книги
+        return false; // Disable enchanting through books
     }
 
     @Override
     public boolean isRepairable(ItemStack stack) {
-        return false; // Запрещаем починку
+        return false; // Disable repair
     }
 
     @Override
     public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
-        return false; // Запрещаем починку через наковальню
+        return false; // Disable repair through anvil
     }
 
     @Override
     public boolean canBeDepleted() {
-        return true; // Разрешаем уменьшение прочности
+        return true; // Allow durability decrease
     }
 
     @Override
     public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
-        return false; // Запрещаем зачарование через книги
+        return false; // Disable enchanting through books
     }
 }

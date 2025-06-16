@@ -97,14 +97,9 @@ public class ManaRelease {
                 }
                 applyModifiers(player, getCurrentLevel(stack));
                 
-                // Отправляем пакет на клиент владельцу
+                // Отправляем пакет всем игрокам поблизости (включая владельца)
                 if (player instanceof ServerPlayer serverPlayer) {
-                    ModMessages.sendAbilityStateToClient(serverPlayer, true, 
-                        player.hasEffect(ModEffects.MANA_LAST_MAGIC.get()),
-                        stack.getTag().getInt(LEVEL_TAG));
-                        
-                    // Отправляем пакет всем игрокам в мире
-                    ModMessages.sendAbilityStateToAllPlayers(serverPlayer, true,
+                    ModMessages.sendAbilityStateToNearbyPlayers(serverPlayer, true, 
                         player.hasEffect(ModEffects.MANA_LAST_MAGIC.get()),
                         stack.getTag().getInt(LEVEL_TAG));
                 }
@@ -119,14 +114,18 @@ public class ManaRelease {
         // Удаляем игрока из списка активных
         activeReleasePlayers.remove(player.getUUID());
 
-        // Отправляем пакет на клиент владельцу
-        ModMessages.sendAbilityStateToClient((ServerPlayer) player,
-            false,
-            player.hasEffect(ModEffects.MANA_LAST_MAGIC.get()),
-            getCurrentLevel(player).damage);
-            
-        // Отправляем пакет всем игрокам в мире
-        ModMessages.sendAbilityStateToAllPlayers((ServerPlayer) player,
+        // Обновляем состояние всех предметов Release в инвентаре
+        for (ItemStack stack : player.getInventory().items) {
+            if (stack.getItem() instanceof Release) {
+                stack.getOrCreateTag().putBoolean(ACTIVE_TAG, false);
+            }
+        }
+
+        // Удаляем модификаторы
+        removeModifiers(player);
+
+        // Отправляем пакет всем игрокам поблизости (включая владельца)
+        ModMessages.sendAbilityStateToNearbyPlayers((ServerPlayer) player,
             false,
             player.hasEffect(ModEffects.MANA_LAST_MAGIC.get()),
             getCurrentLevel(player).damage);

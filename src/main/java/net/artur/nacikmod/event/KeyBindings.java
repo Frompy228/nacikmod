@@ -16,6 +16,9 @@ public class KeyBindings {
             GLFW.GLFW_KEY_P,
             KeyMapping.CATEGORY_GAMEPLAY
     );
-
+    @SubscribeEvent
+    public static void registerKeys(RegisterKeyMappingsEvent event) {
+        event.register(KeyBindings.ABILITY_KEY);
+    }
 
 }

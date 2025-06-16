@@ -93,13 +93,4 @@ public class ModEventBusEventsForge {
             }
         }
     }
-    @SubscribeEvent
-    public static void onEffectRemove(MobEffectEvent.Remove event) {
-        if (event.getEffect().equals(ModEffects.HIRAISHIN_MARK.get()) ||
-                event.getEffect().equals(ModEffects.MANA_LAST_MAGIC.get())) {
-            event.setCanceled(true);
-        }
-    }
-
-
 }

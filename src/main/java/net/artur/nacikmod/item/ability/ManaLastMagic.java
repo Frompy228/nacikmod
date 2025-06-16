@@ -17,25 +17,20 @@ import java.util.UUID;
 @Mod.EventBusSubscriber(modid = NacikMod.MOD_ID)
 public class ManaLastMagic {
     public static final Set<UUID> activeLastMagicPlayers = new HashSet<>();
+    private static final int PACKET_SEND_INTERVAL = 20; // Отправляем пакет каждую секунду
 
     public static void startLastMagic(Player player) {
         if (!(player instanceof ServerPlayer)) return;
 
         // Добавляем эффект LastMagic
         player.addEffect(new net.minecraft.world.effect.MobEffectInstance(
-            ModEffects.MANA_LAST_MAGIC.get(), 600, 0, false, false));
+            ModEffects.MANA_LAST_MAGIC.get(), 2400, 0, false, false));
 
         // Добавляем игрока в список активных
         activeLastMagicPlayers.add(player.getUUID());
 
-        // Отправляем пакет на клиент владельцу
-        ModMessages.sendAbilityStateToClient((ServerPlayer) player,
-            ManaRelease.isReleaseActive(player),
-            true,
-            ManaRelease.getCurrentLevel(player).damage);
-            
-        // Отправляем пакет всем игрокам в мире
-        ModMessages.sendAbilityStateToAllPlayers((ServerPlayer) player,
+        // Отправляем пакет всем игрокам поблизости
+        ModMessages.sendAbilityStateToNearbyPlayers((ServerPlayer) player,
             ManaRelease.isReleaseActive(player),
             true,
             ManaRelease.getCurrentLevel(player).damage);
@@ -50,6 +45,16 @@ public class ManaLastMagic {
         if (!player.hasEffect(ModEffects.MANA_LAST_MAGIC.get()) && 
             activeLastMagicPlayers.contains(player.getUUID())) {
             stopLastMagic(player);
+            return;
+        }
+
+        // Если у игрока есть эффект LastMagic, отправляем пакет каждую секунду
+        if (player.hasEffect(ModEffects.MANA_LAST_MAGIC.get()) && 
+            player.tickCount % PACKET_SEND_INTERVAL == 0) {
+            ModMessages.sendAbilityStateToNearbyPlayers(player,
+                ManaRelease.isReleaseActive(player),
+                true,
+                ManaRelease.getCurrentLevel(player).damage);
         }
     }
 
@@ -59,14 +64,8 @@ public class ManaLastMagic {
         // Удаляем игрока из списка активных
         activeLastMagicPlayers.remove(player.getUUID());
 
-        // Отправляем пакет на клиент владельцу
-        ModMessages.sendAbilityStateToClient((ServerPlayer) player,
-            ManaRelease.isReleaseActive(player),
-            false,
-            ManaRelease.getCurrentLevel(player).damage);
-            
-        // Отправляем пакет всем игрокам в мире
-        ModMessages.sendAbilityStateToAllPlayers((ServerPlayer) player,
+        // Отправляем пакет всем игрокам поблизости
+        ModMessages.sendAbilityStateToNearbyPlayers((ServerPlayer) player,
             ManaRelease.isReleaseActive(player),
             false,
             ManaRelease.getCurrentLevel(player).damage);
