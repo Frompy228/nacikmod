@@ -70,6 +70,14 @@ public class LootTableHandler {
                     .setWeight(1)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
+            LootItem.Builder<?> pocket = LootItem.lootTableItem(ModItems.POCKET.get())
+                    .setWeight(1)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
+            LootItem.Builder<?> absoluteVision = LootItem.lootTableItem(ModItems.ABSOLUTE_VISION.get())
+                    .setWeight(1)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
             // Создаём пул лута
             LootPool pool = LootPool.lootPool()
                     .name("nacikmod_loot_pool")
@@ -87,6 +95,8 @@ public class LootTableHandler {
                     .add(gravity)
                     .add(darkSphere)
                     .add(sensoryRain)
+                    .add(pocket)
+                    .add(absoluteVision)
                     .build();
 
 

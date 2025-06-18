@@ -47,6 +47,8 @@ public class ModCreativeModTabs {
                         pOutput.accept(ModItems.GRAVITY.get());
                         pOutput.accept(ModItems.SHINRA_TENSEI.get());
                         pOutput.accept(ModItems.SENSORY_RAIN.get());
+                        pOutput.accept(ModItems.POCKET.get());
+                        pOutput.accept(ModItems.ABSOLUTE_VISION.get());
                     })
                     .build());
 

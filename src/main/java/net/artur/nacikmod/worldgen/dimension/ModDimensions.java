@@ -2,6 +2,7 @@ package net.artur.nacikmod.worldgen.dimension;
 
 import com.ibm.icu.impl.Pair;
 import net.artur.nacikmod.NacikMod;
+import net.artur.nacikmod.registry.ModBiomes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -61,17 +62,9 @@ public class ModDimensions {
         HolderGetter<DimensionType> dimTypes = context.lookup(Registries.DIMENSION_TYPE);
         HolderGetter<NoiseGeneratorSettings> noiseGenSettings = context.lookup(Registries.NOISE_SETTINGS);
 
-        NoiseSettings noiseSettings = new NoiseSettings(
-                0, // minY
-                256, // height
-                1, // noiseSizeHorizontal
-                1  // noiseSizeVertical
-        );
-
         NoiseBasedChunkGenerator wrappedChunkGenerator = new NoiseBasedChunkGenerator(
-                new FixedBiomeSource(biomeRegistry.getOrThrow(Biomes.DESERT)),
-                noiseGenSettings.getOrThrow(NoiseGeneratorSettings.OVERWORLD));
-
+                new FixedBiomeSource(biomeRegistry.getOrThrow(ModBiomes.EMPTY_BIOME_KEY)),
+                noiseGenSettings.getOrThrow(CustomNoiseGeneratorSettings.EMPTY));
 
         LevelStem stem = new LevelStem(dimTypes.getOrThrow(ModDimensions.SPARTA_DIM_TYPE), wrappedChunkGenerator);
 

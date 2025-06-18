@@ -48,6 +48,8 @@ public class ModItems {
     public static final RegistryObject<Item> LEONID_HELMET = ITEMS.register("leonid_helmet", () -> new LeonidHelmet(new LeonidArmorMaterial(), new Item.Properties()));
     public static final RegistryObject<Item> LEONID_SHIELD = ITEMS.register("leonid_shield", () -> new LeonidShileld(new Item.Properties()));
     public static final RegistryObject<Item> MANA_BLESSING = ITEMS.register("mana_blessing", () -> new ManaBlessing(new Item.Properties()));
+    public static final RegistryObject<Item> POCKET = ITEMS.register("pocket", () -> new Pocket(new Item.Properties()));
+    public static final RegistryObject<Item> ABSOLUTE_VISION = ITEMS.register("absolute_vision", () -> new AbsoluteVision(new Item.Properties()));
     public static final RegistryObject<Item> DARK_SPHERE = ITEMS.register("dark_sphere", () -> new DarkSphere(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LANSER_SPAWN_EGG = ITEMS.register("lanser_spawn_egg",
             ()-> new ForgeSpawnEggItem(ModEntities.LANSER, 0x5b107e, 0xCF6A84,
