@@ -22,8 +22,7 @@ import java.util.List;
 
 public class AbsoluteVision extends Item {
     private static final int NIGHT_TIME = 13000; // Время ночи в тиках (13000 = полночь)
-    private static final int COOLDOWN_TICKS = 15000; // 10 секунд кулдауна
-    private static final int MOON_DURATION = 24000; // 20 минут в тиках
+    private static final int COOLDOWN_TICKS = 15000; // 12.5 минут кулдауна
     private static final int MANA_COST = 3000; // Стоимость маны
 
     public AbsoluteVision(Properties properties) {
@@ -76,7 +75,6 @@ public class AbsoluteVision extends Item {
             // Устанавливаем время на ночь
             serverLevel.setDayTime(NIGHT_TIME);
 
-
             // Отправляем координаты всех игроков
             player.sendSystemMessage(Component.literal("=== Player Coordinates ===")
                     .withStyle(ChatFormatting.GOLD));
@@ -101,8 +99,8 @@ public class AbsoluteVision extends Item {
                 net.minecraft.sounds.SoundEvents.ENDERMAN_TELEPORT, 
                 net.minecraft.sounds.SoundSource.PLAYERS, 1.0F, 1.0F);
         } else if (level.isClientSide) {
-            // На клиенте включаем кастомную текстуру луны
-            MoonTextureManager.enableCustomMoon(MOON_DURATION);
+            // На клиенте включаем магическую ночь
+            MoonTextureManager.activateMagicNight();
         }
 
         return InteractionResultHolder.success(itemStack);
