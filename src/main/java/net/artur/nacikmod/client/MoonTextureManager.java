@@ -3,40 +3,26 @@ package net.artur.nacikmod.client;
 import net.minecraft.client.Minecraft;
 
 public class MoonTextureManager {
-    private static boolean customMoonEnabled = false;
-    private static long customMoonEndTime = 0;
+    private static boolean magicNightActive = false;
 
-    public static boolean isCustomMoonEnabled() {
-        return customMoonEnabled;
+    public static void activateMagicNight() {
+        magicNightActive = true;
     }
 
-    public static long getCustomMoonEndTime() {
-        return customMoonEndTime;
-    }
-
-    public static void enableCustomMoon(long duration) {
-        customMoonEnabled = true;
-        Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.level != null) {
-            customMoonEndTime = minecraft.level.getDayTime() + duration;
-        }
-    }
-
-    public static void disableCustomMoon() {
-        customMoonEnabled = false;
+    public static void deactivateMagicNight() {
+        magicNightActive = false;
     }
 
     public static boolean shouldUseCustomMoon() {
-        if (!customMoonEnabled) {
+        if (!magicNightActive) return false;
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.level == null) return false;
+        long time = mc.level.getDayTime() % 24000;
+        // В Minecraft ночь примерно с 13000 до 23000
+        if (time < 13000 || time > 23000) {
+            magicNightActive = false; // Автоматически сбрасываем, если не ночь
             return false;
         }
-        
-        Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.level != null && minecraft.level.getDayTime() > customMoonEndTime) {
-            customMoonEnabled = false;
-            return false;
-        }
-        
         return true;
     }
 } 
