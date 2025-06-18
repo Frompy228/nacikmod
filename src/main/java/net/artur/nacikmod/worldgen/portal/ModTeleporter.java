@@ -24,7 +24,7 @@ public class ModTeleporter implements ITeleporter {
     public Entity placeEntity(Entity entity, ServerLevel currentWorld, ServerLevel destinationWorld,
                               float yaw, Function<Boolean, Entity> repositionEntity) {
         entity = repositionEntity.apply(false);
-        
+
         if (!insideDimension) {
             // Телепортация из измерения
             BlockPos destinationPos = new BlockPos(thisPos.getX(), thisPos.getY(), thisPos.getZ());
@@ -34,7 +34,7 @@ public class ModTeleporter implements ITeleporter {
 
         // Телепортация в измерение
         BlockPos platformPos = new BlockPos(0, 70, 0);
-        
+
         // Создаем платформу 5x5
         for (int x = -2; x <= 2; x++) {
             for (int z = -2; z <= 2; z++) {
@@ -44,7 +44,7 @@ public class ModTeleporter implements ITeleporter {
 
         // Размещаем портал на платформе
         destinationWorld.setBlock(platformPos, ModBlocks.MOD_PORTAL.get().defaultBlockState(), 3);
-        
+
         // Телепортируем игрока на платформу
         entity.setPos(platformPos.getX() + 0.5, platformPos.getY() + 1, platformPos.getZ() + 0.5);
 

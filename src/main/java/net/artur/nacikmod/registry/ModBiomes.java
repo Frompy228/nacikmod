@@ -20,32 +20,32 @@ public class ModBiomes {
 
     public static Biome emptyBiome(BootstapContext<Biome> context) {
         MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
-        
+
         BiomeGenerationSettings.Builder generationBuilder = new BiomeGenerationSettings.Builder(
-            context.lookup(Registries.PLACED_FEATURE),
-            context.lookup(Registries.CONFIGURED_CARVER)
+                context.lookup(Registries.PLACED_FEATURE),
+                context.lookup(Registries.CONFIGURED_CARVER)
         );
-        
+
         // Create surface rules that only generate air
         SurfaceRules.RuleSource surfaceRule = SurfaceRules.sequence(
-            SurfaceRules.ifTrue(
-                SurfaceRules.ON_FLOOR,
-                SurfaceRules.state(Blocks.AIR.defaultBlockState())
-            )
+                SurfaceRules.ifTrue(
+                        SurfaceRules.ON_FLOOR,
+                        SurfaceRules.state(Blocks.AIR.defaultBlockState())
+                )
         );
 
         return new Biome.BiomeBuilder()
-            .hasPrecipitation(false)
-            .temperature(0.8f)
-            .downfall(0.0f)
-            .specialEffects(new BiomeSpecialEffects.Builder()
-                .waterColor(0x3F76E4)
-                .waterFogColor(0x050533)
-                .fogColor(0xC0D8FF)
-                .skyColor(0x78A7FF)
-                .build())
-            .mobSpawnSettings(spawnBuilder.build())
-            .generationSettings(generationBuilder.build())
+                .hasPrecipitation(false)
+                .temperature(0.8f)
+                .downfall(0.0f)
+                .specialEffects(new BiomeSpecialEffects.Builder()
+                        .waterColor(0x3F76E4)
+                        .waterFogColor(0x050533)
+                        .fogColor(0xC0D8FF)
+                        .skyColor(0x78A7FF)
+                        .build())
+                .mobSpawnSettings(spawnBuilder.build())
+                .generationSettings(generationBuilder.build())
                 .build();
     }
-} 
+}

@@ -1,0 +1,126 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 3,
+      "bonus_rolls": 2,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:lodestone",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:splash_potion",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:respawn_anchor",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:player_head",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:sniffer_egg",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:end_crystal",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:ender_pearl",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nacikmod:magic_circuit",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:enchanted_golden_apple",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:totem_of_undying",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:netherite_ingot",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:allay_spawn_egg",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:diamond_leggings",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nacikmod:mana_blessing",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:netherite_block",
+          "weight": 1,
+          "quality": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:diamond_block",
+          "quality": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nacikmod:magic_circuit"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nacikmod:sensory_rain",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nacikmod:dark_sphere",
+          "weight": 1,
+          "quality": 0
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nacikmod:pocket",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nacikmod:absolute_vision",
+          "weight": 1
+        }
+      ],
+      "functions": [
+        {
+          "function": "minecraft:enchant_with_levels",
+          "levels": 70,
+          "treasure": true,
+          "conditions": []
+        }
+      ],
+      "conditions": []
+    }
+  ]
+}

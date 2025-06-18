@@ -6,7 +6,8 @@
   "refmap": "nacikmod.refmap.json",
   "mixins": [],
   "client": [
-    "MagicBowMixin"
+    "MagicBowMixin",
+    "SkyRendererMixin"
   ],
   "server": [],
   "injectors": {
