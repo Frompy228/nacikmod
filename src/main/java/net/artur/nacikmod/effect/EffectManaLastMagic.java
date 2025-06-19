@@ -27,7 +27,7 @@ public class EffectManaLastMagic extends MobEffect {
     private static final UUID SWIM_SPEED_UUID = UUID.fromString("9c0d1e2f-3a4b-5c6d-7e8f-9a0b1c2d3e4f");
 
     public EffectManaLastMagic() {
-        super(MobEffectCategory.BENEFICIAL, 0x580808);
+        super(MobEffectCategory.BENEFICIAL, 0x000000);
         
         // Добавляем модификаторы атрибутов в конструкторе
         this.addAttributeModifier(Attributes.ATTACK_DAMAGE, DAMAGE_MODIFIER_UUID.toString(),

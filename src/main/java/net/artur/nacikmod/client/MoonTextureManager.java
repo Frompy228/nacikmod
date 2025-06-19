@@ -14,13 +14,16 @@ public class MoonTextureManager {
     }
 
     public static boolean shouldUseCustomMoon() {
-        if (!magicNightActive) return false;
+        if (!magicNightActive) {
+            return false;
+        }
         Minecraft mc = Minecraft.getInstance();
-        if (mc.level == null) return false;
+        if (mc.level == null) {
+            return false;
+        }
         long time = mc.level.getDayTime() % 24000;
-        // В Minecraft ночь примерно с 13000 до 23000
         if (time < 13000 || time > 23000) {
-            magicNightActive = false; // Автоматически сбрасываем, если не ночь
+            magicNightActive = false;
             return false;
         }
         return true;

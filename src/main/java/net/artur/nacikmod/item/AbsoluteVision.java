@@ -14,6 +14,7 @@ import net.minecraft.world.level.Level;
 import net.artur.nacikmod.client.MoonTextureManager;
 import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.registry.ModItems;
+import net.artur.nacikmod.util.CooldownSave;
 import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
@@ -33,14 +34,15 @@ public class AbsoluteVision extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
 
-        if (!level.isClientSide && level instanceof ServerLevel serverLevel) {
-            // Проверяем, не находится ли игрок в кулдауне
-            if (player.getCooldowns().isOnCooldown(this)) {
-                player.sendSystemMessage(Component.literal("Item is on cooldown!")
-                        .withStyle(ChatFormatting.RED));
-                return InteractionResultHolder.fail(itemStack);
-            }
+        // Проверяем кулдаун через NBT
+        if (CooldownSave.isOnCooldown(itemStack, level)) {
+            int left = CooldownSave.getCooldownLeft(itemStack, level);
+            player.sendSystemMessage(Component.literal("Item is on cooldown! (" + left / 20 + "s left)")
+                    .withStyle(ChatFormatting.RED));
+            return InteractionResultHolder.fail(itemStack);
+        }
 
+        if (!level.isClientSide && level instanceof ServerLevel serverLevel) {
             // Проверяем наличие Dark Sphere в слотах Curios
             boolean hasDarkSphere = CuriosApi.getCuriosInventory(player)
                     .map(handler -> {
@@ -91,19 +93,22 @@ public class AbsoluteVision extends Item {
                         .withStyle(ChatFormatting.YELLOW));
             }
 
-            // Устанавливаем кулдаун
-            player.getCooldowns().addCooldown(this, COOLDOWN_TICKS);
+            // Активируем кастомную луну для всех игроков
+            net.artur.nacikmod.network.ModMessages.sendCustomMoonToAll();
 
-            // Воспроизводим звук
-            level.playSound(null, player.blockPosition(), 
-                net.minecraft.sounds.SoundEvents.ENDERMAN_TELEPORT, 
-                net.minecraft.sounds.SoundSource.PLAYERS, 1.0F, 1.0F);
-        } else if (level.isClientSide) {
-            // На клиенте включаем магическую ночь
-            MoonTextureManager.activateMagicNight();
+            // Сохраняем кулдаун в NBT
+            CooldownSave.setCooldown(itemStack, level, COOLDOWN_TICKS);
         }
-
         return InteractionResultHolder.success(itemStack);
+    }
+
+    // Восстанавливаем кулдаун при входе игрока (например, в PlayerLoggedInEvent)
+    public static void restoreCooldowns(Player player) {
+        for (ItemStack stack : player.getInventory().items) {
+            if (stack.getItem() instanceof AbsoluteVision) {
+                CooldownSave.restoreCooldown(stack, player.level(), player, stack.getItem());
+            }
+        }
     }
 
     @Override

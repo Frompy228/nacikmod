@@ -1,5 +1,6 @@
 package net.artur.nacikmod.entity.projectiles;
 
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
@@ -10,11 +11,13 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.artur.nacikmod.registry.ModEntities;
 import net.artur.nacikmod.registry.ModItems;
+import net.artur.nacikmod.registry.ModEffects;
+import net.minecraft.world.effect.MobEffectInstance;
 
 public class ManaArrowProjectile extends ThrowableItemProjectile {
     private int lifetime = 0;
     private static final int MAX_LIFETIME = 200; // 10 seconds (20 ticks * 10)
-    private static final float BASE_DAMAGE = 4.5F; // Базовый урон как у обычной стрелы
+    private static final float BASE_DAMAGE = 5F;
     private static final float GRAVITY = 0.03F; // Небольшая гравитация
 
     public ManaArrowProjectile(Level level, LivingEntity shooter) {
@@ -45,6 +48,9 @@ public class ManaArrowProjectile extends ThrowableItemProjectile {
                 
                 // Применяем урон и откидывание
                 livingEntity.hurt(this.damageSources().thrown(this, this.getOwner()), damage);
+
+                // Накладываем эффект замедления на 2 секунды (40 тиков)
+                livingEntity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 20, 0));
                 
                 // Используем встроенный механизм откидывания
                 if (!this.isNoGravity()) {

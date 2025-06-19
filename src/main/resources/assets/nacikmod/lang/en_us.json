@@ -51,6 +51,7 @@
   "item.nacikmod.mana_blessing": "Mana Blessing",
   "item.nacikmod.pocket": "Pocket Dimesion",
   "item.nacikmod.absolute_vision": "Absolute Vision",
+  "item.nacikmod.breaking_body_limit": "Breaking Body Limit",
   "item.nacikmod.magic_circuit.desc1": "A magic chain that increases the player's maximum mana reserve by 50",
   "curios.identifier.artifact": "Artifact",
   "curios.identifier.ring": "Ring",
@@ -102,5 +103,9 @@
   "item.nacikmod.pocket.desc3": "Right-click to teleport an entity to a pocket dimension",
   "item.nacikmod.pocket.desc4": "Shift + Right-click to teleport to a pocket dimension",
   "item.nacikmod.absolute_vision.desc1": "Absolute vision from which there is no escape. Night falls revealing the coordinates of all the players",
-  "item.nacikmod.absolute_vision.desc2": "Mana Cost: 3000"
+  "item.nacikmod.absolute_vision.desc2": "Mana Cost: 3000",
+  "item.nacikmod.breaking_body_limit.desc1": "Breaks the limit of the wearer's body, enhancing his physical abilities",
+  "item.nacikmod.breaking_body_limit.desc2": "Cost: %s/ps",
+  "item.nacikmod.breaking_body_limit.active": "Active",
+  "item.nacikmod.breaking_body_limit.inactive": "Inactive"
 }

@@ -64,6 +64,14 @@ public class ModMessages {
                 AbilityStatePacket::handle,
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT)
         );
+
+        INSTANCE.registerMessage(packetId++,
+                CustomMoonPacket.class,
+                CustomMoonPacket::encode,
+                CustomMoonPacket::decode,
+                CustomMoonPacket::handle,
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT)
+        );
     }
 
     public static void sendToClient(ServerPlayer player, CooldownSyncPacket packet) {
@@ -102,5 +110,9 @@ public class ModMessages {
                 INSTANCE.send(PacketDistributor.PLAYER.with(() -> player),
                     new AbilityStatePacket(isReleaseActive, isLastMagicActive, releaseLevel, sourcePlayer.getId()));
             });
+    }
+
+    public static void sendCustomMoonToAll() {
+        INSTANCE.send(PacketDistributor.ALL.noArg(), new CustomMoonPacket());
     }
 }

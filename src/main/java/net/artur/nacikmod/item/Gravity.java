@@ -197,6 +197,9 @@ public class Gravity extends Item {
 
                 // Тратим ману
                 player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> mana.removeMana(MANA_COST_EFFECT));
+
+                // Устанавливаем кулдаун на 5 секунд (100 тиков)
+                player.getCooldowns().addCooldown(this, 100);
             } else {
                 // Переключение полета
                 if (!player.getCapability(ManaProvider.MANA_CAPABILITY).map(mana -> mana.getMana() >= MANA_COST_PER_SECOND).orElse(false)) {

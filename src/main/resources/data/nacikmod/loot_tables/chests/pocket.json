@@ -88,7 +88,8 @@
         },
         {
           "type": "minecraft:item",
-          "name": "nacikmod:magic_circuit"
+          "name": "nacikmod:magic_circuit",
+          "weight": 2
         },
         {
           "type": "minecraft:item",
@@ -109,6 +110,11 @@
         {
           "type": "minecraft:item",
           "name": "nacikmod:absolute_vision",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nacikmod:breaking_body_limit",
           "weight": 1
         }
       ],
