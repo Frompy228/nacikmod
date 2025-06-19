@@ -51,6 +51,7 @@
   "item.nacikmod.magic_bow": "Магический лук",
   "item.nacikmod.mana_blessing": "Благославение маной",
   "item.nacikmod.pocket": "Карманное измерение",
+  "item.nacikmod.breaking_body_limit": "Слом предела тела",
   "item.nacikmod.magic_circuit.desc1": "Магическая цепь увеличивающая максимальный запас маны игрока на 50",
   "curios.identifier.artifact": "Артефакт",
   "curios.identifier.ring": "Кольцо",
@@ -102,5 +103,9 @@
   "item.nacikmod.pocket.desc3": "Right-click чтобы телепортировать сущность в карманное измерение",
   "item.nacikmod.pocket.desc4": "Shift + Right-click чтобы телепортироваться в карманное измерение",
   "item.nacikmod.absolute_vision.desc1": "Абсолютное зрение от которого не скрыться. Наступает ночь раскрывающая координаты всех игроков",
-  "item.nacikmod.absolute_vision.desc2": "Затраты маны: 3000"
+  "item.nacikmod.absolute_vision.desc2": "Затраты маны: 3000",
+  "item.nacikmod.breaking_body_limit.desc1": "Ломает предел тела владельца усиливая его физические способности",
+  "item.nacikmod.breaking_body_limit.desc2": "Затраты: %s/с",
+  "item.nacikmod.breaking_body_limit.active": "Активировано",
+  "item.nacikmod.breaking_body_limit.inactive": "Деактивировано"
 }

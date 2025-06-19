@@ -43,7 +43,7 @@ public class LootTableHandler {
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
             LootItem.Builder<?> ringOfTime = LootItem.lootTableItem(ModItems.RING_OF_TIME.get())
-                    .setWeight(5)
+                    .setWeight(1)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
             
             LootItem.Builder<?> lastMagic = LootItem.lootTableItem(ModItems.LAST_MAGIC.get())
@@ -78,6 +78,10 @@ public class LootTableHandler {
                     .setWeight(1)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
+            LootItem.Builder<?> breakingBodyLimit = LootItem.lootTableItem(ModItems.BREAKING_BODY_LIMIT.get())
+                    .setWeight(3)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
             // Создаём пул лута
             LootPool pool = LootPool.lootPool()
                     .name("nacikmod_loot_pool")
@@ -97,6 +101,7 @@ public class LootTableHandler {
                     .add(sensoryRain)
                     .add(pocket)
                     .add(absoluteVision)
+                    .add(breakingBodyLimit)
                     .build();
 
 

@@ -17,6 +17,7 @@ import net.minecraft.world.phys.Vec3;
 import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.item.ability.ShinraTenseiExplosion;
 import net.artur.nacikmod.registry.ModItems;
+import net.artur.nacikmod.util.CooldownSave;
 import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
@@ -27,7 +28,7 @@ import java.util.List;
 public class ShinraTensei extends Item {
     private static final int MANA_COST = 15000;
     private static final int EXPLOSION_RADIUS = 300;
-    private static final int COOLDOWN_TICKS = 800;
+    private static final int COOLDOWN_TICKS = 10000;
 
     public ShinraTensei(Properties properties) {
         super(properties);
@@ -36,6 +37,12 @@ public class ShinraTensei extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
+        if (CooldownSave.isOnCooldown(itemStack, level)) {
+            int left = CooldownSave.getCooldownLeft(itemStack, level);
+            player.sendSystemMessage(Component.literal("Item is on cooldown! (" + left / 20 + "s left)")
+                    .withStyle(ChatFormatting.RED));
+            return InteractionResultHolder.fail(itemStack);
+        }
 
         if (!level.isClientSide) {
             // Проверяем наличие Dark Sphere в слотах Curios используя новый API
@@ -86,7 +93,7 @@ public class ShinraTensei extends Item {
             explosion.explode();
 
             player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> mana.removeMana(MANA_COST));
-            player.getCooldowns().addCooldown(this, COOLDOWN_TICKS);
+            CooldownSave.setCooldown(itemStack, level, COOLDOWN_TICKS);
         }
 
         return InteractionResultHolder.success(itemStack);
@@ -109,5 +116,13 @@ public class ShinraTensei extends Item {
     @Override
     public boolean isEnchantable(ItemStack stack) {
         return false;
+    }
+
+    public static void restoreCooldowns(Player player) {
+        for (ItemStack stack : player.getInventory().items) {
+            if (stack.getItem() instanceof ShinraTensei) {
+                CooldownSave.restoreCooldown(stack, player.level(), player, stack.getItem());
+            }
+        }
     }
 }
