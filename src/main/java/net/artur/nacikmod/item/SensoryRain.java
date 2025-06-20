@@ -30,7 +30,6 @@ import java.util.Random;
 @Mod.EventBusSubscriber(modid = NacikMod.MOD_ID)
 public class SensoryRain extends Item {
     private static final int MANA_COST = 1000;
-    private static final int EFFECT_RADIUS = 50;
     private static final int EFFECT_DURATION = 200; // 10 seconds
     private static final String ACTIVE_TAG = "active";
     private static final String TIMER_TAG = "timer";
@@ -79,26 +78,15 @@ public class SensoryRain extends Item {
             itemStack.getOrCreateTag().putBoolean(ACTIVE_TAG, true);
             itemStack.getOrCreateTag().putInt(TIMER_TAG, ABILITY_DURATION);
 
-            // Получаем все сущности в радиусе
-            AABB area = new AABB(
-                player.getX() - EFFECT_RADIUS, player.getY() - EFFECT_RADIUS, player.getZ() - EFFECT_RADIUS,
-                player.getX() + EFFECT_RADIUS, player.getY() + EFFECT_RADIUS, player.getZ() + EFFECT_RADIUS
-            );
-            List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, area);
-
-            // Применяем эффект подсветки ко всем сущностям кроме игрока
-            for (LivingEntity entity : entities) {
-                if (entity != player) {
-                    entity.addEffect(new net.minecraft.world.effect.MobEffectInstance(
-                        ModEffects.SENSORY_RAIN.get(), EFFECT_DURATION, 0, false, false, false));
-                }
-            }
+            // Накладываем эффект TRUE_SIGHT на игрока
+            player.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                ModEffects.TRUE_SIGHT.get(), EFFECT_DURATION, 0, false, false, false));
 
             // Тратим ману
             player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> mana.removeMana(MANA_COST));
 
             // Устанавливаем кулдаун
-            player.getCooldowns().addCooldown(this, 100); // 5 seconds cooldown
+            player.getCooldowns().addCooldown(this, 260); // 5 seconds cooldown
         }
 
         return InteractionResultHolder.success(itemStack);
@@ -147,18 +135,10 @@ public class SensoryRain extends Item {
                     }
                 }
 
-                // Обновляем эффект подсветки для сущностей в радиусе
-                AABB area = new AABB(
-                    player.getX() - EFFECT_RADIUS, player.getY() - EFFECT_RADIUS, player.getZ() - EFFECT_RADIUS,
-                    player.getX() + EFFECT_RADIUS, player.getY() + EFFECT_RADIUS, player.getZ() + EFFECT_RADIUS
-                );
-                List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, area);
-
-                for (LivingEntity entity : entities) {
-                    if (entity != player && !entity.hasEffect(ModEffects.SENSORY_RAIN.get())) {
-                        entity.addEffect(new net.minecraft.world.effect.MobEffectInstance(
-                            ModEffects.SENSORY_RAIN.get(), EFFECT_DURATION, 0, false, false, false));
-                    }
+                // Обновляем эффект TRUE_SIGHT для игрока
+                if (!player.hasEffect(ModEffects.TRUE_SIGHT.get())) {
+                    player.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                        ModEffects.TRUE_SIGHT.get(), EFFECT_DURATION, 0, false, false, false));
                 }
             } else {
                 // Если таймер истек, деактивируем предмет

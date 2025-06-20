@@ -86,12 +86,6 @@ public class ModMessages {
         INSTANCE.sendToServer(packet);
     }
 
-    // Отправка состояния способности конкретному игроку
-    public static void sendAbilityStateToClient(ServerPlayer player, boolean isReleaseActive, boolean isLastMagicActive, int releaseLevel) {
-        INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), 
-            new AbilityStatePacket(isReleaseActive, isLastMagicActive, releaseLevel, player.getId()));
-    }
-
     // Отправка состояния способности всем игрокам поблизости
     public static void sendAbilityStateToNearbyPlayers(ServerPlayer sourcePlayer, boolean isReleaseActive, boolean isLastMagicActive, int releaseLevel) {
         if (sourcePlayer.level() == null) return;
