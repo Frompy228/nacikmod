@@ -2,6 +2,7 @@ package net.artur.nacikmod.registry;
 
 import net.artur.nacikmod.effect.*;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -34,6 +35,8 @@ public class ModEffects {
             EFFECTS.register("roar", EffectRoar::new);
     public static final RegistryObject<MobEffect> ENHANCED_GRAVITY =
             EFFECTS.register("enhanced_gravity", EffectEnhancedGravity::new);
+    public static final RegistryObject<MobEffect> TRUE_SIGHT =
+            EFFECTS.register("true_sight", EffectTrueSight::new);
     public static final RegistryObject<MobEffect> SENSORY_RAIN =
             EFFECTS.register("sensory_rain", EffectSensoryRain::new);
 }
