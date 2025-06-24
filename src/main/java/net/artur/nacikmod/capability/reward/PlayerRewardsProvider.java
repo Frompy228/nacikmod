@@ -27,6 +27,8 @@ public class PlayerRewardsProvider implements ICapabilityProvider, ICapabilitySe
         tag.putBoolean("TimeReward", rewards.hasReceivedTimeReward());
         tag.putBoolean("24hReward", rewards.hasReceived24hReward());
         tag.putBoolean("ShinraTenseiReward", rewards.hasReceivedShinraTenseiReward());
+        tag.putBoolean("1hReward", rewards.hasReceived1hReward());
+        tag.putBoolean("2hReward", rewards.hasReceived2hReward());
         return tag;
     }
 
@@ -36,6 +38,8 @@ public class PlayerRewardsProvider implements ICapabilityProvider, ICapabilitySe
         rewards.setReceivedTimeReward(tag.getBoolean("TimeReward"));
         rewards.setReceived24hReward(tag.getBoolean("24hReward"));
         rewards.setReceivedShinraTenseiReward(tag.getBoolean("ShinraTenseiReward"));
+        rewards.setReceived1hReward(tag.getBoolean("1hReward"));
+        rewards.setReceived2hReward(tag.getBoolean("2hReward"));
     }
 
     // Сохранение наград после смерти
@@ -51,6 +55,8 @@ public class PlayerRewardsProvider implements ICapabilityProvider, ICapabilitySe
             newRewards.setReceivedTimeReward(oldRewards.hasReceivedTimeReward());
             newRewards.setReceived24hReward(oldRewards.hasReceived24hReward());
             newRewards.setReceivedShinraTenseiReward(oldRewards.hasReceivedShinraTenseiReward());
+            newRewards.setReceived1hReward(oldRewards.hasReceived1hReward());
+            newRewards.setReceived2hReward(oldRewards.hasReceived2hReward());
         }));
     }
 } 

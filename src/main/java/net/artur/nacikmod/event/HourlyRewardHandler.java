@@ -25,8 +25,10 @@ import java.util.Map;
 @Mod.EventBusSubscriber(modid = NacikMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class HourlyRewardHandler {
     private static final int REQUIRED_PLAY_TIME = 2700; // 45 minutes
+    private static final int REQUIRED_1H_PLAY_TIME = 3600; // 1 hour in seconds
     private static final int REQUIRED_24H_PLAY_TIME = 86400; // 24 hours in seconds
     private static final int REQUIRED_MAX_MANA = 50000; // Требуемая максимальная мана для Shinra Tensei
+    private static final int REQUIRED_2H_PLAY_TIME = 7200; // 2 часа в секундах
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
@@ -53,6 +55,18 @@ public class HourlyRewardHandler {
                 player.sendSystemMessage(Component.literal("You've learned something new!"));
             }
 
+            // Проверяем награду за 1 час
+            if (!rewards.hasReceived1hReward() && playTimeSeconds >= REQUIRED_1H_PLAY_TIME) {
+                // Выдаем награду
+                player.addItem(new ItemStack(ModItems.FIRE_FLOWER.get()));
+
+                // Помечаем, что игрок получил награду
+                rewards.setReceived1hReward(true);
+
+                // Отправляем сообщение игроку
+                player.sendSystemMessage(Component.literal("You've learned something new!"));
+            }
+
             // Проверяем награду за 24 часа
             if (!rewards.hasReceived24hReward() && playTimeSeconds >= REQUIRED_24H_PLAY_TIME) {
                 // Помечаем, что игрок получил награду
@@ -60,6 +74,18 @@ public class HourlyRewardHandler {
 
                 // Отправляем сообщение игроку
                 player.sendSystemMessage(Component.literal("Your mana regeneration has been permanently increased by +2!"));
+            }
+
+            // Проверяем награду за 2 часа
+            if (!rewards.hasReceived2hReward() && playTimeSeconds >= REQUIRED_2H_PLAY_TIME) {
+                // Выдаем Ice Prison
+                player.addItem(new ItemStack(ModItems.ICE_PRISON.get()));
+                // Выдаем 2 MAGIC_CIRCUIT
+                player.addItem(new ItemStack(ModItems.MAGIC_CIRCUIT.get(), 2));
+                // Помечаем, что игрок получил награду
+                rewards.setReceived2hReward(true);
+                // Отправляем сообщение игроку
+                player.sendSystemMessage(Component.literal("You've learned something new!"));
             }
 
             // Проверяем награду Shinra Tensei

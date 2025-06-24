@@ -1,5 +1,4 @@
 {
-
   "structures": [
     {
       "structure": "nacikmod:mana_blessing_structure",
@@ -7,16 +6,9 @@
     }
   ],
   "placement": {
-
-    "salt": 1642136474,
-
-
+    "salt": 1234567890,
     "spacing": 60,
-
-
     "separation": 30,
-
-
     "type": "minecraft:random_spread"
   }
 }

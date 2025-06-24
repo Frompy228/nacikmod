@@ -116,7 +116,13 @@
           "type": "minecraft:item",
           "name": "nacikmod:breaking_body_limit",
           "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nacikmod:intangibility",
+          "weight": 1
         }
+
       ],
       "functions": [
         {
