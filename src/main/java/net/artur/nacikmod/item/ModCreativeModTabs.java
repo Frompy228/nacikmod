@@ -44,11 +44,13 @@ public class ModCreativeModTabs {
                         pOutput.accept(ModItems.MAGIC_HEALING.get());
                         pOutput.accept(ModItems.RELEASE.get());
                         pOutput.accept(ModItems.MAGIC_WEAPONS.get());
+                        pOutput.accept(ModItems.FIRE_FLOWER.get());
                         pOutput.accept(ModItems.GRAVITY.get());
                         pOutput.accept(ModItems.SHINRA_TENSEI.get());
                         pOutput.accept(ModItems.SENSORY_RAIN.get());
                         pOutput.accept(ModItems.POCKET.get());
                         pOutput.accept(ModItems.ABSOLUTE_VISION.get());
+                        pOutput.accept(ModItems.INTANGIBILITY.get());
                     })
                     .build());
 

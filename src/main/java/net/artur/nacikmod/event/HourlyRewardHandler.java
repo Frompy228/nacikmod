@@ -25,6 +25,7 @@ import java.util.Map;
 @Mod.EventBusSubscriber(modid = NacikMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class HourlyRewardHandler {
     private static final int REQUIRED_PLAY_TIME = 2700; // 45 minutes
+    private static final int REQUIRED_1H_PLAY_TIME = 3600; // 1 hour in seconds
     private static final int REQUIRED_24H_PLAY_TIME = 86400; // 24 hours in seconds
     private static final int REQUIRED_MAX_MANA = 50000; // Требуемая максимальная мана для Shinra Tensei
 
@@ -48,6 +49,18 @@ public class HourlyRewardHandler {
 
                 // Помечаем, что игрок получил награду
                 rewards.setReceivedTimeReward(true);
+
+                // Отправляем сообщение игроку
+                player.sendSystemMessage(Component.literal("You've learned something new!"));
+            }
+
+            // Проверяем награду за 1 час
+            if (!rewards.hasReceived1hReward() && playTimeSeconds >= REQUIRED_1H_PLAY_TIME) {
+                // Выдаем награду
+                player.addItem(new ItemStack(ModItems.FIRE_FLOWER.get()));
+
+                // Помечаем, что игрок получил награду
+                rewards.setReceived1hReward(true);
 
                 // Отправляем сообщение игроку
                 player.sendSystemMessage(Component.literal("You've learned something new!"));

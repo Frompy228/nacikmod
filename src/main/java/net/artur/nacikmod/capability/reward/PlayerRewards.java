@@ -7,12 +7,14 @@ public class PlayerRewards implements IPlayerRewards {
     private boolean hasReceivedTimeReward;
     private boolean hasReceived24hReward;
     private boolean hasReceivedShinraTenseiReward;
+    private boolean hasReceived1hReward;
 
     public PlayerRewards() {
         this.hasReceivedSpawnReward = false;
         this.hasReceivedTimeReward = false;
         this.hasReceived24hReward = false;
         this.hasReceivedShinraTenseiReward = false;
+        this.hasReceived1hReward = false;
     }
 
     @Override
@@ -55,11 +57,22 @@ public class PlayerRewards implements IPlayerRewards {
         this.hasReceivedShinraTenseiReward = value;
     }
 
+    @Override
+    public boolean hasReceived1hReward() {
+        return hasReceived1hReward;
+    }
+
+    @Override
+    public void setReceived1hReward(boolean value) {
+        this.hasReceived1hReward = value;
+    }
+
     public void saveNBTData(CompoundTag nbt) {
         nbt.putBoolean("hasReceivedSpawnReward", hasReceivedSpawnReward);
         nbt.putBoolean("hasReceivedTimeReward", hasReceivedTimeReward);
         nbt.putBoolean("hasReceived24hReward", hasReceived24hReward);
         nbt.putBoolean("hasReceivedShinraTenseiReward", hasReceivedShinraTenseiReward);
+        nbt.putBoolean("hasReceived1hReward", hasReceived1hReward);
     }
 
     public void loadNBTData(CompoundTag nbt) {
@@ -67,5 +80,6 @@ public class PlayerRewards implements IPlayerRewards {
         hasReceivedTimeReward = nbt.getBoolean("hasReceivedTimeReward");
         hasReceived24hReward = nbt.getBoolean("hasReceived24hReward");
         hasReceivedShinraTenseiReward = nbt.getBoolean("hasReceivedShinraTenseiReward");
+        hasReceived1hReward = nbt.getBoolean("hasReceived1hReward");
     }
 } 

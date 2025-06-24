@@ -12,4 +12,7 @@ public interface IPlayerRewards {
 
     boolean hasReceivedShinraTenseiReward();
     void setReceivedShinraTenseiReward(boolean value);
+
+    boolean hasReceived1hReward();
+    void setReceived1hReward(boolean value);
 } 

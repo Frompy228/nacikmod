@@ -79,7 +79,11 @@ public class LootTableHandler {
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
             LootItem.Builder<?> breakingBodyLimit = LootItem.lootTableItem(ModItems.BREAKING_BODY_LIMIT.get())
-                    .setWeight(3)
+                    .setWeight(1)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
+            LootItem.Builder<?> intangibility = LootItem.lootTableItem(ModItems.INTANGIBILITY.get())
+                    .setWeight(1)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
             // Создаём пул лута
@@ -102,6 +106,7 @@ public class LootTableHandler {
                     .add(pocket)
                     .add(absoluteVision)
                     .add(breakingBodyLimit)
+                    .add(intangibility)
                     .build();
 
 

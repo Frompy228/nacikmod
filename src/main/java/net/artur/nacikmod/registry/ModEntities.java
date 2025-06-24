@@ -6,8 +6,10 @@ import net.artur.nacikmod.entity.custom.SpartanEntity;
 import net.artur.nacikmod.entity.custom.BerserkerEntity;
 import net.artur.nacikmod.entity.projectiles.BloodShootProjectile;
 import net.artur.nacikmod.entity.projectiles.FireArrowEntity;
+import net.artur.nacikmod.entity.projectiles.FireCloudEntity;
 import net.artur.nacikmod.entity.projectiles.ManaSwordProjectile;
 import net.artur.nacikmod.entity.projectiles.ManaArrowProjectile;
+import net.artur.nacikmod.entity.projectiles.IceSpikeProjectile;
 import net.artur.nacikmod.NacikMod;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -80,6 +82,22 @@ public class ModEntities {
                             .clientTrackingRange(8)
                             .updateInterval(20)
                             .build("mana_arrow"));
+
+    public static final RegistryObject<EntityType<FireCloudEntity>> FIRE_CLOUD =
+            ENTITY_TYPES.register("fire_cloud",
+                    () -> EntityType.Builder.<FireCloudEntity>of((type, level) -> new FireCloudEntity(type, level), MobCategory.MISC)
+                            .sized(4.0F, 2.0F) // Уменьшенный размер хитбокса (было 6.0F, 3.0F)
+                            .clientTrackingRange(16)
+                            .updateInterval(2)
+                            .build("fire_cloud"));
+
+    public static final RegistryObject<EntityType<IceSpikeProjectile>> ICE_SPIKE_PROJECTILE =
+            ENTITY_TYPES.register("ice_spike_projectile",
+                    () -> EntityType.Builder.<IceSpikeProjectile>of((type, level) -> new IceSpikeProjectile(type, level), MobCategory.MISC)
+                            .sized(1F, 1F)
+                            .clientTrackingRange(8)
+                            .updateInterval(20)
+                            .build("ice_spike_projectile"));
 
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);

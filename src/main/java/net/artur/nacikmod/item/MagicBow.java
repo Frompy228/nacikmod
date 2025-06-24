@@ -75,7 +75,7 @@ public class MagicBow extends BowItem {
                             ManaArrowProjectile manaArrow = new ManaArrowProjectile(level, player);
                             
                             // Рассчитываем скорость с учетом силы натяжения
-                            float velocity = power * 2.4F;
+                            float velocity = power * 2.7F;
                             
                             // Применяем зачарования
                             int powerLevel = stack.getEnchantmentLevel(Enchantments.POWER_ARROWS);

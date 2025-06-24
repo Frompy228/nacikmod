@@ -46,9 +46,12 @@ public class BreakingBodyLimit extends Item {
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
         super.appendHoverText(stack, level, tooltipComponents, isAdvanced);
         BreakingBodyLimitAbility.Level currentLevel = BreakingBodyLimitAbility.getCurrentLevel(stack);
+        // Получаем номер уровня (0-4) и добавляем 1 для отображения (1-5)
+        int levelNumber = stack.hasTag() ? stack.getTag().getInt("level") : 0;
         tooltipComponents.add(Component.translatable("item.nacikmod.breaking_body_limit.desc1"));
-        tooltipComponents.add(Component.translatable("item.nacikmod.breaking_body_limit.desc2", String.format("%.1f", (float) currentLevel.hpCost))
-                        .withStyle(ChatFormatting.DARK_RED));
+        tooltipComponents.add(Component.translatable("item.nacikmod.breaking_body_limit.desc2", 
+                String.format("%.1f", (float) currentLevel.hpCost), levelNumber + 1)
+                .withStyle(ChatFormatting.DARK_RED));
         boolean isActive = stack.hasTag() && stack.getTag().getBoolean(ACTIVE_TAG);
         if (isActive) {
             tooltipComponents.add(Component.translatable("item.nacikmod.breaking_body_limit.active")
