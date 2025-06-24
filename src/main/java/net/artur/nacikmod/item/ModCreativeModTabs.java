@@ -45,6 +45,7 @@ public class ModCreativeModTabs {
                         pOutput.accept(ModItems.RELEASE.get());
                         pOutput.accept(ModItems.MAGIC_WEAPONS.get());
                         pOutput.accept(ModItems.FIRE_FLOWER.get());
+                        pOutput.accept(ModItems.ICE_PRISON.get());
                         pOutput.accept(ModItems.GRAVITY.get());
                         pOutput.accept(ModItems.SHINRA_TENSEI.get());
                         pOutput.accept(ModItems.SENSORY_RAIN.get());

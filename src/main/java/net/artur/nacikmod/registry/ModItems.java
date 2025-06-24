@@ -42,6 +42,7 @@ public class ModItems {
     public static final RegistryObject<Item> MANA_SWORD = ITEMS.register("mana_sword", () -> new ManaSword(Tiers.WOOD, new Item.Properties()));
     public static final RegistryObject<Item> MAGIC_WEAPONS = ITEMS.register("magic_weapons", () -> new MagicWeapons(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> FIRE_FLOWER = ITEMS.register("fire_flower", () -> new FireFlower(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> ICE_PRISON = ITEMS.register("ice_prison", () -> new IcePrison(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> BLOOD_SHOOT = ITEMS.register("blood_shoot", () -> new BloodShoot(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> SHINRA_TENSEI = ITEMS.register("shinra_tensei", () -> new ShinraTensei(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> GRAVITY = ITEMS.register("gravity", () -> new Gravity(new Item.Properties().stacksTo(1)));
@@ -53,7 +54,6 @@ public class ModItems {
     public static final RegistryObject<Item> BREAKING_BODY_LIMIT = ITEMS.register("breaking_body_limit", () -> new BreakingBodyLimit(new Item.Properties()));
     public static final RegistryObject<Item> ABSOLUTE_VISION = ITEMS.register("absolute_vision", () -> new AbsoluteVision(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> INTANGIBILITY = ITEMS.register("intangibility", () -> new Intangibility(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> ICE_PRISON = ITEMS.register("ice_prison", () -> new IcePrison(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> DARK_SPHERE = ITEMS.register("dark_sphere", () -> new DarkSphere(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LANSER_SPAWN_EGG = ITEMS.register("lanser_spawn_egg",
             ()-> new ForgeSpawnEggItem(ModEntities.LANSER, 0x5b107e, 0xCF6A84,

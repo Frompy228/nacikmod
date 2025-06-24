@@ -15,4 +15,7 @@ public interface IPlayerRewards {
 
     boolean hasReceived1hReward();
     void setReceived1hReward(boolean value);
+
+    boolean hasReceived2hReward();
+    void setReceived2hReward(boolean value);
 } 
