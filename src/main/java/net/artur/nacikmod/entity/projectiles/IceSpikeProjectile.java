@@ -51,6 +51,7 @@ public class IceSpikeProjectile extends ThrowableItemProjectile {
                                 BlockPos pos = center.offset(dx, dy, dz);
                                 if (level.isEmptyBlock(pos)) {
                                     level.setBlockAndUpdate(pos, Blocks.ICE.defaultBlockState());
+                                    net.artur.nacikmod.util.TemporaryIceManager.addIceBlock(level, pos, 100); // 5 секунд = 100 тиков
                                 }
                             }
                         }

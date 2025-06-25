@@ -44,7 +44,7 @@ public class FireFlower extends Item {
             createCloudsAroundPlayer(level, player);
 
             // Устанавливаем кулдаун
-            player.getCooldowns().addCooldown(this, 100); // 3 секунды
+            player.getCooldowns().addCooldown(this, 120);
         }
 
         return InteractionResultHolder.success(itemStack);
