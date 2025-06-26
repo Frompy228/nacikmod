@@ -23,7 +23,7 @@ import java.util.List;
 
 public class AbsoluteVision extends Item {
     private static final int NIGHT_TIME = 13000; // Время ночи в тиках (13000 = полночь)
-    private static final int COOLDOWN_TICKS = 15; // 12.5 минут кулдауна
+    private static final int COOLDOWN_TICKS = 15000; // 12.5 минут кулдауна
     private static final int MANA_COST = 3000; // Стоимость маны
 
     public AbsoluteVision(Properties properties) {

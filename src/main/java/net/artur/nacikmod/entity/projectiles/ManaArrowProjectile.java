@@ -19,19 +19,22 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkHooks;
 
 public class ManaArrowProjectile extends AbstractArrow {
-    private static final float BASE_DAMAGE = 6F;
+    private static final float BASE_DAMAGE = 5F;
+    private int powerLevel = 0;
+    private int punchLevel = 0;
+    private boolean flame = false;
 
     public ManaArrowProjectile(EntityType<? extends AbstractArrow> type, Level level) {
         super(type, level);
         this.setBaseDamage(BASE_DAMAGE);
-        this.setKnockback(1); // Стандартный откидывающий эффект
+        this.setKnockback(0); // Стандартный откидывающий эффект
         this.pickup = Pickup.DISALLOWED; // Нельзя подобрать
     }
 
     public ManaArrowProjectile(Level level, LivingEntity shooter) {
         super(ModEntities.MANA_ARROW.get(), shooter, level);
         this.setBaseDamage(BASE_DAMAGE);
-        this.setKnockback(1);
+        this.setKnockback(0);
         this.pickup = Pickup.DISALLOWED;
     }
 
@@ -48,9 +51,10 @@ public class ManaArrowProjectile extends AbstractArrow {
             if (result.getEntity() instanceof LivingEntity target) {
                 // Наложение эффекта замедления на 1 сек (20 тиков)
                 target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 20, 0));
-
-                // При желании — другие кастомные эффекты:
-                // target.addEffect(new MobEffectInstance(ModEffects.YOUR_EFFECT.get(), 60, 1));
+                // Если есть Flame, поджигаем цель
+                if (flame) {
+                    target.setSecondsOnFire(5);
+                }
             }
         }
     }
@@ -79,5 +83,19 @@ public class ManaArrowProjectile extends AbstractArrow {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 
+    public void setPowerLevel(int powerLevel) {
+        this.powerLevel = powerLevel;
+        // Vanilla: Power увеличивает урон на 1.5 за уровень
+        this.setBaseDamage(BASE_DAMAGE + powerLevel * 1.5F);
+    }
 
+    public void setPunchLevel(int punchLevel) {
+        this.punchLevel = punchLevel;
+        this.setKnockback(punchLevel);
+    }
+
+    public void setFlame(boolean flame) {
+        this.flame = flame;
+        if (flame) this.setSecondsOnFire(100);
+    }
 }

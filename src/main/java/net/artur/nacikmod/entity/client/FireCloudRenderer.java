@@ -16,4 +16,5 @@ public class FireCloudRenderer extends EntityRenderer<FireCloudEntity> {
         // Возвращаем пустую текстуру, так как облако невидимо
         return new ResourceLocation("minecraft", "textures/block/air.png");
     }
+
 } 

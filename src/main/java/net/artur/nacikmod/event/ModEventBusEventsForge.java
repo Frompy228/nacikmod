@@ -27,7 +27,6 @@ import net.artur.nacikmod.registry.ModEffects;
 import net.minecraft.world.item.ItemStack;
 import net.artur.nacikmod.item.ManaSword;
 import net.artur.nacikmod.effect.EffectBloodExplosion;
-import net.artur.nacikmod.util.TemporaryIceManager;
 
 @Mod.EventBusSubscriber(modid = NacikMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ModEventBusEventsForge {
@@ -95,10 +94,4 @@ public class ModEventBusEventsForge {
         }
     }
 
-    @SubscribeEvent
-    public static void onWorldTick(TickEvent.LevelTickEvent event) {
-        if (!event.level.isClientSide && event.phase == TickEvent.Phase.END) {
-            TemporaryIceManager.tick(event.level);
-        }
-    }
 }

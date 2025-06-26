@@ -79,8 +79,16 @@ public class MagicBow extends BowItem {
                             
                             // Применяем зачарования
                             int powerLevel = stack.getEnchantmentLevel(Enchantments.POWER_ARROWS);
+                            int punchLevel = stack.getEnchantmentLevel(Enchantments.PUNCH_ARROWS);
+                            int flameLevel = stack.getEnchantmentLevel(Enchantments.FLAMING_ARROWS);
                             if (powerLevel > 0) {
-                                velocity *= (1.0F + powerLevel * 0.1F);
+                                manaArrow.setPowerLevel(powerLevel);
+                            }
+                            if (punchLevel > 0) {
+                                manaArrow.setPunchLevel(punchLevel);
+                            }
+                            if (flameLevel > 0) {
+                                manaArrow.setFlame(true);
                             }
                             
                             // Для Multishot корректируем угол выстрела

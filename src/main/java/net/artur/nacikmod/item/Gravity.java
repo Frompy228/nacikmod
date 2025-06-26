@@ -38,7 +38,7 @@ import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = NacikMod.MOD_ID)
 public class Gravity extends Item {
-    private static final int MANA_COST_PER_SECOND = 10;
+    private static final int MANA_COST_PER_SECOND = 20;
     private static final int MANA_COST_EFFECT = 500;
     private static final int EFFECT_RADIUS = 10;
     private static final int EFFECT_DURATION = 80;

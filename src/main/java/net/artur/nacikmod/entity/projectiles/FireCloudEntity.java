@@ -17,7 +17,7 @@ import java.util.List;
 public class FireCloudEntity extends Projectile {
     private static final int LIFETIME = 200; // 10 seconds (20 ticks * 10)
     private static final double CLOUD_RADIUS = 3.0; // Радиус облака
-    private static final float EXPLOSION_DAMAGE = 6.0f; // Урон взрыва
+    private static final float EXPLOSION_DAMAGE = 7.0f; // Урон взрыва
     private static final int FIRE_DURATION = 5; // Длительность поджигания в секундах
     private static final int PARTICLES_PER_TICK = 20; // Количество частиц в тик
     private static final int EXPLOSION_COOLDOWN = 20; // Перезарядка взрыва в тиках (1 секунда = 20 тиков)
@@ -166,6 +166,7 @@ public class FireCloudEntity extends Projectile {
             }
         }
     }
+
 
     @Override
     protected void onHitEntity(EntityHitResult entityHitResult) {

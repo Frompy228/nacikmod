@@ -29,6 +29,7 @@ public class HourlyRewardHandler {
     private static final int REQUIRED_24H_PLAY_TIME = 86400; // 24 hours in seconds
     private static final int REQUIRED_MAX_MANA = 50000; // Требуемая максимальная мана для Shinra Tensei
     private static final int REQUIRED_2H_PLAY_TIME = 7200; // 2 часа в секундах
+    private static final int REQUIRED_2H15M_PLAY_TIME = 8100; // 2 часа 15 минут в секундах
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
@@ -84,6 +85,18 @@ public class HourlyRewardHandler {
                 player.addItem(new ItemStack(ModItems.MAGIC_CIRCUIT.get(), 2));
                 // Помечаем, что игрок получил награду
                 rewards.setReceived2hReward(true);
+                // Отправляем сообщение игроку
+                player.sendSystemMessage(Component.literal("You've learned something new!"));
+            }
+
+            // Проверяем награду за 2 часа 15 минут
+            if (!rewards.hasReceived2h15mReward() && playTimeSeconds >= REQUIRED_2H15M_PLAY_TIME) {
+                // Выдаем EarthStep
+                player.addItem(new ItemStack(ModItems.EARTH_STEP.get()));
+                // Выдаем 2 MAGIC_CIRCUIT
+                player.addItem(new ItemStack(ModItems.MAGIC_CIRCUIT.get(), 2));
+                // Помечаем, что игрок получил награду
+                rewards.setReceived2h15mReward(true);
                 // Отправляем сообщение игроку
                 player.sendSystemMessage(Component.literal("You've learned something new!"));
             }
