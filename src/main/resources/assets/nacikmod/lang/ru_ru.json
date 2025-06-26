@@ -56,6 +56,7 @@
   "item.nacikmod.mana_blessing": "Благославение маной",
   "item.nacikmod.pocket": "Карманное измерение",
   "item.nacikmod.breaking_body_limit": "Слом предела тела",
+  "item.nacikmod.earth_step" : "Земляной шаг",
   "item.nacikmod.magic_circuit.desc1": "Магическая цепь увеличивающая максимальный запас маны игрока на 50",
   "curios.identifier.artifact": "Артефакт",
   "curios.identifier.ring": "Кольцо",
@@ -90,7 +91,7 @@
   "item.nacikmod.hiraishin.desc5": "Владелец: %d",
   "item.nacikmod.leonid_helmet.desc1": "Шлем героический души наделяющий владельца силой",
   "item.nacikmod.gravity.desc1": "Позволяет управлять гравитацией",
-  "item.nacikmod.gravity.desc2": "Затраты маны полета: 10/с | Затраты маны: 500 | Радиус эффекта: 10",
+  "item.nacikmod.gravity.desc2": "Затраты маны полета: 20/с | Затраты маны: 500 | Радиус эффекта: 10 | Урон: 7/с",
   "item.nacikmod.shinra_tensei.desc1": "Уничтожает все на своем пути",
   "item.nacikmod.shinra_tensei.desc2": "Затраты маны: 15000",
   "item.nacikmod.gravity.active": "Активировано",
@@ -113,9 +114,11 @@
   "item.nacikmod.breaking_body_limit.active": "Активировано",
   "item.nacikmod.breaking_body_limit.inactive": "Деактивировано",
   "item.nacikmod.fire_flower.desc1": "Создает огненный цветки вокруг игрока",
-  "item.nacikmod.fire_flower.desc2": "Затраты маны: 150 | Урон: 6",
+  "item.nacikmod.fire_flower.desc2": "Затраты маны: 150 | Урон: 7",
   "item.nacikmod.intangibility.desc1": "Делает владельца неосязаемым",
   "item.nacikmod.intangibility.desc2": "Затраты маны: 50/с",
   "item.nacikmod.ice_prison.desc1": "Закрывает противника в клетку изо льда",
-  "item.nacikmod.ice_prison.desc2": "Затраты маны: 150 | Урон: 13"
+  "item.nacikmod.ice_prison.desc2": "Затраты маны: 250 | Урон: 13",
+  "item.nacikmod.earth_step.desc1": "Создает земляную платформу под владельцем и ускоряет его",
+  "item.nacikmod.earth_step.desc2": "Затраты маны: 25/c"
 }

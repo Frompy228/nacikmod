@@ -56,6 +56,7 @@
   "item.nacikmod.fire_flower": "Fire Flower",
   "item.nacikmod.intangibility": "Intangibility",
   "item.nacikmod.ice_prison" : "Ice Prison",
+  "item.nacikmod.earth_step" : "Earth Step",
   "item.nacikmod.magic_circuit.desc1": "A magic chain that increases the player's maximum mana reserve by 50",
   "curios.identifier.artifact": "Artifact",
   "curios.identifier.ring": "Ring",
@@ -90,7 +91,7 @@
   "item.nacikmod.hiraishin.desc5": "Owner: %d",
   "item.nacikmod.leonid_helmet.desc1": "A Heroic Soul helmet that gives the wearer strength",
   "item.nacikmod.gravity.desc1": "Allows you to control gravity",
-  "item.nacikmod.gravity.desc2": "Mana Cost Fly: 10/ps | Mana Cost: 500 | Effect Radius: 10",
+  "item.nacikmod.gravity.desc2": "Mana Cost Fly: 20/ps | Mana Cost: 500 | Effect Radius: 10 | Damage: 7/ps",
   "item.nacikmod.shinra_tensei.desc1": "Destroys everything in its path",
   "item.nacikmod.shinra_tensei.desc2": "Mana Cost: 15000",
   "item.nacikmod.gravity.active": "Active",
@@ -113,9 +114,11 @@
   "item.nacikmod.breaking_body_limit.active": "Active",
   "item.nacikmod.breaking_body_limit.inactive": "Inactive",
   "item.nacikmod.fire_flower.desc1": "Creates fire flowers around the player",
-  "item.nacikmod.fire_flower.desc2": "Mana Cost: 150 | Damage: 6",
+  "item.nacikmod.fire_flower.desc2": "Mana Cost: 150 | Damage: 7",
   "item.nacikmod.intangibility.desc1": "Makes the owner intangible",
   "item.nacikmod.intangibility.desc2": "Mana Cost: 50/ps",
   "item.nacikmod.ice_prison.desc1": "Closes the opponent into a cage of ice",
-  "item.nacikmod.ice_prison.desc2": "Mana Cost: 150 | Damage: 13"
+  "item.nacikmod.ice_prison.desc2": "Mana Cost: 250 | Damage: 13",
+  "item.nacikmod.earth_step.desc1": "Creates an earthen platform under the owner and accelerates them",
+  "item.nacikmod.earth_step.desc2": "Mana Cost: 25/ps"
 }

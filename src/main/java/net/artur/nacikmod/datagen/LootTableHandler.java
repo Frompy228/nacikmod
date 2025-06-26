@@ -90,7 +90,7 @@ public class LootTableHandler {
             LootPool pool = LootPool.lootPool()
                     .name("nacikmod_loot_pool")
                     .setRolls(UniformGenerator.between(1, 2))
-                    .when(LootItemRandomChanceCondition.randomChance(0.08f))
+                    .when(LootItemRandomChanceCondition.randomChance(0.09f))
                     .add(magicCircuit)
                     .add(magicArmor)
                     .add(ringOfTime)

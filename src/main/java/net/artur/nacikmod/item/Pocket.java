@@ -14,6 +14,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.boss.EnderDragonPart;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -58,6 +60,13 @@ public class Pocket extends Item {
     }
 
     private void teleportEntity(Entity entity, Level level, ItemStack itemStack) {
+        // Запрещаем телепортировать эндер дракона и его части
+        if (entity instanceof EnderDragon || entity instanceof EnderDragonPart) {
+            if (entity instanceof Player player) {
+                player.sendSystemMessage(Component.literal("You cannot teleport the Ender Dragon!").withStyle(ChatFormatting.RED));
+            }
+            return;
+        }
         if (!level.isClientSide && level instanceof ServerLevel serverLevel) {
             if (level.dimension().equals(ModDimensions.SPARTA_LEVEL_KEY)) {
                 // Если в Спарте, возвращаем в предыдущее измерение
@@ -103,7 +112,8 @@ public class Pocket extends Item {
         
         for (Entity entity : player.level().getEntities(player, searchBox, entity -> 
             entity != player && entity.isAlive() && entity.isPickable())) {
-            
+            // Пропускаем эндер дракона и его части
+            if (entity instanceof EnderDragon || entity instanceof EnderDragonPart) continue;
             AABB entityBox = entity.getBoundingBox().inflate(0.3D);
             Optional<Vec3> hitVec = entityBox.clip(eyePos, endPos);
             

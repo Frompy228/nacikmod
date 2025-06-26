@@ -38,7 +38,7 @@ import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = NacikMod.MOD_ID)
 public class Gravity extends Item {
-    private static final int MANA_COST_PER_SECOND = 10;
+    private static final int MANA_COST_PER_SECOND = 20;
     private static final int MANA_COST_EFFECT = 500;
     private static final int EFFECT_RADIUS = 10;
     private static final int EFFECT_DURATION = 80;
@@ -199,7 +199,7 @@ public class Gravity extends Item {
                 player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> mana.removeMana(MANA_COST_EFFECT));
 
                 // Устанавливаем кулдаун на 5 секунд (100 тиков)
-                player.getCooldowns().addCooldown(this, 100);
+                player.getCooldowns().addCooldown(this, 140);
             } else {
                 // Переключение полета
                 if (!player.getCapability(ManaProvider.MANA_CAPABILITY).map(mana -> mana.getMana() >= MANA_COST_PER_SECOND).orElse(false)) {

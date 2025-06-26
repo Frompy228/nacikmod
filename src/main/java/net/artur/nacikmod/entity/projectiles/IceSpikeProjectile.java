@@ -1,5 +1,6 @@
 package net.artur.nacikmod.entity.projectiles;
 
+import net.artur.nacikmod.registry.ModBlocks;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
@@ -42,6 +43,7 @@ public class IceSpikeProjectile extends ThrowableItemProjectile {
                 float totalDamage = 13.0f + damage;
                 livingEntity.hurt(this.damageSources().thrown(this, this.getOwner()), totalDamage);
                 livingEntity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 2));
+                livingEntity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 60, 2));
                 BlockPos center = livingEntity.blockPosition();
                 Level level = livingEntity.level();
                 for (int dx = -1; dx <= 1; dx++) {
@@ -50,7 +52,7 @@ public class IceSpikeProjectile extends ThrowableItemProjectile {
                             if (Math.abs(dx) == 1 || Math.abs(dz) == 1 || dy == 2) {
                                 BlockPos pos = center.offset(dx, dy, dz);
                                 if (level.isEmptyBlock(pos)) {
-                                    level.setBlockAndUpdate(pos, Blocks.ICE.defaultBlockState());
+                                    level.setBlockAndUpdate(pos, net.artur.nacikmod.registry.ModBlocks.TEMPORARY_ICE.get().defaultBlockState());
                                 }
                             }
                         }
@@ -68,7 +70,7 @@ public class IceSpikeProjectile extends ThrowableItemProjectile {
         if (!this.level().isClientSide) {
             if (hitResult.getType() == HitResult.Type.BLOCK) {
                 BlockPos pos = BlockPos.containing(hitResult.getLocation());
-                if (!this.level().getBlockState(pos).is(Blocks.ICE) && !this.level().getBlockState(pos).isAir()) {
+                if (!this.level().getBlockState(pos).is(Blocks.ICE) && !this.level().getBlockState(pos).isAir() && !this.level().getBlockState(pos).is(ModBlocks.TEMPORARY_ICE.get())) {
                     this.discard();
                 }
             }

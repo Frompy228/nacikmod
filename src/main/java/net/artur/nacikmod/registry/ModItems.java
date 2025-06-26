@@ -55,6 +55,7 @@ public class ModItems {
     public static final RegistryObject<Item> ABSOLUTE_VISION = ITEMS.register("absolute_vision", () -> new AbsoluteVision(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> INTANGIBILITY = ITEMS.register("intangibility", () -> new Intangibility(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> DARK_SPHERE = ITEMS.register("dark_sphere", () -> new DarkSphere(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> EARTH_STEP = ITEMS.register("earth_step", () -> new EarthStep(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LANSER_SPAWN_EGG = ITEMS.register("lanser_spawn_egg",
             ()-> new ForgeSpawnEggItem(ModEntities.LANSER, 0x5b107e, 0xCF6A84,
                     new Item.Properties()));

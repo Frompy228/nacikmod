@@ -1,6 +1,8 @@
 package net.artur.nacikmod.registry;
 import net.artur.nacikmod.NacikMod;
 import net.artur.nacikmod.block.custom.ModPortalBlock;
+import net.artur.nacikmod.block.custom.TemporaryDirt;
+import net.artur.nacikmod.block.custom.TemporaryIce;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -26,6 +28,14 @@ public class ModBlocks {
 
     public static final RegistryObject<Block> MOD_PORTAL = registerBlock("mod_portal",
             () -> new ModPortalBlock(BlockBehaviour.Properties.copy(Blocks.STONE).noLootTable().noOcclusion().noCollission()));
+
+    public static final RegistryObject<Block> TEMPORARY_DIRT = registerBlock("temporary_dirt",
+            () -> new TemporaryDirt(BlockBehaviour.Properties.copy(Blocks.DIRT).noLootTable()));
+
+    public static final RegistryObject<Block> TEMPORARY_ICE = registerBlock("temporary_ice",
+            () -> new TemporaryIce(BlockBehaviour.Properties.copy(Blocks.ICE).noLootTable()));
+
+
 
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
