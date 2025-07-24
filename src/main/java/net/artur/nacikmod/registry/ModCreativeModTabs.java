@@ -1,12 +1,10 @@
-package net.artur.nacikmod.item;
+package net.artur.nacikmod.registry;
 
 import net.artur.nacikmod.NacikMod;
-import net.artur.nacikmod.registry.ModItems;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
@@ -25,6 +23,8 @@ public class ModCreativeModTabs {
                         pOutput.accept(ModItems.HIRAISHIN_WITHOUT_SEAL.get());
                         pOutput.accept(ModItems.HIRAISHIN.get());
                         pOutput.accept(ModItems.MANA_SWORD.get());
+                        pOutput.accept(ModItems.CURSED_SWORD.get());
+                        pOutput.accept(ModItems.POISONED_SCYTHE.get());
                         pOutput.accept(ModItems.MAGIC_BOW.get());
                         pOutput.accept(ModItems.LEONID_SHIELD.get());
                         pOutput.accept(ModItems.LEONID_HELMET.get());
@@ -41,11 +41,13 @@ public class ModCreativeModTabs {
                         pOutput.accept(ModItems.LEONID_SPAWN_EGG.get());
                         pOutput.accept(ModItems.SPARTAN_SPAWN_EGG.get());
                         pOutput.accept(ModItems.BERSERKER_SPAWN_EGG.get());
+                        pOutput.accept(ModItems.ARCHER_SPAWN_EGG.get());
                         pOutput.accept(ModItems.MAGIC_HEALING.get());
                         pOutput.accept(ModItems.RELEASE.get());
                         pOutput.accept(ModItems.MAGIC_WEAPONS.get());
                         pOutput.accept(ModItems.FIRE_FLOWER.get());
                         pOutput.accept(ModItems.ICE_PRISON.get());
+                        pOutput.accept(ModItems.EARTH_STEP.get());
                         pOutput.accept(ModItems.GRAVITY.get());
                         pOutput.accept(ModItems.SHINRA_TENSEI.get());
                         pOutput.accept(ModItems.SENSORY_RAIN.get());

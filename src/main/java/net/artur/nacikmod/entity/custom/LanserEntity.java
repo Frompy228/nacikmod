@@ -118,10 +118,11 @@ public class LanserEntity extends HeroSouls {
                 .add(ModAttributes.BONUS_ARMOR.get(),15)
                 .add(Attributes.ARMOR, 20)
                 .add(Attributes.ARMOR_TOUGHNESS, 10)
-                .add(Attributes.MAX_HEALTH, 115.0)
-                .add(Attributes.ATTACK_DAMAGE, 22.0)
-                .add(Attributes.MOVEMENT_SPEED, 0.8)
+                .add(Attributes.MAX_HEALTH, 130.0)
+                .add(Attributes.ATTACK_DAMAGE, 20.0)
+                .add(Attributes.MOVEMENT_SPEED, 0.75)
                 .add(ForgeMod.SWIM_SPEED.get(), 2) // Увеличиваем скорость плавания в 1.5 раза
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0.2)
                 .add(Attributes.FOLLOW_RANGE, 32.0);
     }
 
@@ -248,7 +249,7 @@ public class LanserEntity extends HeroSouls {
                 }
 
                 lanser.attackWithMainHand = !lanser.attackWithMainHand;
-                attackCooldown = 15;
+                attackCooldown = 17;
             } else {
                 attackCooldown--;
             }
@@ -318,9 +319,9 @@ public class LanserEntity extends HeroSouls {
         Random random = new Random(); // Генератор случайных чисел
 
         // Шанс дропа в процентах (0.0 - 1.0)
-        double chanceProtectionLans = 0.25;
-        double chanceNaciiLans = 0.15;
-        double chanceCircuit = 0.25;
+        double chanceProtectionLans = 0.20;
+        double chanceNaciiLans = 0.09;
+        double chanceCircuit = 0.27;
 
         // Логика дропа с шансом
         if (random.nextDouble() < chanceProtectionLans) {

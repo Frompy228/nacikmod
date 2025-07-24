@@ -1,15 +1,7 @@
 package net.artur.nacikmod.registry;
 
-import net.artur.nacikmod.entity.custom.LanserEntity;
-import net.artur.nacikmod.entity.custom.LeonidEntity;
-import net.artur.nacikmod.entity.custom.SpartanEntity;
-import net.artur.nacikmod.entity.custom.BerserkerEntity;
-import net.artur.nacikmod.entity.projectiles.BloodShootProjectile;
-import net.artur.nacikmod.entity.projectiles.FireArrowEntity;
-import net.artur.nacikmod.entity.projectiles.FireCloudEntity;
-import net.artur.nacikmod.entity.projectiles.ManaSwordProjectile;
-import net.artur.nacikmod.entity.projectiles.ManaArrowProjectile;
-import net.artur.nacikmod.entity.projectiles.IceSpikeProjectile;
+import net.artur.nacikmod.entity.custom.*;
+import net.artur.nacikmod.entity.projectiles.*;
 import net.artur.nacikmod.NacikMod;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -98,6 +90,13 @@ public class ModEntities {
                             .clientTrackingRange(8)
                             .updateInterval(20)
                             .build("ice_spike_projectile"));
+
+    public static final RegistryObject<EntityType<ArcherEntity>> ARCHER =
+            ENTITY_TYPES.register("archer", () ->
+                    EntityType.Builder.of(ArcherEntity::new, MobCategory.MONSTER)
+                            .sized(0.6f, 1.8f)
+                            .build("archer")
+            );
 
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);

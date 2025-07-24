@@ -1,0 +1,28 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "nacikmod:item/poisoned_scythe"
+  },
+  "display": {
+    "firstperson_righthand": {
+      "rotation": [ 0, -90, 35 ],
+      "translation": [ 1.13, 3.2, 1.13 ],
+      "scale": [ 1.5, 1.5, 1 ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [ 0, 90, -35 ],
+      "translation": [ 1.13, 3.2, 1.13 ],
+      "scale": [ 1.5, 1.5, 1 ]
+    },
+    "thirdperson_righthand": {
+      "rotation": [ 0, -90, 50 ],
+      "translation": [ 0, 10, 1 ],
+      "scale": [ 2, 2, 1 ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [ 0, 90, -50 ],
+      "translation": [ 0, 10, 1 ],
+      "scale": [ 2, 2, 1 ]
+    }
+  }
+}

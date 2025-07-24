@@ -8,7 +8,9 @@
   "client": [
     "MagicBowMixin",
     "SkyRendererMixin",
-    "MinecraftMixin"
+    "MinecraftMixin",
+    "StrongPoisonHeartsMixin",
+    "LivingEntityNacikmodMixin"
   ],
   "server": [],
   "injectors": {

@@ -17,6 +17,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.ChatFormatting;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
+import net.artur.nacikmod.registry.ModDamageTypes;
+import net.minecraft.server.level.ServerLevel;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -28,7 +30,7 @@ public class BreakingBodyLimitAbility {
     private static final String ACTIVE_TAG = "active";
     private static final String LEVEL_TAG = "level";
     private static final UUID DAMAGE_MODIFIER_UUID = UUID.fromString("b1a2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d");
-    private static final int HP_CHECK_INTERVAL = 20;
+    private static final int HP_CHECK_INTERVAL = 25;
 
     public static class Level {
         public final int hpCost;
@@ -158,7 +160,11 @@ public class BreakingBodyLimitAbility {
         }
         if (activePlayers.contains(player.getUUID()) && activeItem != null) {
             Level currentLevel = getCurrentLevel(activeItem);
-            player.setHealth(player.getHealth() - currentLevel.hpCost);
+            if (player.level() instanceof ServerLevel serverLevel) {
+                player.hurt(ModDamageTypes.breakingBodyLimit(serverLevel), currentLevel.hpCost);
+            } else {
+                player.hurt(player.level().damageSources().generic(), currentLevel.hpCost);
+            }
             // Эффекты силы, скорости, прыгучести
             if (currentLevel.strengthAmplifier > 0)
                 player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 40, currentLevel.strengthAmplifier - 1, false, false));

@@ -40,6 +40,7 @@ public class ModModelLayers {
             new ResourceLocation(NacikMod.MOD_ID, "berserker_layer"), "main");
 
     @OnlyIn(Dist.CLIENT)
-    public static final ModelLayerLocation ICE_SPIKE_LAYER = new ModelLayerLocation(
-            new ResourceLocation(NacikMod.MOD_ID, "ice_spike_projectile"), "main");
+    public static final ModelLayerLocation ARCHER_LAYER = new ModelLayerLocation(
+            new ResourceLocation(NacikMod.MOD_ID, "archer_layer"), "main");
+
 }

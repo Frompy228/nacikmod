@@ -15,7 +15,7 @@ public class TemporaryIce extends Block {
     @Override
     public void onPlace(BlockState state, Level world, BlockPos pos, BlockState oldState, boolean isMoving) {
         if (!world.isClientSide) {
-            world.scheduleTick(pos, this, 100); // 5 секунд
+            world.scheduleTick(pos, this, 75);
         }
     }
 

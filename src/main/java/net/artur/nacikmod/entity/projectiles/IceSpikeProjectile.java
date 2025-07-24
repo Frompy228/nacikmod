@@ -40,7 +40,7 @@ public class IceSpikeProjectile extends ThrowableItemProjectile {
     protected void onHitEntity(EntityHitResult entityHitResult) {
         if (!this.level().isClientSide) {
             if (entityHitResult.getEntity() instanceof LivingEntity livingEntity) {
-                float totalDamage = 13.0f + damage;
+                float totalDamage = 15.0f + damage;
                 livingEntity.hurt(this.damageSources().thrown(this, this.getOwner()), totalDamage);
                 livingEntity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 2));
                 livingEntity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 60, 2));
