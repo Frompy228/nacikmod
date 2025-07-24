@@ -1,0 +1,291 @@
+package net.artur.nacikmod.entity.custom;
+
+import net.artur.nacikmod.capability.mana.ManaProvider;
+import net.artur.nacikmod.entity.MobClass.HeroSouls;
+import net.artur.nacikmod.registry.ModAttributes;
+import net.artur.nacikmod.registry.ModEffects;
+import net.artur.nacikmod.registry.ModItems;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.WaterAnimal;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.monster.RangedAttackMob;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Random;
+import net.artur.nacikmod.item.Intangibility;
+import net.artur.nacikmod.capability.mana.IMana;
+
+public class ArcherEntity extends HeroSouls implements RangedAttackMob {
+    private static final double OPTIMAL_DISTANCE = 20.0;
+    private static final double SWITCH_TO_MELEE_DISTANCE = 6.0;
+    private static final double SWITCH_TO_RANGED_DISTANCE = 7.0;
+    private static final double MAX_SHOOT_DISTANCE = 32.0;
+    private static final double SHOOT_SPEED = 2.8;
+    private static final int SHOOT_COOLDOWN_TICKS = 25;
+    private static final int MELEE_COOLDOWN_TICKS = 14;
+    private static final int ROOT_ABILITY_COOLDOWN_TICKS = 300; // 20 секунд
+    private static final int ROOT_ABILITY_MANA_COST = 3000;
+    private static final int ROOT_ABILITY_DURATION = 20 * 7; // 7 секунд
+    private int shootCooldown = 0;
+    private int rootAbilityCooldown = 0;
+    private boolean attackWithMainHand = true;
+
+    public ArcherEntity(EntityType<? extends HeroSouls> entityType, Level level) {
+        super(entityType, level);
+        this.setCanUseBothHands(true);
+    }
+
+    public static AttributeSupplier.Builder createAttributes() {
+        return Monster.createMonsterAttributes()
+                .add(ModAttributes.BONUS_ARMOR.get(), 11)
+                .add(Attributes.ARMOR, 20)
+                .add(Attributes.ARMOR_TOUGHNESS, 10)
+                .add(Attributes.MAX_HEALTH, 115.0)
+                .add(Attributes.ATTACK_DAMAGE, 15.0)
+                .add(Attributes.MOVEMENT_SPEED, 0.45)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0.1)
+                .add(Attributes.FOLLOW_RANGE, 32.0);
+    }
+
+    @Override
+    protected void registerGoals() {
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new ArcherRangedGoal(this, 1.0));
+        this.goalSelector.addGoal(2, new ArcherMeleeGoal(this, 1.0));
+        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 0.8D));
+        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Mob.class, 40, true, false, this::isValidTarget));
+    }
+
+    private boolean isValidTarget(LivingEntity entity) {
+        return !(entity instanceof Animal) && !(entity instanceof WaterAnimal);
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (shootCooldown > 0) shootCooldown--;
+        // Root-способность только если есть цель
+        LivingEntity target = this.getTarget();
+        if (target != null) {
+            if (rootAbilityCooldown > 0) rootAbilityCooldown--;
+            if (!this.level().isClientSide && rootAbilityCooldown == 0) {
+                this.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
+                    if (mana.getMana() >= ROOT_ABILITY_MANA_COST && this.isValidTarget(target) && target.isAlive() && this.hasLineOfSight(target)) {
+                        target.addEffect(new MobEffectInstance(ModEffects.ROOT.get(), ROOT_ABILITY_DURATION, 0, false, true));
+                        mana.removeMana(ROOT_ABILITY_MANA_COST);
+                        rootAbilityCooldown = ROOT_ABILITY_COOLDOWN_TICKS;
+                        this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.ILLUSIONER_CAST_SPELL, SoundSource.PLAYERS, 1.0F, 1.0F);
+                    }
+                });
+            }
+        }
+    }
+
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        boolean isHurt = super.hurt(source, amount);
+        if (isHurt) {
+            Entity attacker = source.getEntity();
+            if (attacker instanceof LivingEntity livingAttacker && livingAttacker != this) {
+                this.setTarget(livingAttacker);
+            }
+        }
+        return isHurt;
+    }
+
+    @Override
+    public void performRangedAttack(LivingEntity target, float power) {
+        if (!this.level().isClientSide) {
+            this.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES, target.position());
+            net.artur.nacikmod.entity.projectiles.ManaArrowProjectile arrow = new net.artur.nacikmod.entity.projectiles.ManaArrowProjectile(this.level(), this);
+            double dx = target.getX() - this.getX();
+            double dy = target.getY(0.333) - arrow.getY();
+            double dz = target.getZ() - this.getZ();
+            double dist = Math.sqrt(dx * dx + dz * dz);
+            arrow.shoot(dx, dy + dist * 0.08F, dz, (float)SHOOT_SPEED, 0.0F);
+            arrow.setBaseDamage(10.0);
+            this.level().addFreshEntity(arrow);
+        }
+    }
+
+    @Override
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
+        SpawnGroupData data = super.finalizeSpawn(world, difficulty, reason, spawnData, dataTag);
+        this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ModItems.MAGIC_BOW.get()));
+        this.setItemSlot(EquipmentSlot.OFFHAND, ItemStack.EMPTY);
+        AttributeInstance attribute = this.getAttribute(ModAttributes.BONUS_ARMOR.get());
+        attribute.setBaseValue(11.0);
+        // Устанавливаем максимальную ману 10000
+        this.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
+            mana.setMaxMana(10000);
+            mana.setMana(10000);
+        });
+        return data;
+    }
+
+    // --- AI Goals ---
+    static class ArcherRangedGoal extends Goal {
+        private final ArcherEntity archer;
+        private final double speedModifier;
+        public ArcherRangedGoal(ArcherEntity archer, double speedModifier) {
+            this.archer = archer;
+            this.speedModifier = speedModifier;
+            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+        }
+        @Override
+        public boolean canUse() {
+            LivingEntity target = archer.getTarget();
+            return target != null && archer.distanceTo(target) > SWITCH_TO_MELEE_DISTANCE;
+        }
+        @Override
+        public boolean canContinueToUse() {
+            LivingEntity target = archer.getTarget();
+            return target != null && archer.distanceTo(target) > SWITCH_TO_MELEE_DISTANCE;
+        }
+        @Override
+        public void start() {
+            archer.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ModItems.MAGIC_BOW.get()));
+            archer.setItemSlot(EquipmentSlot.OFFHAND, ItemStack.EMPTY);
+        }
+        @Override
+        public void tick() {
+            LivingEntity target = archer.getTarget();
+            if (target == null) return;
+            double dist = archer.distanceTo(target);
+            // Движение: держим дистанцию
+            if (dist > OPTIMAL_DISTANCE + 2) {
+                archer.getNavigation().moveTo(target, speedModifier);
+            } else if (dist < OPTIMAL_DISTANCE - 2) {
+                Vec3 away = archer.position().subtract(target.position()).normalize();
+                archer.getNavigation().moveTo(archer.getX() + away.x * 2, archer.getY(), archer.getZ() + away.z * 2, speedModifier);
+            } else {
+                // Круговое движение
+                double angle = (archer.tickCount % 40 < 20) ? Math.PI / 2 : -Math.PI / 2;
+                Vec3 dir = target.position().subtract(archer.position()).normalize();
+                double x = -dir.z * Math.sin(angle);
+                double z = dir.x * Math.sin(angle);
+                double randomOffset = (archer.getRandom().nextDouble() - 0.5) * 2.0;
+                archer.getNavigation().moveTo(
+                    archer.getX() + x + randomOffset,
+                    archer.getY(),
+                    archer.getZ() + z + randomOffset,
+                    speedModifier
+                );
+            }
+            // Стрельба
+            if (archer.shootCooldown == 0 && archer.hasLineOfSight(target) && dist <= MAX_SHOOT_DISTANCE) {
+                archer.performRangedAttack(target, 1.0F);
+                archer.shootCooldown = SHOOT_COOLDOWN_TICKS;
+            }
+        }
+    }
+
+    static class ArcherMeleeGoal extends Goal {
+        private final ArcherEntity archer;
+        private final double speedModifier;
+        private int attackCooldown = 0;
+
+        public ArcherMeleeGoal(ArcherEntity archer, double speedModifier) {
+            this.archer = archer;
+            this.speedModifier = speedModifier;
+            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+        }
+        @Override
+        public boolean canUse() {
+            LivingEntity target = archer.getTarget();
+            return target != null && archer.distanceTo(target) <= SWITCH_TO_MELEE_DISTANCE;
+        }
+        @Override
+        public boolean canContinueToUse() {
+            LivingEntity target = archer.getTarget();
+            return target != null && archer.distanceTo(target) <= SWITCH_TO_RANGED_DISTANCE;
+        }
+        @Override
+        public void start() {
+            archer.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ModItems.CURSED_SWORD.get()));
+            archer.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(ModItems.CURSED_SWORD.get()));
+            attackCooldown = 0;
+        }
+        @Override
+        public void tick() {
+            LivingEntity target = archer.getTarget();
+            if (target == null) return;
+            archer.getNavigation().moveTo(target, speedModifier);
+            archer.getLookControl().setLookAt(target, 30.0F, 30.0F);
+            // Гарантируем, что в обеих руках кастомные мечи
+            if (!(archer.getMainHandItem().getItem() == ModItems.CURSED_SWORD.get() && archer.getOffhandItem().getItem() == ModItems.CURSED_SWORD.get())) {
+                archer.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ModItems.CURSED_SWORD.get()));
+                archer.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(ModItems.CURSED_SWORD.get()));
+            }
+            double dist = archer.distanceTo(target);
+            if (attackCooldown > 0) { attackCooldown--; return; }
+            if (dist < 3.5 && archer.hasLineOfSight(target)) {
+                // --- Intangibility bypass logic ---
+                if (target instanceof Player player) {
+                    // Атакуем
+                    InteractionHand hand = archer.attackWithMainHand ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
+                    archer.swing(hand);
+                    archer.doHurtTarget(target);
+                    archer.attackWithMainHand = !archer.attackWithMainHand;
+                    attackCooldown = MELEE_COOLDOWN_TICKS;
+                    // Сжигаем ману у цели (не уходит в минус)
+                    player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
+                        int currentMana = mana.getMana();
+                        mana.removeMana(Math.min(currentMana, 50));
+                    });
+                    // --- Дополнительный урон за бонусную броню ---
+                    AttributeInstance bonusArmor = player.getAttribute(ModAttributes.BONUS_ARMOR.get());
+                    double bonus = bonusArmor != null ? bonusArmor.getValue() : 0.0;
+                    float extraDamage = (float) (bonus * 0.45);
+                    if (extraDamage > 0) {
+                        player.hurt(archer.damageSources().mobAttack(archer), extraDamage);
+                    }
+                    return;
+                }
+                // --- Обычные цели ---
+                InteractionHand hand = archer.attackWithMainHand ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
+                archer.swing(hand);
+                archer.doHurtTarget(target);
+                archer.attackWithMainHand = !archer.attackWithMainHand;
+                attackCooldown = MELEE_COOLDOWN_TICKS;
+                // Сжигаем ману у цели (не уходит в минус)
+                target.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
+                    int currentMana = mana.getMana();
+                    mana.removeMana(Math.min(currentMana, 50));
+                });
+                // --- Дополнительный урон за бонусную броню ---
+                AttributeInstance bonusArmor = target.getAttribute(ModAttributes.BONUS_ARMOR.get());
+                double bonus = bonusArmor != null ? bonusArmor.getValue() : 0.0;
+                float extraDamage = (float) (bonus * 0.45);
+                if (extraDamage > 0) {
+                    target.hurt(archer.damageSources().mobAttack(archer), extraDamage);
+                }
+            }
+        }
+    }
+}
+

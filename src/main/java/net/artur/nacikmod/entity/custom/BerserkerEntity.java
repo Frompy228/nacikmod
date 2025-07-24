@@ -50,6 +50,9 @@ public class BerserkerEntity extends HeroSouls {
     private static final int BASE_ATTACK_COOLDOWN = 50; // 2 секунды между атаками
     private int currentAttackCooldown = BASE_ATTACK_COOLDOWN; // Текущая перезарядка атаки
 
+    // Флаг для защиты от повторного входа в performRoar
+    private boolean isRoaring = false;
+
     public BerserkerEntity(EntityType<? extends HeroSouls> entityType, Level level) {
         super(entityType, level);
     }
@@ -128,7 +131,7 @@ public class BerserkerEntity extends HeroSouls {
                 .add(ModAttributes.BONUS_ARMOR.get(), 10)
                 .add(Attributes.ARMOR, 17)
                 .add(Attributes.ARMOR_TOUGHNESS, 15)
-                .add(Attributes.MAX_HEALTH, 100.0)
+                .add(Attributes.MAX_HEALTH, 115.0)
                 .add(Attributes.ATTACK_DAMAGE, BASE_ATTACK_DAMAGE)
                 .add(Attributes.MOVEMENT_SPEED, 0.3)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1)
@@ -198,9 +201,13 @@ public class BerserkerEntity extends HeroSouls {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
+        // Не ревём и не обрабатываем урон, если уже мертвы
+        if (!this.isAlive()) return super.hurt(source, amount);
         // Проверяем, что урон приходит от сущности и не от самого себя
-        if (!this.level().isClientSide && source.getEntity() != null && source.getEntity() != this && roarCooldown <= 0) {
+        if (!this.level().isClientSide && source.getEntity() != this && roarCooldown <= 0 && !isRoaring) {
+            isRoaring = true;
             performRoar();
+            isRoaring = false;
             roarCooldown = ROAR_COOLDOWN;
         }
 
@@ -256,13 +263,9 @@ public class BerserkerEntity extends HeroSouls {
     protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
         Random random = new Random(); // Генератор случайных чисел
         double chanceCircuit = 0.25;
-        double chanceMagicBow = 0.15;
 
         if (random.nextDouble() < chanceCircuit) {
             this.spawnAtLocation(new ItemStack(ModItems.MAGIC_CIRCUIT.get(), 20));
-        }
-        if (random.nextDouble() < chanceMagicBow) {
-            this.spawnAtLocation(new ItemStack(ModItems.MAGIC_BOW.get(), 1));
         }
     }
 
@@ -292,7 +295,7 @@ public class BerserkerEntity extends HeroSouls {
                     this.getX(),
                     this.getY(),
                     this.getZ(),
-                    700 // Количество опыта
+                    750 // Количество опыта
             ));
         }
     }

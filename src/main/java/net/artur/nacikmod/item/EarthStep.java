@@ -30,7 +30,7 @@ import java.util.HashSet;
 @Mod.EventBusSubscriber
 public class EarthStep extends Item {
     private static final int SPEED_AMPLIFIER = 3;
-    private static final int MANA_COST_PER_SECOND = 25; // 20 маны в секунду
+    private static final int MANA_COST_PER_SECOND = 30; // 20 маны в секунду
     private static final String ACTIVE_TAG = "active";
     private static final java.util.Set<UUID> activeEarthStepPlayers = new java.util.HashSet<>();
 
@@ -86,7 +86,6 @@ public class EarthStep extends Item {
         }
         // Каждый тик: эффекты и земля
         player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 25, SPEED_AMPLIFIER, true, false));
-        player.addEffect(new MobEffectInstance(MobEffects.GLOWING, 25, 0, true, false));
         if (!player.isShiftKeyDown()) {
             createEarthBlocksUnderPlayer(player.level(), player);
         }

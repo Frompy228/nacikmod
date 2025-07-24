@@ -28,6 +28,7 @@ public class ModItems {
     public static final RegistryObject<Item> HIRAISHIN_WITHOUT_SEAL = ITEMS.register("hiraishin_without_seal", HiraishinWithoutSeal::new);
     public static final RegistryObject<Item> SPEAR = ITEMS.register("spear", Spear::new);
     public static final RegistryObject<Item> DUBINKA = ITEMS.register("dubinka", () -> new Dubinka());
+    public static final RegistryObject<Item> CURSED_SWORD = ITEMS.register("cursed_sword", () -> new CursedSword());
     public static final RegistryObject<Item> MAGIC_BOW = ITEMS.register("magic_bow", () -> new MagicBow());
     public static final RegistryObject<Item> MAGIC_ARMOR = ITEMS.register("magic_armor", MagicArmor::new);
     public static final RegistryObject<Item> MAGIC_CHARM = ITEMS.register("magic_charm", MagicCharm::new);
@@ -56,6 +57,7 @@ public class ModItems {
     public static final RegistryObject<Item> INTANGIBILITY = ITEMS.register("intangibility", () -> new Intangibility(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> DARK_SPHERE = ITEMS.register("dark_sphere", () -> new DarkSphere(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EARTH_STEP = ITEMS.register("earth_step", () -> new EarthStep(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> POISONED_SCYTHE = ITEMS.register("poisoned_scythe", () -> new PoisonedScythe());
     public static final RegistryObject<Item> LANSER_SPAWN_EGG = ITEMS.register("lanser_spawn_egg",
             ()-> new ForgeSpawnEggItem(ModEntities.LANSER, 0x5b107e, 0xCF6A84,
                     new Item.Properties()));
@@ -67,5 +69,8 @@ public class ModItems {
                     new Item.Properties()));
     public static final RegistryObject<Item> BERSERKER_SPAWN_EGG = ITEMS.register("berserker_spawn_egg",
             ()-> new ForgeSpawnEggItem(ModEntities.BERSERK, 0x897765, 0x474d5d,
+                    new Item.Properties()));
+    public static final RegistryObject<Item> ARCHER_SPAWN_EGG = ITEMS.register("archer_spawn_egg",
+            ()-> new ForgeSpawnEggItem(ModEntities.ARCHER, 0xc5cacc, 0xa1524c,
                     new Item.Properties()));
 }

@@ -24,7 +24,7 @@ public class ManaLastMagic {
 
         // Добавляем эффект LastMagic
         player.addEffect(new net.minecraft.world.effect.MobEffectInstance(
-            ModEffects.MANA_LAST_MAGIC.get(), 2400, 0, false, false));
+            ModEffects.MANA_LAST_MAGIC.get(), 3600, 0, false, false));
 
         // Добавляем игрока в список активных
         activeLastMagicPlayers.add(player.getUUID());

@@ -41,10 +41,21 @@ public class MagicCircuit extends Item {
                 }
             });
 
+            player.level().playSound(
+                    null, // null означает, что звук услышат все рядом
+                    player.getX(), player.getY(), player.getZ(),
+                    net.minecraft.sounds.SoundEvents.EXPERIENCE_ORB_PICKUP,
+                    net.minecraft.sounds.SoundSource.PLAYERS,
+                    1.0F, // громкость
+                    1.0F  // высота
+            );
+
             // Удаляем предмет после использования
             if (!player.isCreative()) { // Если игрок не в креативе, тратим предмет
                 stack.shrink(1);
             }
+
+
         }
 
         return InteractionResultHolder.success(player.getItemInHand(hand));

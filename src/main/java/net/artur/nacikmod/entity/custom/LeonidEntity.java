@@ -74,10 +74,11 @@ public class LeonidEntity extends HeroSouls {
                 .add(ModAttributes.BONUS_ARMOR.get(),15)
                 .add(Attributes.ARMOR,15)
                 .add(Attributes.ARMOR_TOUGHNESS,10)
-                .add(Attributes.MAX_HEALTH, 150.0) // Больше здоровья чем у базового HeroSouls
-                .add(Attributes.ATTACK_DAMAGE, 22.0) // Больше урона
+                .add(Attributes.MAX_HEALTH, 165.0) // Больше здоровья чем у базового HeroSouls
+                .add(Attributes.ATTACK_DAMAGE, 20.0) // Больше урона
                 .add(Attributes.MOVEMENT_SPEED, 0.4) // Быстрее базового HeroSouls
                 .add(Attributes.FOLLOW_RANGE, 40.0) // Больший радиус обнаружения
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0.3)
                 .add(ForgeMod.SWIM_SPEED.get(), 2); // Увеличиваем скорость плавания в 1.5 раза
     }
 
@@ -140,7 +141,7 @@ public class LeonidEntity extends HeroSouls {
                     // Наносим урон с учетом оружия
                     target.hurt(leonid.damageSources().mobAttack(leonid), totalDamage);
 
-                    attackCooldown = 12;
+                    attackCooldown = 14;
                 } else {
                     attackCooldown--;
                 }
@@ -348,7 +349,7 @@ public class LeonidEntity extends HeroSouls {
         Random random = new Random(); // Генератор случайных чисел
 
         // Шанс дропа в процентах (0.0 - 1.0)
-        double chanceLeonidShield = 0.25;
+        double chanceLeonidShield = 0.20;
         double chanceLeonidHelmet = 0.12;
         double chanceCircuit = 0.25;
 

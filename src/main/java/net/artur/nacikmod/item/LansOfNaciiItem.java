@@ -2,6 +2,7 @@ package net.artur.nacikmod.item;
 
 import net.artur.nacikmod.registry.ModItems;
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -13,12 +14,16 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeMod;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.ImmutableMultimap;
 import net.artur.nacikmod.registry.ModEffects;
+
+import java.util.List;
 import java.util.UUID;
 import net.minecraft.world.InteractionHand;
+import org.jetbrains.annotations.Nullable;
 
 
 public class LansOfNaciiItem extends SwordItem {
@@ -61,7 +66,7 @@ public class LansOfNaciiItem extends SwordItem {
             if (amplifier > 0) {
                 target.addEffect(new MobEffectInstance(ModEffects.HEALTH_REDUCTION.get(), 20000, amplifier));
             }
-            target.addEffect(new MobEffectInstance(ModEffects.NO_REGEN.get(), 240, 0));
+            target.addEffect(new MobEffectInstance(ModEffects.NO_REGEN.get(), 180, 0));
 
             if (attacker instanceof Player player) {
                 ItemStack mainHandItem = player.getMainHandItem();
@@ -94,7 +99,7 @@ public class LansOfNaciiItem extends SwordItem {
     private static class CustomTier implements Tier {
         @Override
         public int getUses() {
-            return 2500; // Прочность меча
+            return 2300; // Прочность меча
         }
 
         @Override
@@ -121,5 +126,12 @@ public class LansOfNaciiItem extends SwordItem {
         public Ingredient getRepairIngredient() {
             return Ingredient.of(ModItems.SHARD_OF_ARTIFACT.get()); // Ремонт незеритом
         }
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
+        super.appendHoverText(stack, level, tooltipComponents, isAdvanced);
+
+        tooltipComponents.add(Component.translatable("item.nacikmod.lans_of_nacii.desc1"));
     }
 }

@@ -227,6 +227,33 @@ public class Gravity extends Item {
         if (event.phase != TickEvent.Phase.END) return;
         Player player = event.player;
 
+        // Проверяем наличие Dark Sphere
+        boolean hasDarkSphere = CuriosApi.getCuriosInventory(player)
+                .map(handler -> {
+                    for (ICurioStacksHandler stacksHandler : handler.getCurios().values()) {
+                        for (int i = 0; i < stacksHandler.getSlots(); i++) {
+                            ItemStack curiosStack = stacksHandler.getStacks().getStackInSlot(i);
+                            if (curiosStack.getItem() == ModItems.DARK_SPHERE.get()) {
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+                })
+                .orElse(false);
+        if (!hasDarkSphere) {
+            if (isFlyingActive(player)) {
+                stopFlying(player);
+            }
+            // Сбросить ACTIVE_TAG у всех Gravity (на всякий случай)
+            for (ItemStack stack : player.getInventory().items) {
+                if (stack.getItem() instanceof Gravity) {
+                    stack.getOrCreateTag().putBoolean(ACTIVE_TAG, false);
+                }
+            }
+            return;
+        }
+
         // Проверяем все предметы Gravity в инвентаре
         boolean hasActiveItem = false;
         for (ItemStack stack : player.getInventory().items) {

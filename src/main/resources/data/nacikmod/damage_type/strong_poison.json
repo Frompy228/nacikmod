@@ -1,0 +1,6 @@
+{
+  "message_id": "strong_poison",
+  "scaling": "never",
+  "exhaustion": 0.1,
+  "effects": ["magic"]
+}

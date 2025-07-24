@@ -14,7 +14,6 @@ public class AttackHandler {
             
             player.level().getEntities(player, area).forEach(entity -> {
                 if (entity instanceof LivingEntity living && entity != target) {
-                    living.hurt(player.level().damageSources().generic(), 5.0f);
                 }
             });
         }

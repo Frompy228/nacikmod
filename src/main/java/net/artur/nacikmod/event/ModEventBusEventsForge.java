@@ -3,6 +3,7 @@ package net.artur.nacikmod.event;
 import net.artur.nacikmod.NacikMod;
 import net.artur.nacikmod.capability.reward.PlayerRewardsProvider;
 import net.artur.nacikmod.item.MagicCharm;
+import net.artur.nacikmod.item.CursedSword;
 import net.artur.nacikmod.registry.ModAttributes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
@@ -61,14 +62,32 @@ public class ModEventBusEventsForge {
         if (event.getSource().getEntity() instanceof Player player) {
             // Проверяем, держит ли игрок ManaSword
             ItemStack heldItem = player.getMainHandItem();
-            if (heldItem.getItem() instanceof ManaSword) {
-                // Получаем дополнительный урон из NBT
-                if (heldItem.hasTag() && heldItem.getTag().contains("ManaDamage")) {
-                    int manaDamage = heldItem.getTag().getInt("ManaDamage");
+
+            
+            // Проверяем, держит ли игрок CursedSword
+            if (heldItem.getItem() instanceof CursedSword) {
+                // Получаем значение бонусной брони у цели
+                AttributeInstance bonusArmor = event.getEntity().getAttribute(ModAttributes.BONUS_ARMOR.get());
+                double bonus = bonusArmor != null ? bonusArmor.getValue() : 0.0;
+                float extraDamage = (float) (bonus * 0.45); // 0.45 урона за 1 бонусной брони
+                
+                if (extraDamage > 0) {
                     // Добавляем дополнительный урон к базовому
-                    event.setAmount(event.getAmount() + manaDamage);
+                    event.setAmount(event.getAmount() + extraDamage);
                 }
+                
+                // Сжигаем ману у цели (у всех существ с способностью маны)
+                LivingEntity target = event.getEntity();
+                float damageDealt = event.getAmount();
+                int manaToBurn = (int) (damageDealt * 5); // 5 маны за 1 урон
+                
+                target.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
+                    int currentMana = mana.getMana();
+                    int burnedMana = Math.min(currentMana, manaToBurn);
+                    mana.removeMana(burnedMana);
+                });
             }
+            
             AttackHandler.onAttack(event.getEntity(), player);
         }
     }

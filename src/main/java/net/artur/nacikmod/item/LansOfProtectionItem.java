@@ -1,6 +1,7 @@
 package net.artur.nacikmod.item;
 
 import net.artur.nacikmod.registry.ModItems;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.HumanoidArm;
 import net.artur.nacikmod.registry.ModEffects;
 import net.minecraft.server.level.ServerPlayer;
@@ -14,9 +15,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeMod;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.ImmutableMultimap;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 import java.util.UUID;
 
 public class LansOfProtectionItem extends SwordItem {
@@ -109,5 +114,11 @@ public class LansOfProtectionItem extends SwordItem {
         public Ingredient getRepairIngredient() {
             return Ingredient.of(ModItems.SHARD_OF_ARTIFACT.get()); // Ремонт незеритом
         }
+    }
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
+        super.appendHoverText(stack, level, tooltipComponents, isAdvanced);
+
+        tooltipComponents.add(Component.translatable("item.nacikmod.lans_of_protection.desc1"));
     }
 }

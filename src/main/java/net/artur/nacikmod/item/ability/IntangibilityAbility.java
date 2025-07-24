@@ -13,6 +13,8 @@ import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.artur.nacikmod.NacikMod;
+import net.artur.nacikmod.entity.custom.ArcherEntity;
+import net.minecraft.world.damagesource.DamageSource;
 
 @Mod.EventBusSubscriber(modid = NacikMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class IntangibilityAbility {
@@ -20,6 +22,18 @@ public class IntangibilityAbility {
     @SubscribeEvent
     public static void onLivingAttack(LivingAttackEvent event) {
         if (event.getEntity() instanceof Player player && isIntangible(player)) {
+            // Исключение: если атакующий держит CursedSword, не отменять
+            if (event.getSource().getEntity() instanceof Player attacker) {
+                if (attacker.getMainHandItem().getItem() instanceof net.artur.nacikmod.item.CursedSword) {
+                    return;
+                }
+            }
+            // Исключение: если атакующий ArcherEntity и это ближний бой
+            if (event.getSource().getEntity() instanceof ArcherEntity archer) {
+                if (event.getSource().getMsgId().equals("mob")) {
+                    return;
+                }
+            }
             event.setCanceled(true);
         }
     }
@@ -27,6 +41,18 @@ public class IntangibilityAbility {
     @SubscribeEvent
     public static void onLivingHurt(LivingHurtEvent event) {
         if (event.getEntity() instanceof Player player && isIntangible(player)) {
+            // Исключение: если атакующий держит CursedSword, не отменять
+            if (event.getSource().getEntity() instanceof Player attacker) {
+                if (attacker.getMainHandItem().getItem() instanceof net.artur.nacikmod.item.CursedSword) {
+                    return;
+                }
+            }
+            // Исключение: если атакующий ArcherEntity и это ближний бой
+            if (event.getSource().getEntity() instanceof ArcherEntity archer) {
+                if (event.getSource().getMsgId().equals("mob")) {
+                    return;
+                }
+            }
             event.setCanceled(true);
         }
     }

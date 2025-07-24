@@ -40,9 +40,9 @@ public class EffectManaLastMagic extends MobEffect {
                 1, AttributeModifier.Operation.ADDITION);
         // Добавляем модификаторы досягаемости
         this.addAttributeModifier(ForgeMod.ENTITY_REACH.get(), ENTITY_REACH_UUID.toString(),
-                3.0, AttributeModifier.Operation.ADDITION);
+                2.0, AttributeModifier.Operation.ADDITION);
         this.addAttributeModifier(ForgeMod.BLOCK_REACH.get(), BLOCK_REACH_UUID.toString(),
-                3.0, AttributeModifier.Operation.ADDITION);
+                2.0, AttributeModifier.Operation.ADDITION);
         // Добавляем модификаторы здоровья и брони
         this.addAttributeModifier(Attributes.MAX_HEALTH, MAX_HEALTH_UUID.toString(),
                 250.0, AttributeModifier.Operation.ADDITION);

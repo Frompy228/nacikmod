@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class IcePrison extends Item {
-    private static final int COOLDOWN = 100;
+    private static final int COOLDOWN = 125;
     private static final int MANA_COST = 250;
 
     public IcePrison(Properties properties) {

@@ -14,7 +14,7 @@ public class KeyBindings {
     public static final KeyMapping ABILITY_KEY = new KeyMapping(
             "key.nacikmod.ability_key",
             GLFW.GLFW_KEY_P,
-            KeyMapping.CATEGORY_GAMEPLAY
+            "key.category.nacikmod"
     );
     @SubscribeEvent
     public static void registerKeys(RegisterKeyMappingsEvent event) {

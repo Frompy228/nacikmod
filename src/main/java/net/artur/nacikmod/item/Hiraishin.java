@@ -109,7 +109,7 @@ public class Hiraishin extends SwordItem {
     private static class CustomTier implements Tier {
         @Override
         public int getUses() {
-            return 2000; // Прочность меча
+            return 1950; // Прочность меча
         }
 
         @Override
