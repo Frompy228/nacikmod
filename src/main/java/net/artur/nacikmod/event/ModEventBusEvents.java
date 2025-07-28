@@ -4,9 +4,12 @@ import net.artur.nacikmod.NacikMod;
 import net.artur.nacikmod.entity.custom.*;
 import net.artur.nacikmod.network.ModMessages;
 import net.artur.nacikmod.registry.ModEntities;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
@@ -26,6 +29,8 @@ public class ModEventBusEvents {
         event.put(ModEntities.SPARTAN.get(), SpartanEntity.createAttributes().build());
         event.put(ModEntities.BERSERK.get(), BerserkerEntity.createAttributes().build());
         event.put(ModEntities.ARCHER.get(), ArcherEntity.createAttributes().build());
+        event.put(ModEntities.MYSTERIOUS_TRADER.get(), MysteriousTraderEntity.createAttributes().build());
+        event.put(ModEntities.MYSTERIOUS_TRADER_BATTLE_CLONE.get(), MysteriousTraderBattleCloneEntity.createAttributes().build());
     }
 
     @SubscribeEvent
@@ -33,5 +38,7 @@ public class ModEventBusEvents {
         event.register(ModEntities.LANSER.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
         event.register(ModEntities.LEONID.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
         event.register(ModEntities.BERSERK.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
+        event.register(ModEntities.ARCHER.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
+        event.register(ModEntities.MYSTERIOUS_TRADER.get(), SpawnPlacements.Type.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MysteriousTraderEntity::canSpawn, SpawnPlacementRegisterEvent.Operation.REPLACE);
     }
 }

@@ -98,6 +98,20 @@ public class ModEntities {
                             .build("archer")
             );
 
+    public static final RegistryObject<EntityType<MysteriousTraderEntity>> MYSTERIOUS_TRADER =
+            ENTITY_TYPES.register("mysterious_trader", () ->
+                    EntityType.Builder.of(MysteriousTraderEntity::new, MobCategory.CREATURE)
+                            .sized(0.6f, 1.8f)
+                            .build("mysterious_trader")
+            );
+
+    public static final RegistryObject<EntityType<MysteriousTraderBattleCloneEntity>> MYSTERIOUS_TRADER_BATTLE_CLONE =
+            ENTITY_TYPES.register("mysterious_trader_battle_clone", () ->
+                    EntityType.Builder.of(MysteriousTraderBattleCloneEntity::new, MobCategory.MONSTER)
+                            .sized(0.6f, 1.8f)
+                            .build("mysterious_trader_battle_clone")
+            );
+
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);
     }

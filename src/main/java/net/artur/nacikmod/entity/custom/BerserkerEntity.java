@@ -263,9 +263,13 @@ public class BerserkerEntity extends HeroSouls {
     protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
         Random random = new Random(); // Генератор случайных чисел
         double chanceCircuit = 0.25;
+        double chanceGodHand = 0.19;
 
         if (random.nextDouble() < chanceCircuit) {
             this.spawnAtLocation(new ItemStack(ModItems.MAGIC_CIRCUIT.get(), 20));
+        }
+        if (random.nextDouble() < chanceGodHand) {
+            this.spawnAtLocation(new ItemStack(ModItems.GOD_HAND.get(), 1));
         }
     }
 
@@ -295,7 +299,7 @@ public class BerserkerEntity extends HeroSouls {
                     this.getX(),
                     this.getY(),
                     this.getZ(),
-                    750 // Количество опыта
+                    300 // Количество опыта
             ));
         }
     }

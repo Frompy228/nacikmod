@@ -4,6 +4,7 @@ import net.artur.nacikmod.NacikMod;
 import net.artur.nacikmod.armor.models.DarkSphereModel;
 import net.artur.nacikmod.armor.models.LeonidHelmetModel;
 import net.artur.nacikmod.client.renderer.DarkSphereRenderer;
+import net.artur.nacikmod.client.renderer.HundredSealLayer;
 import net.artur.nacikmod.client.renderer.LeonidHelmetRenderer;
 import net.artur.nacikmod.client.renderer.ReleaseAuraRenderer;
 import net.artur.nacikmod.client.renderer.LastMagicAuraRenderer;
@@ -39,6 +40,8 @@ public class ModEventBusClientEvents {
         event.registerLayerDefinition(ModModelLayers.SPARTAN_LAYER, SpartanModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.BERSERKER_LAYER, BerserkerModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.ARCHER_LAYER, ArcherModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.MYSTERIOUS_TRADER_LAYER, MysteriousTraderModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.MYSTERIOUS_TRADER_BATTLE_CLONE_LAYER, MysteriousTraderBattleCloneModel::createBodyLayer);
         event.registerLayerDefinition(FireArrowModel.LAYER_LOCATION, FireArrowModel::createBodyLayer);
         event.registerLayerDefinition(ProjectileManaSwordModel.LAYER_LOCATION, ProjectileManaSwordModel::createBodyLayer);
         event.registerLayerDefinition(BloodShootProjectileModel.LAYER_LOCATION, BloodShootProjectileModel::createBodyLayer);
@@ -76,6 +79,8 @@ public class ModEventBusClientEvents {
             EntityRenderers.register(ModEntities.SPARTAN.get(), SpartanRender::new);
             EntityRenderers.register(ModEntities.BERSERK.get(), BerserkerRender::new);
             EntityRenderers.register(ModEntities.ARCHER.get(), ArcherRender::new);
+            EntityRenderers.register(ModEntities.MYSTERIOUS_TRADER.get(), MysteriousTraderRender::new);
+            EntityRenderers.register(ModEntities.MYSTERIOUS_TRADER_BATTLE_CLONE.get(), MysteriousTraderBattleCloneRender::new);
             EntityRenderers.register(ModEntities.FIRE_ARROW.get(), FireArrowRenderer::new);
             EntityRenderers.register(ModEntities.MANA_ARROW.get(), ManaArrowRenderer::new);
             EntityRenderers.register(ModEntities.FIRE_CLOUD.get(), FireCloudRenderer::new);
@@ -100,6 +105,7 @@ public class ModEventBusClientEvents {
             PlayerRenderer renderer = event.getSkin(skin);
             renderer.addLayer(new ReleaseAuraRenderer(renderer));
             renderer.addLayer(new LastMagicAuraRenderer(renderer));
+            renderer.addLayer(new HundredSealLayer.Vanilla<>(renderer));
         }
     }
 }

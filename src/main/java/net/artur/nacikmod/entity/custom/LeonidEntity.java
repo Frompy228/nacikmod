@@ -349,8 +349,8 @@ public class LeonidEntity extends HeroSouls {
         Random random = new Random(); // Генератор случайных чисел
 
         // Шанс дропа в процентах (0.0 - 1.0)
-        double chanceLeonidShield = 0.20;
-        double chanceLeonidHelmet = 0.12;
+        double chanceLeonidShield = 0.19;
+        double chanceLeonidHelmet = 0.11;
         double chanceCircuit = 0.25;
 
         // Логика дропа с шансом

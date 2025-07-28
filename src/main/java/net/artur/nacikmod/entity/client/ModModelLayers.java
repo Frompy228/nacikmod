@@ -43,4 +43,12 @@ public class ModModelLayers {
     public static final ModelLayerLocation ARCHER_LAYER = new ModelLayerLocation(
             new ResourceLocation(NacikMod.MOD_ID, "archer_layer"), "main");
 
+    @OnlyIn(Dist.CLIENT)
+    public static final ModelLayerLocation MYSTERIOUS_TRADER_LAYER = new ModelLayerLocation(
+            new ResourceLocation(NacikMod.MOD_ID, "mysterious_trader_layer"), "main");
+
+    @OnlyIn(Dist.CLIENT)
+    public static final ModelLayerLocation MYSTERIOUS_TRADER_BATTLE_CLONE_LAYER = new ModelLayerLocation(
+            new ResourceLocation(NacikMod.MOD_ID, "mysterious_trader_battle_clone_layer"), "main");
+
 }

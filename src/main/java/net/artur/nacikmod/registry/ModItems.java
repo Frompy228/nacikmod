@@ -57,7 +57,9 @@ public class ModItems {
     public static final RegistryObject<Item> INTANGIBILITY = ITEMS.register("intangibility", () -> new Intangibility(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> DARK_SPHERE = ITEMS.register("dark_sphere", () -> new DarkSphere(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EARTH_STEP = ITEMS.register("earth_step", () -> new EarthStep(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> HUNDRED_SEAL = ITEMS.register("hundred_seal", () -> new HundredSeal(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> POISONED_SCYTHE = ITEMS.register("poisoned_scythe", () -> new PoisonedScythe());
+    public static final RegistryObject<Item> GOD_HAND = ITEMS.register("god_hand", () -> new GodHand(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LANSER_SPAWN_EGG = ITEMS.register("lanser_spawn_egg",
             ()-> new ForgeSpawnEggItem(ModEntities.LANSER, 0x5b107e, 0xCF6A84,
                     new Item.Properties()));
@@ -72,5 +74,11 @@ public class ModItems {
                     new Item.Properties()));
     public static final RegistryObject<Item> ARCHER_SPAWN_EGG = ITEMS.register("archer_spawn_egg",
             ()-> new ForgeSpawnEggItem(ModEntities.ARCHER, 0xc5cacc, 0xa1524c,
+                    new Item.Properties()));
+    public static final RegistryObject<Item> MYSTERIOUS_TRADER_SPAWN_EGG = ITEMS.register("mysterious_trader_spawn_egg",
+            ()-> new ForgeSpawnEggItem(ModEntities.MYSTERIOUS_TRADER, 0x393939, 0x121212,
+                    new Item.Properties()));
+    public static final RegistryObject<Item> MYSTERIOUS_TRADER_BATTLE_CLONE_SPAWN_EGG = ITEMS.register("mysterious_trader_battle_clone_spawn_egg",
+            ()-> new ForgeSpawnEggItem(ModEntities.MYSTERIOUS_TRADER_BATTLE_CLONE, 0x393939, 0x121212,
                     new Item.Properties()));
 }

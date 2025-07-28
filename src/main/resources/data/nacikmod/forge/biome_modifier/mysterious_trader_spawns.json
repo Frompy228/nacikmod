@@ -1,0 +1,12 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": [
+    "minecraft:plains"
+  ],
+  "spawners": {
+    "type": "nacikmod:mysterious_trader",
+    "weight": 6,
+    "minCount": 1,
+    "maxCount": 1
+  }
+}

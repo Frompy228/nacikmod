@@ -319,7 +319,7 @@ public class LanserEntity extends HeroSouls {
         Random random = new Random(); // Генератор случайных чисел
 
         // Шанс дропа в процентах (0.0 - 1.0)
-        double chanceProtectionLans = 0.20;
+        double chanceProtectionLans = 0.19;
         double chanceNaciiLans = 0.09;
         double chanceCircuit = 0.27;
 
