@@ -43,4 +43,6 @@ public class ModEffects {
             EFFECTS.register("cursed_sword", EffectCursedSword::new);
     public static final RegistryObject<MobEffect> STRONG_POISON =
             EFFECTS.register("strong_poison", EffectStrongPoison::new);
+    public static final RegistryObject<MobEffect> GOD_HAND =
+            EFFECTS.register("god_hand", EffectGodHand::new);
 }

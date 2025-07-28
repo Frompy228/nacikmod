@@ -1,0 +1,17 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": [
+    "minecraft:plains",
+    "minecraft:snowy_beach",
+    "minecraft:snowy_taiga",
+    "minecraft:snowy_plains",
+    "minecraft:snowy_slopes",
+    "minecraft:ice_spikes"
+  ],
+  "spawners": {
+    "type": "nacikmod:archer",
+    "weight": 4,
+    "minCount": 1,
+    "maxCount": 1
+  }
+}

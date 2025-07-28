@@ -15,6 +15,7 @@ public class ModSounds {
     public static final RegistryObject<SoundEvent> ROAR = registerSoundEvent("roar");
     public static final RegistryObject<SoundEvent> GRAVITY = registerSoundEvent("gravity");
     public static final RegistryObject<SoundEvent> BERSERKER_ROAR = registerSoundEvent("berserker_roar");
+    public static final RegistryObject<SoundEvent> GOD_HAND = registerSoundEvent("god_hand");
 
     private static RegistryObject<SoundEvent> registerSoundEvent(String name) {
         return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(NacikMod.MOD_ID, name)));

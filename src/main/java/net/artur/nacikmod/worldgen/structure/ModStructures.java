@@ -110,10 +110,11 @@ public class ModStructures {
         avgX /= players.size();
         avgZ /= players.size();
 
-        // Рандомно выбрать смещение: (+1000, +1000) или (-1000, -1000)
-        boolean plus = level.getRandom().nextBoolean();
-        int x = (int)avgX + (plus ? 1000 : -1000);
-        int z = (int)avgZ + (plus ? 1000 : -1000);
+        // Генерируем случайные смещения для x и z независимо друг от друга
+        int xOffset = level.getRandom().nextInt(-3000, 3001); // от -3000 до +3000 включительно
+        int zOffset = level.getRandom().nextInt(-3000, 3001); // от -3000 до +3000 включительно
+        int x = (int)avgX + xOffset;
+        int z = (int)avgZ + zOffset;
 
         // Принудительно загружаем чанк, чтобы getHeight вернул корректную высоту
         // Важно: это может вызвать генерацию чанка, что немного нагружает сервер, если делать часто и далеко от игроков

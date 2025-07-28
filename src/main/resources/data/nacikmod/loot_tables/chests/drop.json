@@ -48,25 +48,25 @@
         {
           "type": "minecraft:item",
           "name": "minecraft:diamond",
-          "weight": 25,
+          "weight": 35,
           "functions": []
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:amethyst_shard",
-          "weight": 24,
+          "weight": 34,
           "functions": []
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:netherite_scrap",
-          "weight": 23,
+          "weight": 30,
           "functions": []
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:brown_dye",
-          "weight": 16,
+          "weight": 19,
           "functions": []
         },
         {
@@ -74,6 +74,20 @@
           "name": "nacikmod:dark_sphere",
           "weight": 9,
           "functions": []
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nacikmod:magic_circuit",
+          "weight": 15,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 1,
+                "max": 2
+              }
+            }
+          ]
         },
         {
           "type": "minecraft:item",

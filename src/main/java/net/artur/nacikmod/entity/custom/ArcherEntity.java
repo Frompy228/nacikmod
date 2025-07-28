@@ -29,6 +29,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.ForgeMod;
 import org.jetbrains.annotations.Nullable;
 import java.util.EnumSet;
 import java.util.List;
@@ -43,10 +44,10 @@ public class ArcherEntity extends HeroSouls implements RangedAttackMob {
     private static final double MAX_SHOOT_DISTANCE = 32.0;
     private static final double SHOOT_SPEED = 2.8;
     private static final int SHOOT_COOLDOWN_TICKS = 25;
-    private static final int MELEE_COOLDOWN_TICKS = 14;
+    private static final int MELEE_COOLDOWN_TICKS = 12;
     private static final int ROOT_ABILITY_COOLDOWN_TICKS = 300; // 20 секунд
     private static final int ROOT_ABILITY_MANA_COST = 3000;
-    private static final int ROOT_ABILITY_DURATION = 20 * 7; // 7 секунд
+    private static final int ROOT_ABILITY_DURATION = 180; // 7 секунд
     private int shootCooldown = 0;
     private int rootAbilityCooldown = 0;
     private boolean attackWithMainHand = true;
@@ -65,7 +66,8 @@ public class ArcherEntity extends HeroSouls implements RangedAttackMob {
                 .add(Attributes.ATTACK_DAMAGE, 15.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.45)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.1)
-                .add(Attributes.FOLLOW_RANGE, 32.0);
+                .add(ForgeMod.SWIM_SPEED.get(), 2)
+                .add(Attributes.FOLLOW_RANGE, 40.0);
     }
 
     @Override
@@ -285,6 +287,47 @@ public class ArcherEntity extends HeroSouls implements RangedAttackMob {
                     target.hurt(archer.damageSources().mobAttack(archer), extraDamage);
                 }
             }
+        }
+    }
+    @Override
+    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
+        Random random = new Random();
+        double chanceMagicBow = 0.10;
+        double chanceCursedSword = 0.19;
+        double chanceCircuit = 0.27;
+
+        if (random.nextDouble() < chanceMagicBow) {
+            this.spawnAtLocation(new ItemStack(ModItems.MAGIC_BOW.get()));
+        }
+        if (random.nextDouble() < chanceCursedSword) {
+            this.spawnAtLocation(new ItemStack(ModItems.CURSED_SWORD.get()));
+        }
+        if (random.nextDouble() < chanceCircuit) {
+            this.spawnAtLocation(new ItemStack(ModItems.MAGIC_CIRCUIT.get(), 13));
+        }
+    }
+
+    @Override
+    protected void dropEquipment() {
+        // Не дропаем экипировку из рук
+    }
+
+    @Override
+    public void dropAllDeathLoot(DamageSource source) {
+        this.dropCustomDeathLoot(source, 0, false);
+        this.dropExperience();
+    }
+
+    @Override
+    protected void dropExperience() {
+        if (!this.level().isClientSide) {
+            this.level().addFreshEntity(new net.minecraft.world.entity.ExperienceOrb(
+                    this.level(),
+                    this.getX(),
+                    this.getY(),
+                    this.getZ(),
+                    80 // Количество опыта
+            ));
         }
     }
 }

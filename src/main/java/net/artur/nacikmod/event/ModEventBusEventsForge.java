@@ -5,6 +5,7 @@ import net.artur.nacikmod.capability.reward.PlayerRewardsProvider;
 import net.artur.nacikmod.item.MagicCharm;
 import net.artur.nacikmod.item.CursedSword;
 import net.artur.nacikmod.registry.ModAttributes;
+import net.artur.nacikmod.registry.ModItems;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -26,8 +27,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.registry.ModEffects;
 import net.minecraft.world.item.ItemStack;
-import net.artur.nacikmod.item.ManaSword;
-import net.artur.nacikmod.effect.EffectBloodExplosion;
+import net.minecraft.server.level.ServerLevel;
 
 @Mod.EventBusSubscriber(modid = NacikMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ModEventBusEventsForge {
@@ -101,7 +101,6 @@ public class ModEventBusEventsForge {
             // Trigger the effect's remove method to cause explosion
             entity.removeEffect(ModEffects.BLOOD_EXPLOSION.get());
         }
-
         // Existing mana check code
         if (entity instanceof Player player) {
             if (player.hasEffect(ModEffects.MANA_LAST_MAGIC.get())) {
@@ -110,7 +109,63 @@ public class ModEventBusEventsForge {
                     mana.setMana(0);
                 });
             }
+
+            // --- GOD HAND LOGIC ---
+            boolean saved = false;
+            int godHandLevel = 0;
+            int godHandDuration = 500;
+            // 1. Если есть предмет GodHand в инвентаре
+            for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+                ItemStack stack = player.getInventory().getItem(i);
+                if (stack.getItem() == ModItems.GOD_HAND.get()) {
+                    // Спасаем игрока
+                    event.setCanceled(true);
+                    player.setHealth(10.0F);
+                    stack.shrink(1);
+                    // Накладываем эффект GodHand 0 уровня (amplifier = 0)
+                    player.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                        ModEffects.GOD_HAND.get(), godHandDuration, 0, false, true, true));
+                    saved = true;
+                    godHandLevel = 0;
+                    break;
+                }
+            }
+            // 2. Если есть эффект GodHand (до 5 уровня)
+            if (!saved && player.hasEffect(ModEffects.GOD_HAND.get())) {
+                net.minecraft.world.effect.MobEffectInstance effect = player.getEffect(ModEffects.GOD_HAND.get());
+                int amplifier = effect.getAmplifier();
+                if (amplifier < 4) { // максимум 5 уровень (amplifier = 4)
+                    event.setCanceled(true);
+                    player.setHealth(10.0F);
+                    // Накладываем эффект с уровнем выше и обновляем длительность
+                    player.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                        ModEffects.GOD_HAND.get(), godHandDuration, amplifier + 1, false, true, true));
+                    godHandLevel = amplifier + 1;
+                    saved = true;
+                }
+            }
+            // 3. Если спасли, спавним частицы и проигрываем звук
+            if (saved && !player.level().isClientSide) {
+                // Спавним золотые частицы вокруг игрока
+                if (player.level() instanceof ServerLevel serverLevel) {
+                    for (int i = 0; i < 40; i++) {
+                        double dx = (player.getRandom().nextDouble() - 0.5) * player.getBbWidth() * 2.5;
+                        double dy = player.getRandom().nextDouble() * player.getBbHeight();
+                        double dz = (player.getRandom().nextDouble() - 0.5) * player.getBbWidth() * 2.5;
+                        serverLevel.sendParticles(
+                            net.minecraft.core.particles.ParticleTypes.GLOW,
+                            player.getX() + dx,
+                            player.getY() + dy + 0.5,
+                            player.getZ() + dz,
+                            1, 0, 0, 0, 0.15
+                        );
+                    }
+                    // Проигрываем звук god_hand
+                    serverLevel.playSound(null, player.getX(), player.getY(), player.getZ(),
+                        net.artur.nacikmod.registry.ModSounds.GOD_HAND.get(),
+                        net.minecraft.sounds.SoundSource.PLAYERS, 1.0F, 1.0F);
+                }
+            }
         }
     }
-
 }

@@ -13,7 +13,7 @@
 
 
   "biomes": "#nacikmod:has_structure/mana_blessing_structure",
-
+  "terrain_adaptation": "beard_box",
 
   "step": "surface_structures",
 

@@ -15,7 +15,7 @@ public class TemporaryDirt extends Block {
     @Override
     public void onPlace(BlockState state, Level world, BlockPos pos, BlockState oldState, boolean isMoving) {
         if (!world.isClientSide) {
-            world.scheduleTick(pos, this, 40); // 2 секунды
+            world.scheduleTick(pos, this, 45); // 2 секунды
         }
     }
 

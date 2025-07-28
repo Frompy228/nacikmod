@@ -16,5 +16,11 @@
       "nacikmod:berserker_roar"
     ],
     "subtitle": "subtitles.nacikmod.berserker_roar"
+  },
+  "god_hand": {
+    "sounds": [
+      "nacikmod:god_hand"
+    ],
+    "subtitle": "subtitles.nacikmod.god_hand"
   }
 }
