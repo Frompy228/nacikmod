@@ -97,24 +97,8 @@ public class BerserkerEntity extends HeroSouls {
                 if (attackCooldown <= 0) {
                     berserker.swing(InteractionHand.MAIN_HAND);
 
-                    // Наносим урон основной цели
+                    // Наносим урон основной цели (атака по области автоматически сработает в doHurtTarget)
                     berserker.doHurtTarget(target);
-
-                    // Наносим урон всем сущностям в радиусе
-                    AABB area = new AABB(
-                            target.getX() - AREA_DAMAGE_RADIUS, target.getY() - AREA_DAMAGE_RADIUS, target.getZ() - AREA_DAMAGE_RADIUS,
-                            target.getX() + AREA_DAMAGE_RADIUS, target.getY() + AREA_DAMAGE_RADIUS, target.getZ() + AREA_DAMAGE_RADIUS
-                    );
-
-                    List<LivingEntity> nearbyEntities = berserker.level().getEntitiesOfClass(
-                            LivingEntity.class,
-                            area,
-                            entity -> entity != target && entity != berserker && berserker.canAttack(entity)
-                    );
-
-                    for (LivingEntity entity : nearbyEntities) {
-                        berserker.doHurtTarget(entity);
-                    }
 
                     attackCooldown = berserker.currentAttackCooldown;
                 } else {
@@ -124,6 +108,33 @@ public class BerserkerEntity extends HeroSouls {
 
             super.tick();
         }
+    }
+
+    @Override
+    public boolean doHurtTarget(Entity entity) {
+        boolean success = super.doHurtTarget(entity);
+        
+        // Если атака прошла успешно и цель - живая сущность, применяем атаку по области
+        if (success && entity instanceof LivingEntity target) {
+            // Наносим урон всем сущностям в радиусе 2 блоков от атакуемой цели
+            AABB area = new AABB(
+                    target.getX() - 2, target.getY() - 2, target.getZ() - 2,
+                    target.getX() + 2, target.getY() + 2, target.getZ() + 2
+            );
+
+            List<LivingEntity> nearbyEntities = this.level().getEntitiesOfClass(
+                    LivingEntity.class,
+                    area,
+                    entity2 -> entity2 != target && entity2 != this && entity2.isAlive()
+            );
+
+            // Наносим урон всем найденным сущностям
+            for (LivingEntity nearbyEntity : nearbyEntities) {
+                super.doHurtTarget(nearbyEntity);
+            }
+        }
+        
+        return success;
     }
 
     public static AttributeSupplier.Builder createAttributes() {

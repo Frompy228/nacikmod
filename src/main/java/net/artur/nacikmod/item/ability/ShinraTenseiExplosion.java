@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ShinraTenseiExplosion extends Explosion {
-    private static final float FIXED_DAMAGE = 500.0f;
+    private static final float FIXED_DAMAGE = 1000.0f;
     private static final int MAX_BLOCKS_PER_TICK = 100;
     private static final int CYLINDER_HEIGHT = 20; // Высота в одну сторону
     private static final int CYLINDER_RADIUS = 50;

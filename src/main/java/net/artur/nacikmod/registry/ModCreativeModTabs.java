@@ -34,6 +34,7 @@ public class ModCreativeModTabs {
                         pOutput.accept(ModItems.DARK_SPHERE.get());
                         pOutput.accept(ModItems.MANA_CRYSTAL.get());
                         pOutput.accept(ModItems.SHARD_OF_ARTIFACT.get());
+                        pOutput.accept(ModItems.ANCIENT_SCROLL.get());
                         pOutput.accept(ModItems.MAGIC_SEAL.get());
                         pOutput.accept(ModItems.MAGIC_CIRCUIT.get());
                         pOutput.accept(ModItems.MANA_BLESSING.get());
@@ -52,6 +53,9 @@ public class ModCreativeModTabs {
                         pOutput.accept(ModItems.FIRE_FLOWER.get());
                         pOutput.accept(ModItems.ICE_PRISON.get());
                         pOutput.accept(ModItems.EARTH_STEP.get());
+                        pOutput.accept(ModItems.SLASH.get());
+                        pOutput.accept(ModItems.DOUBLE_SLASH.get());
+                        pOutput.accept(ModItems.WORLD_SLASH.get());
                         pOutput.accept(ModItems.GRAVITY.get());
                         pOutput.accept(ModItems.SHINRA_TENSEI.get());
                         pOutput.accept(ModItems.SENSORY_RAIN.get());

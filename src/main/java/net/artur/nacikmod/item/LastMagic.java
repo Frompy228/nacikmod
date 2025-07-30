@@ -48,6 +48,8 @@ public class LastMagic extends Item {
                 .withStyle(ChatFormatting.DARK_RED));
         tooltipComponents.add(Component.translatable("item.nacikmod.last_magic.desc3")
                 .withStyle(ChatFormatting.DARK_RED));
+        tooltipComponents.add(Component.translatable("item.disappears")
+                .withStyle(ChatFormatting.GRAY));
     }
 
     @Override

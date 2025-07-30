@@ -112,6 +112,22 @@ public class ModEntities {
                             .build("mysterious_trader_battle_clone")
             );
 
+    public static final RegistryObject<EntityType<SlashProjectile>> SLASH_PROJECTILE =
+            ENTITY_TYPES.register("slash_projectile",
+                    () -> EntityType.Builder.<SlashProjectile>of((type, level) -> new SlashProjectile(type, level), MobCategory.MISC)
+                            .sized(3.0F, 0.2F)
+                            .clientTrackingRange(8)
+                            .updateInterval(20)
+                            .build("slash_projectile"));
+
+    public static final RegistryObject<EntityType<DoubleSlashProjectile>> DOUBLE_SLASH_PROJECTILE =
+            ENTITY_TYPES.register("double_slash_projectile",
+                    () -> EntityType.Builder.<DoubleSlashProjectile>of((type, level) -> new DoubleSlashProjectile(type, level), MobCategory.MISC)
+                            .sized(3.0F, 4F)
+                            .clientTrackingRange(8)
+                            .updateInterval(20)
+                            .build("double_slash_projectile"));
+
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);
     }

@@ -28,6 +28,8 @@ import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.registry.ModEffects;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.phys.AABB;
+import java.util.List;
 
 @Mod.EventBusSubscriber(modid = NacikMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ModEventBusEventsForge {
@@ -86,6 +88,30 @@ public class ModEventBusEventsForge {
                     int burnedMana = Math.min(currentMana, manaToBurn);
                     mana.removeMana(burnedMana);
                 });
+            }
+            
+            // Проверяем наличие эффекта ManaLastMagic у игрока
+            if (player.hasEffect(ModEffects.MANA_LAST_MAGIC.get())) {
+                LivingEntity target = event.getEntity();
+                
+                // Наносим урон по области в радиусе 1.5 блока от атакуемой цели
+                double areaRadius = 1.5;
+                AABB area = new AABB(
+                        target.getX() - areaRadius, target.getY() - areaRadius, target.getZ() - areaRadius,
+                        target.getX() + areaRadius, target.getY() + areaRadius, target.getZ() + areaRadius
+                );
+
+                // Ищем все сущности в радиусе 1.5 блока от цели
+                List<LivingEntity> nearbyEntities = target.level().getEntitiesOfClass(
+                        LivingEntity.class,
+                        area,
+                        entity -> entity != target && entity != player && entity.isAlive()
+                );
+
+                // Наносим урон 5 единиц всем найденным сущностям
+                for (LivingEntity nearbyEntity : nearbyEntities) {
+                    nearbyEntity.hurt(player.damageSources().playerAttack(player), 5.0f);
+                }
             }
             
             AttackHandler.onAttack(event.getEntity(), player);
