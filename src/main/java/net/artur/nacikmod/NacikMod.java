@@ -4,6 +4,9 @@ import com.mojang.logging.LogUtils;
 import net.artur.nacikmod.capability.mana.ManaSyncOnDeath;
 import net.artur.nacikmod.capability.reward.RewardEvents;
 import net.artur.nacikmod.capability.reward.RewardSyncOnDeath;
+import net.artur.nacikmod.capability.killcount.KillCountEvents;
+import net.artur.nacikmod.capability.killcount.KillCountHandler;
+import net.artur.nacikmod.capability.killcount.KillCountSyncOnDeath;
 import net.artur.nacikmod.datagen.ModWorldGenProvider;
 import net.artur.nacikmod.registry.ModCreativeModTabs;
 import net.artur.nacikmod.network.ModMessages;
@@ -48,6 +51,9 @@ public class NacikMod
         MinecraftForge.EVENT_BUS.register(ManaSyncOnDeath.class);
         MinecraftForge.EVENT_BUS.register(RewardEvents.class);
         MinecraftForge.EVENT_BUS.register(RewardSyncOnDeath.class);
+        MinecraftForge.EVENT_BUS.register(KillCountEvents.class);
+        MinecraftForge.EVENT_BUS.register(KillCountHandler.class);
+        MinecraftForge.EVENT_BUS.register(KillCountSyncOnDeath.class);
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
         ModCreativeModTabs.register(modEventBus);

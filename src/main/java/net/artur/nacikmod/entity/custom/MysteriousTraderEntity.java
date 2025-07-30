@@ -10,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.phys.Vec3;
@@ -156,16 +157,14 @@ public class MysteriousTraderEntity extends PathfinderMob implements Merchant, M
                 5, 2, 0.05F
         );
         offers.add(emeraldOffer);
-        // Четвертый трейд: magic charm на 7 magic circuit (только на уровне 1, 1 раз)
-        if (getVillagerLevel() >= 1) {
-            MerchantOffer charmOffer = new MerchantOffer(
-                    new ItemStack(ModItems.MAGIC_CHARM.get(), 1),
-                    ItemStack.EMPTY,
-                    new ItemStack(ModItems.MAGIC_CIRCUIT.get(), 7),
-                    1, 1, 0.05F // 1 XP за трейд
-            );
-            offers.add(charmOffer);
-        }
+
+        MerchantOffer slashOffer = new MerchantOffer(
+                new ItemStack(ModItems.SLASH.get(), 1),
+                new ItemStack(ModItems.SLASH.get(), 1),
+                new ItemStack(ModItems.DOUBLE_SLASH.get(), 1),
+                1, 2, 0.05F
+        );
+        offers.add(slashOffer);
     }
 
     @Override
@@ -398,6 +397,16 @@ public class MysteriousTraderEntity extends PathfinderMob implements Merchant, M
                 1, 1, 0.05F // 1 XP за трейд
             );
             this.offers.add(charmOffer);
+
+            this.tradeLevel = 1;
+            MerchantOffer ancientWorldSlashOffer = new MerchantOffer(
+                    new ItemStack(ModItems.ANCIENT_SCROLL.get(), 1),
+                    ItemStack.EMPTY,
+                    new ItemStack(ModItems.ANCIENT_SCROLL.get(), 1),
+                    1, 0, 0.05F // 0 XP за трейд
+            );
+            this.offers.add(ancientWorldSlashOffer);
+
             if (this.level() != null) {
                 this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
                         SoundEvents.PLAYER_LEVELUP, SoundSource.NEUTRAL, 1.0F, 1.0F);
@@ -491,7 +500,12 @@ public class MysteriousTraderEntity extends PathfinderMob implements Merchant, M
 
     @Override
     protected void dropCustomDeathLoot(net.minecraft.world.damagesource.DamageSource source, int looting, boolean recentlyHit) {
-        // Торговец не дропает предметы при смерти
+        Random random = new Random(); // Генератор случайных чисел
+        double chanceSlash = 0.10;
+
+        if (random.nextDouble() < chanceSlash) {
+            this.spawnAtLocation(new ItemStack(ModItems.SLASH.get(), 1));
+        }
     }
 
     @Override

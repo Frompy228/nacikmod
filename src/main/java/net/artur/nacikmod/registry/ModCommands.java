@@ -1,9 +1,8 @@
 package net.artur.nacikmod.registry;
 
-import com.mojang.brigadier.CommandDispatcher;
+import net.artur.nacikmod.command.KillCountCommand;
 import net.artur.nacikmod.command.SetMana;
 import net.artur.nacikmod.command.SetMaxMana;
-import net.minecraft.commands.CommandSourceStack;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -15,5 +14,6 @@ public class ModCommands {
     public static void onRegisterCommands(RegisterCommandsEvent event) {
         SetMana.register(event.getDispatcher());
         SetMaxMana.register(event.getDispatcher());
+        KillCountCommand.register(event.getDispatcher());
     }
 }

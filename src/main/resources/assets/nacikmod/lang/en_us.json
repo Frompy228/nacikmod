@@ -71,6 +71,11 @@
   "item.nacikmod.poisoned_scythe" : "Poisoned Scythe",
   "item.nacikmod.god_hand" : "The Hand of God",
   "item.nacikmod.hundred_seal": "Hundred Seal",
+  "item.nacikmod.slash": "Slash",
+  "item.nacikmod.double_slash": "Double Slash",
+  "item.nacikmod.world_slash": "World Slash",
+  "item.nacikmod.ancient_scroll": "Ancient Scroll",
+  "item.disappears": "The item disappears after use",
   "item.nacikmod.magic_circuit.desc1": "A magic chain that increases the player's maximum mana reserve by 50",
   "curios.identifier.artifact": "Artifact",
   "curios.identifier.ring": "Ring",
@@ -147,5 +152,12 @@
   "item.nacikmod.hundred_seal.inactive": "Inactive",
   "item.nacikmod.hundred_seal.desc2": "Mana Cost: 250/ps",
   "item.nacikmod.hundred_seal.desc3": "Right-click to activate",
-  "item.nacikmod.hundred_seal.desc4": "Shift + Right-click to put mana"
+  "item.nacikmod.hundred_seal.desc4": "Shift + Right-click to put mana",
+  "item.nacikmod.slash.desc1": "Air slash piercing everything in its path",
+  "item.nacikmod.slash.desc2": "Mana Cost: 500 | Damage: 20",
+  "item.nacikmod.double_slash.desc1": "Enhanced air slash piercing everything in its path",
+  "item.nacikmod.double_slash.desc2": "Mana Cost: 500 | Damage: 40",
+  "item.nacikmod.world_slash.desc1": "Slash is capable of instantly killing all living things",
+  "item.nacikmod.world_slash.desc2": "Mana Cost: 6500 | Damage: 500 | Radius: 50",
+  "item.nacikmod.ancient_scroll.desc1": "It preserves ancient knowledge"
 }

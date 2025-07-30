@@ -70,6 +70,11 @@
   "item.nacikmod.breaking_body_limit": "Слом предела тела",
   "item.nacikmod.earth_step" : "Земляной шаг",
   "item.nacikmod.hundred_seal": "Печать сотни",
+  "item.nacikmod.slash": "Разрез",
+  "item.nacikmod.double_slash": "Двойной разрез",
+  "item.nacikmod.world_slash": "Мировой разрез",
+  "item.nacikmod.ancient_scroll": "Древний свиток",
+  "item.disappears": "Предмет исчезает после использования",
   "item.nacikmod.magic_circuit.desc1": "Магическая цепь увеличивающая максимальный запас маны игрока на 50",
   "curios.identifier.artifact": "Артефакт",
   "curios.identifier.ring": "Кольцо",
@@ -146,5 +151,12 @@
   "item.nacikmod.hundred_seal.inactive": "Деактивировано",
   "item.nacikmod.hundred_seal.desc2": "Затраты маны: 250/с",
   "item.nacikmod.hundred_seal.desc3": "Right-click, чтобы активировать",
-  "item.nacikmod.hundred_seal.desc4": "Shift + Right-click, чтобы вложить ману"
+  "item.nacikmod.hundred_seal.desc4": "Shift + Right-click, чтобы вложить ману",
+  "item.nacikmod.slash.desc1": "Воздушный разрез, пронзающий все на своем пути",
+  "item.nacikmod.slash.desc2": "Затраты маны: 500 | Урон: 20",
+  "item.nacikmod.double_slash.desc1": "Усовершенствованный воздушный разрез, пронзающий все на своем пути",
+  "item.nacikmod.double_slash.desc2": "Затраты маны: 500 | Урон: 40",
+  "item.nacikmod.world_slash.desc1": "Разрез, способный мгновенно уничтожить все живое",
+  "item.nacikmod.world_slash.desc2": "Затраты маны: 6500 | Урон: 500 | Радиус: 50",
+  "item.nacikmod.ancient_scroll.desc1": "Хранит в себе древние знания"
 }

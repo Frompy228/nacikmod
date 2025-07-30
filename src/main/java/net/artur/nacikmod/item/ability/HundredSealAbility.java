@@ -57,7 +57,7 @@ public class HundredSealAbility {
                 player.addEffect(new net.minecraft.world.effect.MobEffectInstance(
                     net.minecraft.world.effect.MobEffects.REGENERATION, 
                     -1, // Бесконечная длительность
-                    5, // Уровень 6 (индекс 5)
+                    4, // Уровень 5 (индекс 4)
                     false, false, true
                 ));
                 

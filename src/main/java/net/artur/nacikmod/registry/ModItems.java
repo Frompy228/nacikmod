@@ -60,6 +60,10 @@ public class ModItems {
     public static final RegistryObject<Item> HUNDRED_SEAL = ITEMS.register("hundred_seal", () -> new HundredSeal(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> POISONED_SCYTHE = ITEMS.register("poisoned_scythe", () -> new PoisonedScythe());
     public static final RegistryObject<Item> GOD_HAND = ITEMS.register("god_hand", () -> new GodHand(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> SLASH = ITEMS.register("slash", () -> new Slash(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> DOUBLE_SLASH = ITEMS.register("double_slash", () -> new DoubleSlash(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> WORLD_SLASH = ITEMS.register("world_slash", () -> new WorldSlash(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> ANCIENT_SCROLL = ITEMS.register("ancient_scroll", () -> new AncientScroll(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LANSER_SPAWN_EGG = ITEMS.register("lanser_spawn_egg",
             ()-> new ForgeSpawnEggItem(ModEntities.LANSER, 0x5b107e, 0xCF6A84,
                     new Item.Properties()));
