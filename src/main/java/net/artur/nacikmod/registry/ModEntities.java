@@ -112,6 +112,13 @@ public class ModEntities {
                             .build("mysterious_trader_battle_clone")
             );
 
+    public static final RegistryObject<EntityType<BloodWarriorEntity>> BLOOD_WARRIOR =
+            ENTITY_TYPES.register("blood_warrior", () ->
+                    EntityType.Builder.of(BloodWarriorEntity::new, MobCategory.MONSTER)
+                            .sized(0.6f, 1.8f)
+                            .build("blood_warrior")
+            );
+
     public static final RegistryObject<EntityType<SlashProjectile>> SLASH_PROJECTILE =
             ENTITY_TYPES.register("slash_projectile",
                     () -> EntityType.Builder.<SlashProjectile>of((type, level) -> new SlashProjectile(type, level), MobCategory.MISC)
@@ -127,6 +134,14 @@ public class ModEntities {
                             .clientTrackingRange(8)
                             .updateInterval(20)
                             .build("double_slash_projectile"));
+
+    public static final RegistryObject<EntityType<SuppressingGate>> SUPPRESSING_GATE =
+            ENTITY_TYPES.register("suppressing_gate",
+                    () -> EntityType.Builder.<SuppressingGate>of((type, level) -> new SuppressingGate(type, level), MobCategory.MISC)
+                            .sized(4.0F, 4.0F)
+                            .clientTrackingRange(16)
+                            .updateInterval(2)
+                            .build("suppressing_gate"));
 
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);

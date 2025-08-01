@@ -402,8 +402,8 @@ public class MysteriousTraderEntity extends PathfinderMob implements Merchant, M
             MerchantOffer ancientWorldSlashOffer = new MerchantOffer(
                     new ItemStack(ModItems.ANCIENT_SCROLL.get(), 1),
                     ItemStack.EMPTY,
-                    new ItemStack(ModItems.ANCIENT_SCROLL.get(), 1),
-                    1, 0, 0.05F // 0 XP за трейд
+                    new ItemStack(ModItems.ANCIENT_SEAL.get(), 1),
+                    1, 2, 0.05F // 2 XP за трейд
             );
             this.offers.add(ancientWorldSlashOffer);
 

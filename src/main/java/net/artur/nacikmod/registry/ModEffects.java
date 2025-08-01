@@ -45,4 +45,6 @@ public class ModEffects {
             EFFECTS.register("strong_poison", EffectStrongPoison::new);
     public static final RegistryObject<MobEffect> GOD_HAND =
             EFFECTS.register("god_hand", EffectGodHand::new);
+    public static final RegistryObject<MobEffect> SUPPRESSING_GATE =
+            EFFECTS.register("suppressing_gate", EffectSuppressingGate::new);
 }

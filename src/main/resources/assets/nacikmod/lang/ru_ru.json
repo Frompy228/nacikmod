@@ -74,6 +74,8 @@
   "item.nacikmod.double_slash": "Двойной разрез",
   "item.nacikmod.world_slash": "Мировой разрез",
   "item.nacikmod.ancient_scroll": "Древний свиток",
+  "item.nacikmod.blood_warrior": "Кровавый воин",
+  "item.nacikmod.ancient_seal": "Древняя печать",
   "item.disappears": "Предмет исчезает после использования",
   "item.nacikmod.magic_circuit.desc1": "Магическая цепь увеличивающая максимальный запас маны игрока на 50",
   "curios.identifier.artifact": "Артефакт",
@@ -111,7 +113,7 @@
   "item.nacikmod.gravity.desc1": "Позволяет управлять гравитацией",
   "item.nacikmod.gravity.desc2": "Затраты маны полета: 20/с | Затраты маны: 500 | Радиус эффекта: 10 | Урон: 7/с",
   "item.nacikmod.shinra_tensei.desc1": "Уничтожает все на своем пути",
-  "item.nacikmod.shinra_tensei.desc2": "Затраты маны: 15000",
+  "item.nacikmod.shinra_tensei.desc2": "Затраты маны: 15000 | Урон: 1000",
   "item.nacikmod.gravity.active": "Активировано",
   "item.nacikmod.gravity.inactive": "Деактивировано",
   "item.nacikmod.sensory_rain.desc1": "Вызывает дождь усиливающий сенсорные способности",
@@ -158,5 +160,10 @@
   "item.nacikmod.double_slash.desc2": "Затраты маны: 500 | Урон: 40",
   "item.nacikmod.world_slash.desc1": "Разрез, способный мгновенно уничтожить все живое",
   "item.nacikmod.world_slash.desc2": "Затраты маны: 6500 | Урон: 500 | Радиус: 50",
-  "item.nacikmod.ancient_scroll.desc1": "Хранит в себе древние знания"
+  "item.nacikmod.ancient_scroll.desc1": "Хранит в себе древние знания",
+  "item.nacikmod.blood_warrior.desc1": "Создает кровавых воинов для защиты владельца",
+  "item.nacikmod.blood_warrior.desc2": "Затраты: 15,0",
+  "item.nacikmod.blood_warrior.desc3": "Затраты маны: 100",
+  "item.nacikmod.ancient_seal.desc1": "Древнее заклинание подавления жертвы",
+  "item.nacikmod.ancient_seal.desc2": "Затраты маны: 700"
 }

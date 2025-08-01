@@ -9,6 +9,8 @@ import net.artur.nacikmod.client.renderer.LeonidHelmetRenderer;
 import net.artur.nacikmod.client.renderer.ReleaseAuraRenderer;
 import net.artur.nacikmod.client.renderer.LastMagicAuraRenderer;
 import net.artur.nacikmod.entity.client.*;
+import net.artur.nacikmod.entity.client.SuppressingGateRenderer;
+import net.artur.nacikmod.entity.client.SuppressingGateModel;
 import net.artur.nacikmod.gui.TimeStopOverlay;
 import net.artur.nacikmod.item.MagicCrystal;
 import net.artur.nacikmod.registry.ModEntities;
@@ -42,6 +44,7 @@ public class ModEventBusClientEvents {
         event.registerLayerDefinition(ModModelLayers.ARCHER_LAYER, ArcherModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.MYSTERIOUS_TRADER_LAYER, MysteriousTraderModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.MYSTERIOUS_TRADER_BATTLE_CLONE_LAYER, MysteriousTraderBattleCloneModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.BLOOD_WARRIOR_LAYER, BloodWarriorModel::createBodyLayer);
         event.registerLayerDefinition(FireArrowModel.LAYER_LOCATION, FireArrowModel::createBodyLayer);
         event.registerLayerDefinition(ProjectileManaSwordModel.LAYER_LOCATION, ProjectileManaSwordModel::createBodyLayer);
         event.registerLayerDefinition(BloodShootProjectileModel.LAYER_LOCATION, BloodShootProjectileModel::createBodyLayer);
@@ -51,6 +54,7 @@ public class ModEventBusClientEvents {
         event.registerLayerDefinition(IceSpikeModel.LAYER_LOCATION, IceSpikeModel::createBodyLayer);
         event.registerLayerDefinition(SlashProjectileModel.LAYER_LOCATION, SlashProjectileModel::createBodyLayer);
         event.registerLayerDefinition(DoubleSlashProjectileModel.LAYER_LOCATION, DoubleSlashProjectileModel::createBodyLayer);
+        event.registerLayerDefinition(SuppressingGateModel.LAYER_LOCATION, SuppressingGateModel::createBodyLayer);
     }
 
 
@@ -83,12 +87,14 @@ public class ModEventBusClientEvents {
             EntityRenderers.register(ModEntities.ARCHER.get(), ArcherRender::new);
             EntityRenderers.register(ModEntities.MYSTERIOUS_TRADER.get(), MysteriousTraderRender::new);
             EntityRenderers.register(ModEntities.MYSTERIOUS_TRADER_BATTLE_CLONE.get(), MysteriousTraderBattleCloneRender::new);
+            EntityRenderers.register(ModEntities.BLOOD_WARRIOR.get(), BloodWarriorRender::new);
             EntityRenderers.register(ModEntities.FIRE_ARROW.get(), FireArrowRenderer::new);
             EntityRenderers.register(ModEntities.MANA_ARROW.get(), ManaArrowRenderer::new);
             EntityRenderers.register(ModEntities.FIRE_CLOUD.get(), FireCloudRenderer::new);
             EntityRenderers.register(ModEntities.ICE_SPIKE_PROJECTILE.get(), IceSpikeProjectileRenderer::new);
             EntityRenderers.register(ModEntities.SLASH_PROJECTILE.get(), SlashProjectileRenderer::new);
             EntityRenderers.register(ModEntities.DOUBLE_SLASH_PROJECTILE.get(), DoubleSlashProjectileRenderer::new);
+            EntityRenderers.register(ModEntities.SUPPRESSING_GATE.get(), SuppressingGateRenderer::new);
             
             // Register Dark Sphere renderer
             CuriosRendererRegistry.register(ModItems.DARK_SPHERE.get(), () -> new DarkSphereRenderer());

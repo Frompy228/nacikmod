@@ -14,7 +14,7 @@ import net.minecraft.world.level.Level;
 import net.artur.nacikmod.client.MoonTextureManager;
 import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.registry.ModItems;
-import net.artur.nacikmod.util.CooldownSave;
+import net.artur.nacikmod.util.PlayerCooldowns;
 import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
@@ -34,9 +34,9 @@ public class AbsoluteVision extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
 
-        // Проверяем кулдаун через NBT
-        if (CooldownSave.isOnCooldown(itemStack, level)) {
-            int left = CooldownSave.getCooldownLeft(itemStack, level);
+        // Проверяем кулдаун через capability игрока
+        if (PlayerCooldowns.isOnCooldown(player, this)) {
+            int left = PlayerCooldowns.getCooldownLeft(player, this);
             player.sendSystemMessage(Component.literal("Item is on cooldown! (" + left / 20 + "s left)")
                     .withStyle(ChatFormatting.RED));
             return InteractionResultHolder.fail(itemStack);
@@ -96,19 +96,16 @@ public class AbsoluteVision extends Item {
             // Активируем кастомную луну для всех игроков
             net.artur.nacikmod.network.ModMessages.sendCustomMoonToAll();
 
-            // Сохраняем кулдаун в NBT
-            CooldownSave.setCooldown(itemStack, level, COOLDOWN_TICKS);
+            // Сохраняем кулдаун в capability игрока
+            PlayerCooldowns.setCooldown(player, this, COOLDOWN_TICKS);
         }
         return InteractionResultHolder.success(itemStack);
     }
 
     // Восстанавливаем кулдаун при входе игрока (например, в PlayerLoggedInEvent)
     public static void restoreCooldowns(Player player) {
-        for (ItemStack stack : player.getInventory().items) {
-            if (stack.getItem() instanceof AbsoluteVision) {
-                CooldownSave.restoreCooldown(stack, player.level(), player, stack.getItem());
-            }
-        }
+        // Больше не нужно, так как перезарядки сохраняются в capability игрока
+        // и автоматически восстанавливаются при входе
     }
 
     @Override

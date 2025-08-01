@@ -62,6 +62,7 @@ public class ModCreativeModTabs {
                         pOutput.accept(ModItems.POCKET.get());
                         pOutput.accept(ModItems.ABSOLUTE_VISION.get());
                         pOutput.accept(ModItems.INTANGIBILITY.get());
+                        pOutput.accept(ModItems.ANCIENT_SEAL.get());
                     })
                     .build());
 

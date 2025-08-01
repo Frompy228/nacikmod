@@ -75,6 +75,8 @@
   "item.nacikmod.double_slash": "Double Slash",
   "item.nacikmod.world_slash": "World Slash",
   "item.nacikmod.ancient_scroll": "Ancient Scroll",
+  "item.nacikmod.blood_warrior": "Blood Warrior",
+  "item.nacikmod.ancient_seal": "Ancient Seal",
   "item.disappears": "The item disappears after use",
   "item.nacikmod.magic_circuit.desc1": "A magic chain that increases the player's maximum mana reserve by 50",
   "curios.identifier.artifact": "Artifact",
@@ -112,7 +114,7 @@
   "item.nacikmod.gravity.desc1": "Allows you to control gravity",
   "item.nacikmod.gravity.desc2": "Mana Cost Fly: 20/ps | Mana Cost: 500 | Effect Radius: 10 | Damage: 7/ps",
   "item.nacikmod.shinra_tensei.desc1": "Destroys everything in its path",
-  "item.nacikmod.shinra_tensei.desc2": "Mana Cost: 15000",
+  "item.nacikmod.shinra_tensei.desc2": "Mana Cost: 15000 | Damage: 1000",
   "item.nacikmod.gravity.active": "Active",
   "item.nacikmod.gravity.inactive": "Inactive",
   "item.nacikmod.sensory_rain.desc1": "Causes rain that enhances sensory abilities",
@@ -159,5 +161,10 @@
   "item.nacikmod.double_slash.desc2": "Mana Cost: 500 | Damage: 40",
   "item.nacikmod.world_slash.desc1": "Slash is capable of instantly killing all living things",
   "item.nacikmod.world_slash.desc2": "Mana Cost: 6500 | Damage: 500 | Radius: 50",
-  "item.nacikmod.ancient_scroll.desc1": "It preserves ancient knowledge"
+  "item.nacikmod.ancient_scroll.desc1": "It preserves ancient knowledge",
+  "item.nacikmod.blood_warrior.desc1": "Creates blood warriors to protect the owner",
+  "item.nacikmod.blood_warrior.desc2": "Cost: 15,0",
+  "item.nacikmod.blood_warrior.desc3": "Mana Cost: 100",
+  "item.nacikmod.ancient_seal.desc1": "The ancient spell of suppressing the victim",
+  "item.nacikmod.ancient_seal.desc2": "Mana Cost: 700"
 }

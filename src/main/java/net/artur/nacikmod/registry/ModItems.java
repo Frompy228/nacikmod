@@ -64,6 +64,8 @@ public class ModItems {
     public static final RegistryObject<Item> DOUBLE_SLASH = ITEMS.register("double_slash", () -> new DoubleSlash(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> WORLD_SLASH = ITEMS.register("world_slash", () -> new WorldSlash(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> ANCIENT_SCROLL = ITEMS.register("ancient_scroll", () -> new AncientScroll(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> BLOOD_WARRIOR = ITEMS.register("blood_warrior", () -> new BloodWarrior(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> ANCIENT_SEAL = ITEMS.register("ancient_seal", () -> new AncientSeal(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LANSER_SPAWN_EGG = ITEMS.register("lanser_spawn_egg",
             ()-> new ForgeSpawnEggItem(ModEntities.LANSER, 0x5b107e, 0xCF6A84,
                     new Item.Properties()));
@@ -84,5 +86,8 @@ public class ModItems {
                     new Item.Properties()));
     public static final RegistryObject<Item> MYSTERIOUS_TRADER_BATTLE_CLONE_SPAWN_EGG = ITEMS.register("mysterious_trader_battle_clone_spawn_egg",
             ()-> new ForgeSpawnEggItem(ModEntities.MYSTERIOUS_TRADER_BATTLE_CLONE, 0x393939, 0x121212,
+                    new Item.Properties()));
+    public static final RegistryObject<Item> BLOOD_WARRIOR_SPAWN_EGG = ITEMS.register("blood_warrior_spawn_egg",
+            ()-> new ForgeSpawnEggItem(ModEntities.BLOOD_WARRIOR, 0x8B0000, 0xFF0000,
                     new Item.Properties()));
 }
