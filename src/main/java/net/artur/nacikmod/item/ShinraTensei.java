@@ -17,7 +17,7 @@ import net.minecraft.world.phys.Vec3;
 import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.item.ability.ShinraTenseiExplosion;
 import net.artur.nacikmod.registry.ModItems;
-import net.artur.nacikmod.util.CooldownSave;
+import net.artur.nacikmod.util.PlayerCooldowns;
 import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
@@ -37,8 +37,8 @@ public class ShinraTensei extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
-        if (CooldownSave.isOnCooldown(itemStack, level)) {
-            int left = CooldownSave.getCooldownLeft(itemStack, level);
+        if (PlayerCooldowns.isOnCooldown(player, this)) {
+            int left = PlayerCooldowns.getCooldownLeft(player, this);
             player.sendSystemMessage(Component.literal("Item is on cooldown! (" + left / 20 + "s left)")
                     .withStyle(ChatFormatting.RED));
             return InteractionResultHolder.fail(itemStack);
@@ -93,7 +93,7 @@ public class ShinraTensei extends Item {
             explosion.explode();
 
             player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> mana.removeMana(MANA_COST));
-            CooldownSave.setCooldown(itemStack, level, COOLDOWN_TICKS);
+            PlayerCooldowns.setCooldown(player, this, COOLDOWN_TICKS);
         }
 
         return InteractionResultHolder.success(itemStack);
@@ -119,10 +119,7 @@ public class ShinraTensei extends Item {
     }
 
     public static void restoreCooldowns(Player player) {
-        for (ItemStack stack : player.getInventory().items) {
-            if (stack.getItem() instanceof ShinraTensei) {
-                CooldownSave.restoreCooldown(stack, player.level(), player, stack.getItem());
-            }
-        }
+        // Больше не нужно, так как перезарядки сохраняются в capability игрока
+        // и автоматически восстанавливаются при входе
     }
 }

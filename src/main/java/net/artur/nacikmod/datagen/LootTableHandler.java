@@ -54,6 +54,10 @@ public class LootTableHandler {
                     .setWeight(7)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
+            LootItem.Builder<?> bloodWarrior = LootItem.lootTableItem(ModItems.BLOOD_WARRIOR.get())
+                    .setWeight(7)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
             LootItem.Builder<?> hiraishinWithoutSeal = LootItem.lootTableItem(ModItems.HIRAISHIN_WITHOUT_SEAL.get())
                     .setWeight(2)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
@@ -107,6 +111,7 @@ public class LootTableHandler {
                     .add(absoluteVision)
                     .add(breakingBodyLimit)
                     .add(intangibility)
+                    .add(bloodWarrior)
                     .build();
 
 

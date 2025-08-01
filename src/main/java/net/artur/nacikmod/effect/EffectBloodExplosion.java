@@ -7,6 +7,7 @@ import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import org.joml.Vector3f;
 import net.minecraft.world.phys.AABB;
+import net.artur.nacikmod.entity.custom.BloodWarriorEntity;
 
 public class EffectBloodExplosion extends MobEffect {
     public EffectBloodExplosion() {
@@ -26,8 +27,10 @@ public class EffectBloodExplosion extends MobEffect {
             // Calculate damage based on amplifier (4.0 base + 2.0 per level)
             float damage = 4.0f + (amplifier * 2.0f);
             
-            // First, damage the effect owner
-            entity.hurt(entity.damageSources().generic(), damage);
+            // First, damage the effect owner (but not if it's a BloodWarrior)
+            if (!(entity instanceof BloodWarriorEntity)) {
+                entity.hurt(entity.damageSources().generic(), damage);
+            }
             
             // Create area of effect for damage to nearby entities
             AABB damageArea = new AABB(
@@ -35,9 +38,11 @@ public class EffectBloodExplosion extends MobEffect {
                 x + 2, y + 2, z + 2
             );
             
-            // Then damage nearby entities (excluding the owner)
+            // Then damage nearby entities (excluding the owner and BloodWarriors)
             entity.level().getEntities(entity, damageArea).forEach(target -> {
-                if (target instanceof LivingEntity livingTarget && livingTarget != entity) {
+                if (target instanceof LivingEntity livingTarget && 
+                    livingTarget != entity && 
+                    !(livingTarget instanceof BloodWarriorEntity)) {
                     livingTarget.hurt(entity.damageSources().generic(), damage);
                 }
             });

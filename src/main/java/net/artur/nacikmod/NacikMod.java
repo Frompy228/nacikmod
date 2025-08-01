@@ -7,6 +7,8 @@ import net.artur.nacikmod.capability.reward.RewardSyncOnDeath;
 import net.artur.nacikmod.capability.killcount.KillCountEvents;
 import net.artur.nacikmod.capability.killcount.KillCountHandler;
 import net.artur.nacikmod.capability.killcount.KillCountSyncOnDeath;
+import net.artur.nacikmod.capability.cooldowns.CooldownsProvider;
+import net.artur.nacikmod.capability.cooldowns.ICooldowns;
 import net.artur.nacikmod.datagen.ModWorldGenProvider;
 import net.artur.nacikmod.registry.ModCreativeModTabs;
 import net.artur.nacikmod.network.ModMessages;
@@ -63,7 +65,7 @@ public class NacikMod
 
     private void commonSetup(final FMLCommonSetupEvent event)
     {
-
+        // Capability регистрируется через события
     }
 
     @SubscribeEvent

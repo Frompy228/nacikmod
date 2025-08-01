@@ -31,6 +31,7 @@ public class ModEventBusEvents {
         event.put(ModEntities.ARCHER.get(), ArcherEntity.createAttributes().build());
         event.put(ModEntities.MYSTERIOUS_TRADER.get(), MysteriousTraderEntity.createAttributes().build());
         event.put(ModEntities.MYSTERIOUS_TRADER_BATTLE_CLONE.get(), MysteriousTraderBattleCloneEntity.createAttributes().build());
+        event.put(ModEntities.BLOOD_WARRIOR.get(), BloodWarriorEntity.createAttributes().build());
     }
 
     @SubscribeEvent
