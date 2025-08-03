@@ -76,6 +76,9 @@
   "item.nacikmod.ancient_scroll": "Древний свиток",
   "item.nacikmod.blood_warrior": "Кровавый воин",
   "item.nacikmod.ancient_seal": "Древняя печать",
+  "item.nacikmod.lord_of_souls": "Повелитель душ",
+  "item.active": "Активировано",
+  "item.inactive": "Деактивировано",
   "item.disappears": "Предмет исчезает после использования",
   "item.nacikmod.magic_circuit.desc1": "Магическая цепь увеличивающая максимальный запас маны игрока на 50",
   "curios.identifier.artifact": "Артефакт",
@@ -165,5 +168,10 @@
   "item.nacikmod.blood_warrior.desc2": "Затраты: 15,0",
   "item.nacikmod.blood_warrior.desc3": "Затраты маны: 100",
   "item.nacikmod.ancient_seal.desc1": "Древнее заклинание подавления жертвы",
-  "item.nacikmod.ancient_seal.desc2": "Затраты маны: 700"
+  "item.nacikmod.ancient_seal.desc2": "Затраты маны: 900",
+  "item.nacikmod.lord_of_souls.desc1": "Поглощает душу существа, получая контроль над его сущностью",
+  "item.nacikmod.lord_of_souls.desc2": "Количество Душ: %d",
+  "item.nacikmod.lord_of_souls.desc3": "Затраты маны: %d",
+  "item.nacikmod.lord_of_souls.desc4": "Right-click, чтобы поглотить души",
+  "item.nacikmod.lord_of_souls.desc5": "Shift + Right-click, чтобы высвободить души"
 }

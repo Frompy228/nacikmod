@@ -18,6 +18,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.artur.nacikmod.network.ModMessages;
+import net.artur.nacikmod.network.AbilityStateManager;
 
 
 import java.util.HashSet;
@@ -99,9 +100,7 @@ public class ManaRelease {
                 
                 // Отправляем пакет всем игрокам поблизости (включая владельца)
                 if (player instanceof ServerPlayer serverPlayer) {
-                    ModMessages.sendAbilityStateToNearbyPlayers(serverPlayer, true, 
-                        player.hasEffect(ModEffects.MANA_LAST_MAGIC.get()),
-                        stack.getTag().getInt(LEVEL_TAG));
+                    AbilityStateManager.syncAbilityState(serverPlayer, "release", true);
                 }
                 break;
             }
@@ -125,10 +124,7 @@ public class ManaRelease {
         removeModifiers(player);
 
         // Отправляем пакет всем игрокам поблизости (включая владельца)
-        ModMessages.sendAbilityStateToNearbyPlayers((ServerPlayer) player,
-            false,
-            player.hasEffect(ModEffects.MANA_LAST_MAGIC.get()),
-            getCurrentLevel(player).damage);
+        AbilityStateManager.syncAbilityState((ServerPlayer) player, "release", false);
     }
 
     public static void switchLevel(Player player) {

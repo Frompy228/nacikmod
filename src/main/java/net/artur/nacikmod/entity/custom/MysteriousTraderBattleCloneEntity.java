@@ -40,7 +40,7 @@ public class MysteriousTraderBattleCloneEntity extends Monster {
                 .add(Attributes.MAX_HEALTH, 15.0)
                 .add(Attributes.ARMOR, 5.0)
                 .add(Attributes.ATTACK_DAMAGE, 8.0)
-                .add(Attributes.MOVEMENT_SPEED, 0.38)
+                .add(Attributes.MOVEMENT_SPEED, 0.4)
                 .add(Attributes.FOLLOW_RANGE, 16.0)
                 .add(ForgeMod.SWIM_SPEED.get(), 2)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.1);

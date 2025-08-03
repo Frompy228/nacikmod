@@ -116,11 +116,11 @@ public class LanserEntity extends HeroSouls {
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
                 .add(ModAttributes.BONUS_ARMOR.get(),15)
-                .add(Attributes.ARMOR, 20)
+                .add(Attributes.ARMOR, 15)
                 .add(Attributes.ARMOR_TOUGHNESS, 10)
                 .add(Attributes.MAX_HEALTH, 130.0)
                 .add(Attributes.ATTACK_DAMAGE, 20.0)
-                .add(Attributes.MOVEMENT_SPEED, 0.75)
+                .add(Attributes.MOVEMENT_SPEED, 0.47)
                 .add(ForgeMod.SWIM_SPEED.get(), 2) // Увеличиваем скорость плавания в 1.5 раза
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.2)
                 .add(Attributes.FOLLOW_RANGE, 32.0);
@@ -152,7 +152,7 @@ public class LanserEntity extends HeroSouls {
 
         @Override
         public boolean canUse() {
-            return lanser.getHealth() <= 25 && cooldown <= 0 && lanser.getTarget() != null;
+            return lanser.getHealth() <= 35 && cooldown <= 0 && lanser.getTarget() != null;
         }
 
         @Override
@@ -165,7 +165,7 @@ public class LanserEntity extends HeroSouls {
             lanser.setDeltaMovement(retreatDirection.x, 0.3, retreatDirection.z); // Добавляем импульс
             lanser.hurtMarked = true; // Обновляем движение
 
-            // Лечение на 25 HP
+            // Лечение на 35 HP
             lanser.heal(35.0F);
 
             // Увеличение скорости на 0.1
@@ -219,11 +219,11 @@ public class LanserEntity extends HeroSouls {
                         lanser.getX() + retreatDirection.x,
                         lanser.getY(),
                         lanser.getZ() + retreatDirection.z,
-                        0.5
+                        1
                 );
             } else if (squaredDistance > maxDistance * maxDistance) {
                 // Если слишком далеко – приближаемся
-                lanser.getNavigation().moveTo(target, 0.5);
+                lanser.getNavigation().moveTo(target, 1);
             }
 
             // Если цель находится примерно в 10 блоках, совершаем рывок
@@ -257,7 +257,7 @@ public class LanserEntity extends HeroSouls {
 
         // Метод для совершения рывка
         private void performDash(LivingEntity target) {
-            Vec3 dashDirection = target.position().subtract(lanser.position()).normalize().scale(1.5);
+            Vec3 dashDirection = target.position().subtract(lanser.position()).normalize().scale(1.7);
             lanser.setDeltaMovement(dashDirection.x, 0.3, dashDirection.z); // Поднимаем чуть вверх
             lanser.hurtMarked = true; // Обновляем движение
         }

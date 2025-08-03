@@ -9,36 +9,63 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkEvent;
 import net.artur.nacikmod.item.ability.ManaRelease;
 import net.artur.nacikmod.item.ability.ManaLastMagic;
+import net.artur.nacikmod.item.ability.HundredSealAbility;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public class AbilityStatePacket {
-    private final boolean isReleaseActive;
-    private final boolean isLastMagicActive;
-    private final int releaseLevel;
+    private final Map<String, Boolean> abilityStates;
+    private final Map<String, Integer> abilityLevels;
     private final int playerId; // ID игрока, чье состояние мы синхронизируем
 
-    public AbilityStatePacket(boolean isReleaseActive, boolean isLastMagicActive, int releaseLevel, int playerId) {
-        this.isReleaseActive = isReleaseActive;
-        this.isLastMagicActive = isLastMagicActive;
-        this.releaseLevel = releaseLevel;
+    public AbilityStatePacket(Map<String, Boolean> abilityStates, Map<String, Integer> abilityLevels, int playerId) {
+        this.abilityStates = new HashMap<>(abilityStates);
+        this.abilityLevels = new HashMap<>(abilityLevels);
         this.playerId = playerId;
     }
 
     public static void encode(AbilityStatePacket packet, FriendlyByteBuf buffer) {
-        buffer.writeBoolean(packet.isReleaseActive);
-        buffer.writeBoolean(packet.isLastMagicActive);
-        buffer.writeInt(packet.releaseLevel);
+        // Записываем количество состояний
+        buffer.writeInt(packet.abilityStates.size());
+        for (Map.Entry<String, Boolean> entry : packet.abilityStates.entrySet()) {
+            buffer.writeUtf(entry.getKey());
+            buffer.writeBoolean(entry.getValue());
+        }
+        
+        // Записываем количество уровней
+        buffer.writeInt(packet.abilityLevels.size());
+        for (Map.Entry<String, Integer> entry : packet.abilityLevels.entrySet()) {
+            buffer.writeUtf(entry.getKey());
+            buffer.writeInt(entry.getValue());
+        }
+        
         buffer.writeInt(packet.playerId);
     }
 
     public static AbilityStatePacket decode(FriendlyByteBuf buffer) {
-        return new AbilityStatePacket(
-            buffer.readBoolean(),
-            buffer.readBoolean(),
-            buffer.readInt(),
-            buffer.readInt()
-        );
+        // Читаем состояния
+        int statesSize = buffer.readInt();
+        Map<String, Boolean> abilityStates = new HashMap<>();
+        for (int i = 0; i < statesSize; i++) {
+            String key = buffer.readUtf();
+            boolean value = buffer.readBoolean();
+            abilityStates.put(key, value);
+        }
+        
+        // Читаем уровни
+        int levelsSize = buffer.readInt();
+        Map<String, Integer> abilityLevels = new HashMap<>();
+        for (int i = 0; i < levelsSize; i++) {
+            String key = buffer.readUtf();
+            int value = buffer.readInt();
+            abilityLevels.put(key, value);
+        }
+        
+        int playerId = buffer.readInt();
+        
+        return new AbilityStatePacket(abilityStates, abilityLevels, playerId);
     }
 
     public static void handle(AbilityStatePacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
@@ -54,26 +81,54 @@ public class AbilityStatePacket {
     @OnlyIn(Dist.CLIENT)
     private static void handleClient(AbilityStatePacket packet) {
         if (Minecraft.getInstance().level == null) return;
-        
+
         // Получаем игрока по ID
         Player targetPlayer = Minecraft.getInstance().level.getEntity(packet.playerId) instanceof Player player ? player : null;
         if (targetPlayer == null) return;
 
-        // Обновляем состояние для конкретного игрока
-        if (packet.isReleaseActive) {
-            if (!ManaRelease.activeReleasePlayers.contains(targetPlayer.getUUID())) {
-                ManaRelease.activeReleasePlayers.add(targetPlayer.getUUID());
-            }
-        } else {
-            ManaRelease.activeReleasePlayers.remove(targetPlayer.getUUID());
-        }
-
-        if (packet.isLastMagicActive) {
-            if (!ManaLastMagic.activeLastMagicPlayers.contains(targetPlayer.getUUID())) {
-                ManaLastMagic.activeLastMagicPlayers.add(targetPlayer.getUUID());
-            }
-        } else {
-            ManaLastMagic.activeLastMagicPlayers.remove(targetPlayer.getUUID());
+        // Обновляем состояния для конкретного игрока
+        updateAbilityState(targetPlayer, "release", packet.abilityStates.getOrDefault("release", false));
+        updateAbilityState(targetPlayer, "last_magic", packet.abilityStates.getOrDefault("last_magic", false));
+        updateAbilityState(targetPlayer, "hundred_seal", packet.abilityStates.getOrDefault("hundred_seal", false));
+        
+        // Обновляем уровни
+        updateAbilityLevel(targetPlayer, "release", packet.abilityLevels.getOrDefault("release", 0));
+    }
+    
+    private static void updateAbilityState(Player player, String ability, boolean isActive) {
+        switch (ability) {
+            case "release":
+                if (isActive) {
+                    if (!ManaRelease.activeReleasePlayers.contains(player.getUUID())) {
+                        ManaRelease.activeReleasePlayers.add(player.getUUID());
+                    }
+                } else {
+                    ManaRelease.activeReleasePlayers.remove(player.getUUID());
+                }
+                break;
+            case "last_magic":
+                if (isActive) {
+                    if (!ManaLastMagic.activeLastMagicPlayers.contains(player.getUUID())) {
+                        ManaLastMagic.activeLastMagicPlayers.add(player.getUUID());
+                    }
+                } else {
+                    ManaLastMagic.activeLastMagicPlayers.remove(player.getUUID());
+                }
+                break;
+            case "hundred_seal":
+                if (isActive) {
+                    if (!HundredSealAbility.activeHundredSealPlayers.contains(player.getUUID())) {
+                        HundredSealAbility.activeHundredSealPlayers.add(player.getUUID());
+                    }
+                } else {
+                    HundredSealAbility.activeHundredSealPlayers.remove(player.getUUID());
+                }
+                break;
         }
     }
-} 
+    
+    private static void updateAbilityLevel(Player player, String ability, int level) {
+        // Здесь можно добавить логику для обновления уровней способностей
+        // Пока оставляем пустым, так как только Release использует уровни
+    }
+}

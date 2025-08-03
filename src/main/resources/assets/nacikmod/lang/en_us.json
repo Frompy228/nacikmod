@@ -77,7 +77,10 @@
   "item.nacikmod.ancient_scroll": "Ancient Scroll",
   "item.nacikmod.blood_warrior": "Blood Warrior",
   "item.nacikmod.ancient_seal": "Ancient Seal",
+  "item.nacikmod.lord_of_souls": "Lord Of Souls",
   "item.disappears": "The item disappears after use",
+  "item.active": "Active",
+  "item.inactive": "Inactive",
   "item.nacikmod.magic_circuit.desc1": "A magic chain that increases the player's maximum mana reserve by 50",
   "curios.identifier.artifact": "Artifact",
   "curios.identifier.ring": "Ring",
@@ -166,5 +169,10 @@
   "item.nacikmod.blood_warrior.desc2": "Cost: 15,0",
   "item.nacikmod.blood_warrior.desc3": "Mana Cost: 100",
   "item.nacikmod.ancient_seal.desc1": "The ancient spell of suppressing the victim",
-  "item.nacikmod.ancient_seal.desc2": "Mana Cost: 700"
+  "item.nacikmod.ancient_seal.desc2": "Mana Cost: 900",
+  "item.nacikmod.lord_of_souls.desc1": "It absorbs the soul of an entity, gaining control over its essence",
+  "item.nacikmod.lord_of_souls.desc2": "Souls Count: %d",
+  "item.nacikmod.lord_of_souls.desc3": "Mana Cost: %d",
+  "item.nacikmod.lord_of_souls.desc4": "Right-click to absorb souls",
+  "item.nacikmod.lord_of_souls.desc5": "Shift + Right-click to the release of souls"
 }

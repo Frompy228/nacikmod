@@ -9,6 +9,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.artur.nacikmod.NacikMod;
 import net.artur.nacikmod.registry.ModEffects;
 import net.artur.nacikmod.network.ModMessages;
+import net.artur.nacikmod.network.AbilityStateManager;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -30,10 +31,7 @@ public class ManaLastMagic {
         activeLastMagicPlayers.add(player.getUUID());
 
         // Отправляем пакет всем игрокам поблизости
-        ModMessages.sendAbilityStateToNearbyPlayers((ServerPlayer) player,
-            ManaRelease.isReleaseActive(player),
-            true,
-            ManaRelease.getCurrentLevel(player).damage);
+        AbilityStateManager.syncAbilityState((ServerPlayer) player, "last_magic", true);
     }
 
     @SubscribeEvent
@@ -51,10 +49,7 @@ public class ManaLastMagic {
         // Если у игрока есть эффект LastMagic, отправляем пакет каждую секунду
         if (player.hasEffect(ModEffects.MANA_LAST_MAGIC.get()) && 
             player.tickCount % PACKET_SEND_INTERVAL == 0) {
-            ModMessages.sendAbilityStateToNearbyPlayers(player,
-                ManaRelease.isReleaseActive(player),
-                true,
-                ManaRelease.getCurrentLevel(player).damage);
+            AbilityStateManager.syncAbilityState(player, "last_magic", true);
         }
     }
 
@@ -65,9 +60,6 @@ public class ManaLastMagic {
         activeLastMagicPlayers.remove(player.getUUID());
 
         // Отправляем пакет всем игрокам поблизости
-        ModMessages.sendAbilityStateToNearbyPlayers((ServerPlayer) player,
-            ManaRelease.isReleaseActive(player),
-            false,
-            ManaRelease.getCurrentLevel(player).damage);
+        AbilityStateManager.syncAbilityState((ServerPlayer) player, "last_magic", false);
     }
 }

@@ -13,6 +13,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.ChatFormatting;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
+import net.artur.nacikmod.registry.ModAttributes;
+import net.artur.nacikmod.network.ModMessages;
+import net.artur.nacikmod.network.AbilityStateManager;
 
 
 import java.util.HashSet;
@@ -29,6 +32,7 @@ public class HundredSealAbility {
     private static final int HEALING_INTERVAL = 90;
     private static final int MANA_CHECK_INTERVAL = 20; // 1 секунда
     private static final UUID HEALTH_MODIFIER_UUID = UUID.fromString("464326ce-9581-4d13-8910-883042df6502");
+    private static final UUID MAGIC_ARMOR_MODIFIER_UUID = UUID.fromString("464326ce-9581-4d13-8910-883042df6503");
 
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
@@ -72,6 +76,21 @@ public class HundredSealAbility {
                 player.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH)
                     .addTransientModifier(healthModifier);
                 
+                // Добавляем +2 magic armor через кастомный атрибут
+                net.minecraft.world.entity.ai.attributes.AttributeModifier magicArmorModifier = 
+                    new net.minecraft.world.entity.ai.attributes.AttributeModifier(
+                        MAGIC_ARMOR_MODIFIER_UUID,
+                        "hundred_seal_magic_armor_bonus",
+                        2.0,
+                        net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADDITION
+                    );
+                player.getAttribute(ModAttributes.BONUS_ARMOR.get())
+                    .addTransientModifier(magicArmorModifier);
+                
+                // Отправляем пакет всем игрокам поблизости (включая владельца)
+                if (player instanceof ServerPlayer serverPlayer) {
+                    AbilityStateManager.syncAbilityState(serverPlayer, "hundred_seal", true);
+                }
 
                 break;
             }
@@ -93,6 +112,13 @@ public class HundredSealAbility {
 
         // Удаляем эффекты и модификаторы
         removeModifiers(player);
+        
+        // Отправляем пакет всем игрокам поблизости (включая владельца)
+        if (player instanceof ServerPlayer serverPlayer) {
+            AbilityStateManager.syncAbilityState(serverPlayer, "hundred_seal", false);
+        }
+
+
     }
 
     private static void removeModifiers(Player player) {
@@ -102,6 +128,10 @@ public class HundredSealAbility {
         // Удаляем модификатор здоровья
         player.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH)
             .removeModifier(HEALTH_MODIFIER_UUID);
+        
+        // Удаляем модификатор magic armor
+        player.getAttribute(ModAttributes.BONUS_ARMOR.get())
+            .removeModifier(MAGIC_ARMOR_MODIFIER_UUID);
         
         // Корректируем текущее здоровье, если оно превышает новый максимум
         if (player.getHealth() > player.getMaxHealth()) {
