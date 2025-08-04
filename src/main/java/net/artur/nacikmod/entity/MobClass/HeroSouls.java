@@ -1,5 +1,6 @@
 package net.artur.nacikmod.entity.MobClass;
 
+import net.artur.nacikmod.registry.ModEffects;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
@@ -66,6 +67,39 @@ public class HeroSouls extends Monster {
     // Метод для получения дальности атаки
     public double getAttackRange() {
         return this.attackRange;
+    }
+
+    // ===== СИСТЕМА БЛОКИРОВКИ ДЕЙСТВИЙ =====
+    
+    /**
+     * Проверяет, заблокировано ли действие под эффектом SUPPRESSING_GATE
+     */
+    protected boolean isActionBlocked(ActionType actionType) {
+        if (hasEffect(ModEffects.SUPPRESSING_GATE.get())) {
+            return actionType.isBlockedBySuppressingGate();
+        }
+        return false;
+    }
+    
+    /**
+     * Перечисление типов действий, которые могут быть заблокированы
+     */
+    public enum ActionType {
+        RANGED_ATTACK(true),    // Дальняя атака (стрельба) - заблокирована
+        ABILITY_CAST(true),     // Способности (root, стены, клоны) - заблокированы
+        SPECIAL_ATTACK(true),   // Специальные атаки - заблокированы
+        MELEE_ATTACK(false),    // Ближний бой - НЕ заблокирован
+        MOVEMENT(false);        // Движение - НЕ заблокировано
+        
+        private final boolean blockedBySuppressingGate;
+        
+        ActionType(boolean blocked) {
+            this.blockedBySuppressingGate = blocked;
+        }
+        
+        public boolean isBlockedBySuppressingGate() {
+            return blockedBySuppressingGate;
+        }
     }
 
 

@@ -78,7 +78,7 @@ public class MysteriousTraderEntity extends PathfinderMob implements Merchant, M
                 .add(Attributes.MAX_HEALTH, 60.0)
                 .add(ModAttributes.BONUS_ARMOR.get(),15)
                 .add(Attributes.ARMOR, 5.0)
-                .add(Attributes.MOVEMENT_SPEED, 0.3)
+                .add(Attributes.MOVEMENT_SPEED, 0.32)
                 .add(ForgeMod.SWIM_SPEED.get(), 2)
                 .add(Attributes.FOLLOW_RANGE, 32.0);
     }

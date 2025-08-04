@@ -19,6 +19,7 @@ import java.util.List;
 public class HundredSeal extends Item {
     private static final String ACTIVE_TAG = "active";
     private static final int MAX_STORAGE = 100000;
+    private static final int MANA_TRANSFER_AMOUNT = 200;
 
     public HundredSeal(Properties properties) {
         super(properties.stacksTo(1));
@@ -36,7 +37,7 @@ public class HundredSeal extends Item {
                     int storedMana = HundredSealAbility.getStoredMana(itemStack);
                     
                     if (playerMana > 0 && storedMana < MAX_STORAGE) {
-                        int transferAmount = Math.min(playerMana, Math.min(100, MAX_STORAGE - storedMana));
+                        int transferAmount = Math.min(playerMana, Math.min(MANA_TRANSFER_AMOUNT, MAX_STORAGE - storedMana));
                         mana.removeMana(transferAmount);
                         HundredSealAbility.addManaToItem(itemStack, transferAmount);
                     }

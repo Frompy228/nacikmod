@@ -60,7 +60,7 @@ public class ArcherEntity extends HeroSouls implements RangedAttackMob {
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
                 .add(ModAttributes.BONUS_ARMOR.get(), 11)
-                .add(Attributes.ARMOR, 20)
+                .add(Attributes.ARMOR, 15)
                 .add(Attributes.ARMOR_TOUGHNESS, 10)
                 .add(Attributes.MAX_HEALTH, 115.0)
                 .add(Attributes.ATTACK_DAMAGE, 15.0)
@@ -95,14 +95,17 @@ public class ArcherEntity extends HeroSouls implements RangedAttackMob {
         if (target != null) {
             if (rootAbilityCooldown > 0) rootAbilityCooldown--;
             if (!this.level().isClientSide && rootAbilityCooldown == 0) {
-                this.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
-                    if (mana.getMana() >= ROOT_ABILITY_MANA_COST && this.isValidTarget(target) && target.isAlive() && this.hasLineOfSight(target)) {
-                        target.addEffect(new MobEffectInstance(ModEffects.ROOT.get(), ROOT_ABILITY_DURATION, 0, false, true));
-                        mana.removeMana(ROOT_ABILITY_MANA_COST);
-                        rootAbilityCooldown = ROOT_ABILITY_COOLDOWN_TICKS;
-                        this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.ILLUSIONER_CAST_SPELL, SoundSource.PLAYERS, 1.0F, 1.0F);
-                    }
-                });
+                // Проверяем блокировку способностей
+                if (!isActionBlocked(ActionType.ABILITY_CAST)) {
+                    this.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
+                        if (mana.getMana() >= ROOT_ABILITY_MANA_COST && this.isValidTarget(target) && target.isAlive() && this.hasLineOfSight(target)) {
+                            target.addEffect(new MobEffectInstance(ModEffects.ROOT.get(), ROOT_ABILITY_DURATION, 0, false, true));
+                            mana.removeMana(ROOT_ABILITY_MANA_COST);
+                            rootAbilityCooldown = ROOT_ABILITY_COOLDOWN_TICKS;
+                            this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.ILLUSIONER_CAST_SPELL, SoundSource.PLAYERS, 1.0F, 1.0F);
+                        }
+                    });
+                }
             }
         }
     }
@@ -121,6 +124,11 @@ public class ArcherEntity extends HeroSouls implements RangedAttackMob {
 
     @Override
     public void performRangedAttack(LivingEntity target, float power) {
+        // Проверяем блокировку дальней атаки
+        if (isActionBlocked(ActionType.RANGED_ATTACK)) {
+            return; // Стрельба заблокирована под эффектом SUPPRESSING_GATE
+        }
+        
         if (!this.level().isClientSide) {
             this.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES, target.position());
             net.artur.nacikmod.entity.projectiles.ManaArrowProjectile arrow = new net.artur.nacikmod.entity.projectiles.ManaArrowProjectile(this.level(), this);

@@ -63,6 +63,7 @@ public class ModCreativeModTabs {
                         pOutput.accept(ModItems.ABSOLUTE_VISION.get());
                         pOutput.accept(ModItems.INTANGIBILITY.get());
                         pOutput.accept(ModItems.ANCIENT_SEAL.get());
+                        pOutput.accept(ModItems.LORD_OF_SOULS.get());
                     })
                     .build());
 

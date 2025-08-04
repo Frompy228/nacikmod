@@ -48,7 +48,7 @@ public class LeonidEntity extends HeroSouls {
     private static final double ATTACK_RANGE = 3.0D;
     private float lastHealth;
     private boolean[] thresholdCrossed = new boolean[3]; // Для отслеживания пересечения порогов 75%, 50%, 25%
-    private static final int MAX_MANA = 5000;
+    private static final int MAX_MANA = 5100;
     private static final int SPARTAN_SPAWN_MANA_COST = 5000;
     private static final int SPARTAN_SPAWN_RADIUS = 2;
     private int regenerationTick = 0;
@@ -71,12 +71,12 @@ public class LeonidEntity extends HeroSouls {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(ModAttributes.BONUS_ARMOR.get(),15)
-                .add(Attributes.ARMOR,15)
+                .add(ModAttributes.BONUS_ARMOR.get(),13)
+                .add(Attributes.ARMOR,20)
                 .add(Attributes.ARMOR_TOUGHNESS,10)
                 .add(Attributes.MAX_HEALTH, 165.0) // Больше здоровья чем у базового HeroSouls
                 .add(Attributes.ATTACK_DAMAGE, 20.0) // Больше урона
-                .add(Attributes.MOVEMENT_SPEED, 0.4) // Быстрее базового HeroSouls
+                .add(Attributes.MOVEMENT_SPEED, 0.42) // Быстрее базового HeroSouls
                 .add(Attributes.FOLLOW_RANGE, 40.0) // Больший радиус обнаружения
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.3)
                 .add(ForgeMod.SWIM_SPEED.get(), 2); // Увеличиваем скорость плавания в 1.5 раза
@@ -275,6 +275,9 @@ public class LeonidEntity extends HeroSouls {
     public boolean hurt(DamageSource source, float amount) {
         // Проверяем, что урон приходит спереди
         Entity attacker = source.getEntity();
+        boolean shieldBlocked = false;
+        float originalAmount = amount;
+        
         if (attacker != null && this.isUsingItem() && this.getUsedItemHand() == InteractionHand.OFF_HAND &&
                 this.getOffhandItem().getItem() == ModItems.LEONID_SHIELD.get() && !shieldBlockedHit) {
 
@@ -288,6 +291,7 @@ public class LeonidEntity extends HeroSouls {
             if (lookVec.dot(toAttacker) > 0) {
                 // Уменьшаем урон на 80%
                 amount *= 0.2f;
+                shieldBlocked = true;
 
                 // Отмечаем, что щит заблокировал удар
                 shieldBlockedHit = true;
@@ -302,6 +306,20 @@ public class LeonidEntity extends HeroSouls {
         }
 
         boolean isHurt = super.hurt(source, amount);
+
+        // Отражение урона обратно на атакующего при успешном блокировании
+        if (shieldBlocked && attacker instanceof LivingEntity livingAttacker && livingAttacker != this) {
+            // Вычисляем 70% отраженного урона
+            float reflectedDamage = originalAmount * 0.9f;
+            
+            // Наносим отраженный урон атакующему
+            livingAttacker.hurt(this.damageSources().mobAttack(this), reflectedDamage);
+            
+            // Проигрываем звук отражения урона
+            this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
+                    SoundEvents.SHIELD_BREAK,
+                    this.getSoundSource(), 0.8F, 1.2F);
+        }
 
         if (isHurt) {
             if (attacker instanceof LivingEntity livingAttacker && livingAttacker != this) {
@@ -335,7 +353,7 @@ public class LeonidEntity extends HeroSouls {
         });
 
         AttributeInstance attribute = this.getAttribute(ModAttributes.BONUS_ARMOR.get());
-        attribute.setBaseValue(15.0);
+        attribute.setBaseValue(13.0);
         return data;
     }
 

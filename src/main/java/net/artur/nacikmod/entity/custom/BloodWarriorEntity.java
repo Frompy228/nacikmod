@@ -44,7 +44,7 @@ public class BloodWarriorEntity extends Monster {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 50.0)
+                .add(Attributes.MAX_HEALTH, 30.0)
                 .add(Attributes.ARMOR, 5.0)
                 .add(Attributes.ATTACK_DAMAGE, 10.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.4)
@@ -98,7 +98,7 @@ public class BloodWarriorEntity extends Monster {
         if (!this.level().isClientSide) {
             // Эффект накладываем только один раз
             if (!effectApplied) {
-                this.addEffect(new net.minecraft.world.effect.MobEffectInstance(ModEffects.BLOOD_EXPLOSION.get(), 2400, 15, false, false));
+                this.addEffect(new net.minecraft.world.effect.MobEffectInstance(ModEffects.BLOOD_EXPLOSION.get(), 2400, 13, false, false));
                 effectApplied = true;
             }
 
@@ -173,9 +173,9 @@ public class BloodWarriorEntity extends Monster {
     public void die(DamageSource source) {
         super.die(source);
         
-        // Исцеляем владельца на 8 HP при смерти воина
+        // Исцеляем владельца на 4.5 HP при смерти воина
         if (owner != null && owner.isAlive()) {
-            owner.heal(8.0f);
+            owner.heal(4.5f);
         }
     }
 
@@ -193,11 +193,7 @@ public class BloodWarriorEntity extends Monster {
                                         @Nullable CompoundTag dataTag) {
         SpawnGroupData data = super.finalizeSpawn(world, difficulty, reason, spawnData, dataTag);
 
-        
-        // Накладываем эффект Blood Explosion 5 уровня на 60 секунд
-        if (!this.level().isClientSide) {
-            this.addEffect(new net.minecraft.world.effect.MobEffectInstance(ModEffects.BLOOD_EXPLOSION.get(), 1200, 4, false, false));
-        }
+
         
         return data;
     }

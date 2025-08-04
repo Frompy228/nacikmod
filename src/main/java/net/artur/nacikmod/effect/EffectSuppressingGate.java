@@ -14,6 +14,7 @@ public class EffectSuppressingGate extends MobEffect {
     private static final UUID ATTACK_DAMAGE_MODIFIER_ID = UUID.fromString("bf0b6d12-1b7a-4f3f-a9d3-3f0e9a7a5b5e");
     private static final UUID ATTACK_SPEED_MODIFIER_ID = UUID.fromString("bf0b6d12-1b7a-4f3f-a9d3-3f0e9a7a5b5d");
     private static final UUID GRAVITY_MODIFIER_ID = UUID.fromString("bf0b6d12-1b7a-4f3f-a9d3-3f0e9a7a5b5c");
+    private static final UUID KNOCKBACK_RESISTANCE_MODIFIER_ID = UUID.fromString("bf0b6d12-1b7a-4f3f-a9d3-3f0e9a7a5b5b");
 
     public EffectSuppressingGate() {
         super(MobEffectCategory.HARMFUL, 0x8B0000); // Dark red color
@@ -49,6 +50,14 @@ public class EffectSuppressingGate extends MobEffect {
                 10.0D,
                 AttributeModifier.Operation.ADDITION
         );
+
+        // Increase knockback resistance by 0.3
+        this.addAttributeModifier(
+                Attributes.KNOCKBACK_RESISTANCE,
+                KNOCKBACK_RESISTANCE_MODIFIER_ID.toString(),
+                0.3D,
+                AttributeModifier.Operation.ADDITION
+        );
     }
 
     @Override
@@ -64,8 +73,8 @@ public class EffectSuppressingGate extends MobEffect {
                 player.getAbilities().flying = false;
                 player.onUpdateAbilities();
             }
-            
-            // Сжигаем 1 ману каждый тик
+
+            // Сжигаем 2 ману каждый тик
             entity.getCapability(net.artur.nacikmod.capability.mana.ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
                 int currentMana = mana.getMana();
                 if (currentMana > 0) {

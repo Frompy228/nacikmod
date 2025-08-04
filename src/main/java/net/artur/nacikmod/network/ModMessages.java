@@ -10,6 +10,7 @@ import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 import net.artur.nacikmod.NacikMod;
 
+import java.util.Map;
 import java.util.Optional;
 
 public class ModMessages {
@@ -87,23 +88,23 @@ public class ModMessages {
     }
 
     // Отправка состояния способности всем игрокам поблизости
-    public static void sendAbilityStateToNearbyPlayers(ServerPlayer sourcePlayer, boolean isReleaseActive, boolean isLastMagicActive, int releaseLevel) {
+    public static void sendAbilityStateToNearbyPlayers(ServerPlayer sourcePlayer, Map<String, Boolean> abilityStates, Map<String, Integer> abilityLevels) {
         if (sourcePlayer.level() == null) return;
-        
+
         // Сначала отправляем пакет владельцу
         INSTANCE.send(PacketDistributor.PLAYER.with(() -> sourcePlayer),
-            new AbilityStatePacket(isReleaseActive, isLastMagicActive, releaseLevel, sourcePlayer.getId()));
-        
+                new AbilityStatePacket(abilityStates, abilityLevels, sourcePlayer.getId()));
+
         // Затем отправляем пакет всем остальным игрокам поблизости
         sourcePlayer.level().players().stream()
-            .filter(player -> player instanceof ServerPlayer)
-            .map(player -> (ServerPlayer) player)
-            .filter(player -> player != sourcePlayer)
-            .filter(player -> player.distanceToSqr(sourcePlayer) <= 4096) // 64 blocks squared
-            .forEach(player -> {
-                INSTANCE.send(PacketDistributor.PLAYER.with(() -> player),
-                    new AbilityStatePacket(isReleaseActive, isLastMagicActive, releaseLevel, sourcePlayer.getId()));
-            });
+                .filter(player -> player instanceof ServerPlayer)
+                .map(player -> (ServerPlayer) player)
+                .filter(player -> player != sourcePlayer)
+                .filter(player -> player.distanceToSqr(sourcePlayer) <= 4096) // 64 blocks squared
+                .forEach(player -> {
+                    INSTANCE.send(PacketDistributor.PLAYER.with(() -> player),
+                            new AbilityStatePacket(abilityStates, abilityLevels, sourcePlayer.getId()));
+                });
     }
 
     public static void sendCustomMoonToAll() {

@@ -52,7 +52,7 @@ public class SpartanEntity extends HeroSouls {
                 .add(Attributes.ARMOR_TOUGHNESS, 5)
                 .add(Attributes.MAX_HEALTH, 50.0)
                 .add(Attributes.ATTACK_DAMAGE, 12.0)
-                .add(Attributes.MOVEMENT_SPEED, 0.35)
+                .add(Attributes.MOVEMENT_SPEED, 0.37)
                 .add(ForgeMod.SWIM_SPEED.get(), 2)
                 .add(Attributes.FOLLOW_RANGE, 35.0);
     }

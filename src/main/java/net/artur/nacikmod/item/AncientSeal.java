@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class AncientSeal extends Item {
-    private static final int MANA_COST = 700;
+    private static final int MANA_COST = 900;
     private static final int COOLDOWN_TICKS = 340;
 
     public static final Rarity ANCIENT_GOLD = Rarity.create("ANCIENT_GOLD", ChatFormatting.GOLD);

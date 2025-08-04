@@ -14,6 +14,7 @@ import net.minecraft.world.level.Level;
 import net.artur.nacikmod.entity.custom.BloodWarriorEntity;
 import net.artur.nacikmod.registry.ModEntities;
 import net.artur.nacikmod.capability.mana.ManaProvider;
+import net.artur.nacikmod.util.PlayerCooldowns;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -21,7 +22,7 @@ import java.util.List;
 public class BloodWarrior extends Item {
     private static final int MANA_COST = 100;
     private static final float HEALTH_COST = 15.0f;
-    private static final int COOLDOWN_TICKS = 260;
+    private static final int COOLDOWN_TICKS = 600;
 
     public BloodWarrior(Properties properties) {
         super(properties.rarity(Rarity.EPIC).stacksTo(1));
@@ -32,6 +33,14 @@ public class BloodWarrior extends Item {
         ItemStack itemStack = player.getItemInHand(hand);
 
         if (!level.isClientSide) {
+            // Check cooldown using our custom system
+            if (PlayerCooldowns.isOnCooldown(player, this)) {
+                int left = PlayerCooldowns.getCooldownLeft(player, this);
+                player.sendSystemMessage(Component.literal("Item is on cooldown! (" + left / 20 + "s left)")
+                        .withStyle(ChatFormatting.RED));
+                return InteractionResultHolder.fail(itemStack);
+            }
+            
             // Check if player has enough mana
             if (!player.getCapability(ManaProvider.MANA_CAPABILITY).map(mana -> mana.getMana() >= MANA_COST).orElse(false)) {
                 player.sendSystemMessage(Component.literal("Not enough mana!")
@@ -66,8 +75,8 @@ public class BloodWarrior extends Item {
                 }
             }
             
-            // Set cooldown
-            player.getCooldowns().addCooldown(this, COOLDOWN_TICKS);
+            // Set cooldown using our custom system
+            PlayerCooldowns.setCooldown(player, this, COOLDOWN_TICKS);
             
             // Send success message
             player.sendSystemMessage(Component.literal("Blood warriors summoned!")

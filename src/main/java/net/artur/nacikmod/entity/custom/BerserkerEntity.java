@@ -144,7 +144,7 @@ public class BerserkerEntity extends HeroSouls {
                 .add(Attributes.ARMOR_TOUGHNESS, 15)
                 .add(Attributes.MAX_HEALTH, 115.0)
                 .add(Attributes.ATTACK_DAMAGE, BASE_ATTACK_DAMAGE)
-                .add(Attributes.MOVEMENT_SPEED, 0.3)
+                .add(Attributes.MOVEMENT_SPEED, 0.32)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1)
                 .add(ForgeMod.SWIM_SPEED.get(), 2)
                 .add(Attributes.FOLLOW_RANGE, 40.0)

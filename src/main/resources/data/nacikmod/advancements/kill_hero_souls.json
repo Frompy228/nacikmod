@@ -1,0 +1,61 @@
+{
+  "display": {
+    "icon": {
+      "item": "nacikmod:ancient_scroll"
+    },
+    "title": {
+      "translate": "advancement.nacikmod.kill_hero_souls"
+    },
+    "description": {
+      "translate": "advancement.nacikmod.kill_hero_souls.desc"
+    },
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "nacikmod:nacik_mod",
+  "criteria": {
+    "kill_lanser": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "nacikmod:lanser"
+        }
+      }
+    },
+    "kill_archer": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "nacikmod:archer"
+        }
+      }
+    },
+    "kill_leonid": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "nacikmod:leonid"
+        }
+      }
+    },
+    "kill_berserker": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "nacikmod:berserker"
+        }
+      }
+    }
+  },
+  "requirements": [
+    ["kill_lanser"],
+    ["kill_leonid"],
+    ["kill_archer"],
+    ["kill_berserker"]
+  ],
+  "rewards": {
+    "loot": [],
+    "experience": 1000
+  }
+}

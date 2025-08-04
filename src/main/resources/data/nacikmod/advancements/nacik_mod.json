@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "nacikmod:magic_circuit"
+    },
+    "title": "Nacik Mod",
+    "description": "Nacik Mod",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "background": "minecraft:textures/block/red_wool.png"
+  },
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nacikmod:magic_circuit"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

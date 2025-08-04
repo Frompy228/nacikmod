@@ -77,7 +77,10 @@
   "item.nacikmod.ancient_scroll": "Ancient Scroll",
   "item.nacikmod.blood_warrior": "Blood Warrior",
   "item.nacikmod.ancient_seal": "Ancient Seal",
+  "item.nacikmod.lord_of_souls": "Lord Of Souls",
   "item.disappears": "The item disappears after use",
+  "item.active": "Active",
+  "item.inactive": "Inactive",
   "item.nacikmod.magic_circuit.desc1": "A magic chain that increases the player's maximum mana reserve by 50",
   "curios.identifier.artifact": "Artifact",
   "curios.identifier.ring": "Ring",
@@ -145,7 +148,7 @@
   "item.nacikmod.cursed_sword.desc1": "A mana burning sword. An ability that enhances the wearer",
   "item.nacikmod.lans_of_nacii.desc1": "A spear that inflicts incurable wounds",
   "item.nacikmod.lans_of_protection.desc1": "A spear that destroys armor",
-  "item.nacikmod.leonid_shield.desc1": "A shield that reflects increased damage to the attacker",
+  "item.nacikmod.leonid_shield.desc1": "A shield that reflects damage to the attacker",
   "item.nacikmod.poisoned_scythe.desc1": "Scythe poisoning victims. The ability removes the effect of poisoning from victims by causing injuries",
   "item.nacikmod.poisoned_scythe.desc2": "Mana Cost: 350",
   "item.nacikmod.god_hand.desc1": "Saves the owner from destruction",
@@ -166,5 +169,12 @@
   "item.nacikmod.blood_warrior.desc2": "Cost: 15,0",
   "item.nacikmod.blood_warrior.desc3": "Mana Cost: 100",
   "item.nacikmod.ancient_seal.desc1": "The ancient spell of suppressing the victim",
-  "item.nacikmod.ancient_seal.desc2": "Mana Cost: 700"
+  "item.nacikmod.ancient_seal.desc2": "Mana Cost: 900",
+  "item.nacikmod.lord_of_souls.desc1": "It absorbs the soul of an entity, gaining control over its essence",
+  "item.nacikmod.lord_of_souls.desc2": "Souls Count: %d",
+  "item.nacikmod.lord_of_souls.desc3": "Mana Cost: %d",
+  "item.nacikmod.lord_of_souls.desc4": "Right-click to absorb souls",
+  "item.nacikmod.lord_of_souls.desc5": "Shift + Right-click to the release of souls",
+  "advancement.nacikmod.kill_hero_souls": "Hero Souls Slayer",
+  "advancement.nacikmod.kill_hero_souls.desc": "Defeat all the Hero Souls. The first person to achieve this will be granted the spell of the past."
 }
