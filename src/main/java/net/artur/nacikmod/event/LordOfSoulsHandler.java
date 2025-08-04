@@ -13,6 +13,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.artur.nacikmod.NacikMod;
 import net.artur.nacikmod.item.LordOfSouls;
 import net.artur.nacikmod.capability.mana.ManaProvider;
+import net.artur.nacikmod.capability.lord_of_souls_summoned_entities.LordOfSoulsSummonedEntityProvider;
 
 import java.util.List;
 
@@ -28,6 +29,31 @@ public class LordOfSoulsHandler {
 
         // Check if killed entity is a player - don't absorb player souls
         if (event.getEntity() instanceof Player) {
+            return;
+        }
+
+        // Check if killed entity was a summoned entity - don't absorb summoned entity souls
+        boolean isSummonedEntity = false;
+        
+        // Check capability first (if owner is online)
+        for (Player onlinePlayer : event.getEntity().level().players()) {
+            if (onlinePlayer.getCapability(LordOfSoulsSummonedEntityProvider.LORD_OF_SOULS_SUMMONED_ENTITY_CAPABILITY)
+                    .map(cap -> cap.isTracked(event.getEntity().getUUID())).orElse(false)) {
+                isSummonedEntity = true;
+                break;
+            }
+        }
+        
+        // Check NBT backup if not found (for offline owners)
+        if (!isSummonedEntity) {
+            var entityData = event.getEntity().getPersistentData();
+            if (entityData.contains("lord_of_souls_owner")) {
+                isSummonedEntity = true;
+            }
+        }
+        
+        if (isSummonedEntity) {
+            // This was a summoned entity, don't absorb its soul
             return;
         }
 

@@ -25,7 +25,7 @@ import java.util.List;
 
 public class WorldSlash extends Item {
     private static final int MANA_COST = 6500;
-    private static final int COOLDOWN_TICKS = 200;
+    private static final int COOLDOWN_TICKS = 60;
     private static final float DAMAGE = 500.0F;
     private static final int RANGE = 50;
     private static final double HALF_WIDTH = 25.0;

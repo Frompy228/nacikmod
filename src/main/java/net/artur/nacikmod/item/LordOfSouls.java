@@ -16,7 +16,9 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.artur.nacikmod.capability.mana.ManaProvider;
-import net.artur.nacikmod.entity.ai.SummonedEntityAI;
+import net.artur.nacikmod.entity.ai.LordOfSoulsSummonedEntityAI;
+import net.artur.nacikmod.util.PlayerCooldowns;
+import net.artur.nacikmod.capability.lord_of_souls_summoned_entities.LordOfSoulsSummonedEntityProvider;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -33,6 +35,8 @@ public class LordOfSouls extends Item {
     public static final int MANA_COST = 5000;
     private static final int SOULS_PER_KILL = 1;
     private static final int MAX_SOULS = 10;
+    private static final int SUMMON_COOLDOWN_TICKS = 20; // 1000 seconds = 20000 ticks
+    private static final int SUMMONED_ENTITY_LIFETIME = 6000; // 5 minutes = 6000 ticks
 
     public LordOfSouls(Properties properties) {
         super(properties.rarity(AncientSeal.ANCIENT_GOLD).stacksTo(1));
@@ -44,8 +48,19 @@ public class LordOfSouls extends Item {
         
         if (!level.isClientSide) {
             if (player.isShiftKeyDown()) {
+                // Check cooldown for summoning
+                if (PlayerCooldowns.isOnCooldown(player, this)) {
+                    int left = PlayerCooldowns.getCooldownLeft(player, this);
+                    player.sendSystemMessage(Component.literal("Summoning is on cooldown! (" + left / 20 + "s left)")
+                            .withStyle(ChatFormatting.RED));
+                    return InteractionResultHolder.fail(itemStack);
+                }
+                
                 // Release all souls and spawn entities
                 releaseAllSouls(level, player, itemStack);
+                
+                // Set cooldown after successful summoning
+                PlayerCooldowns.setCooldown(player, this, SUMMON_COOLDOWN_TICKS);
             } else {
                 // Toggle activation
                 boolean isActive = isActive(itemStack);
@@ -60,7 +75,7 @@ public class LordOfSouls extends Item {
                 }
             }
             
-            // Set cooldown
+            // Set cooldown for activation toggle
             player.getCooldowns().addCooldown(this, 20);
         }
         
@@ -158,7 +173,7 @@ public class LordOfSouls extends Item {
                     if (entity instanceof LivingEntity livingEntity) {
                         // Set position near player
                         entity.setPos(player.getX() + (level.random.nextDouble() - 0.5) * 10,
-                                    player.getY(),
+                                    player.getY() + 1,
                                     player.getZ() + (level.random.nextDouble() - 0.5) * 10);
                         
                         // Restore equipment
@@ -172,20 +187,30 @@ public class LordOfSouls extends Item {
                             }
                         }
                         
-                        // Add custom tag to identify summoned entities
-                        livingEntity.addTag("lord_of_souls_summoned");
-                        livingEntity.addTag("lord_of_souls_owner:" + player.getUUID());
-                        
                         // Add custom AI for summoned entities
                         if (livingEntity instanceof Mob mob) {
                             // Clear existing target goals to prevent conflicts
                             mob.targetSelector.removeAllGoals(goal -> true);
                             // Add our custom AI
-                            mob.targetSelector.addGoal(1, new SummonedEntityAI(mob, player.getUUID()));
+                            mob.targetSelector.addGoal(1, new LordOfSoulsSummonedEntityAI(mob, player.getUUID()));
+                            
+                            // Set custom properties for summoned entities
+                            mob.setPersistenceRequired(); // Prevent despawning
+                            mob.setInvulnerable(false); // Can be killed but won't drop loot (handled by event)
+                            
+                                                    // Add lifetime data for automatic removal
+                        var entityData = livingEntity.getPersistentData();
+                        entityData.putInt("lord_of_souls_lifetime", SUMMONED_ENTITY_LIFETIME);
+                        entityData.putUUID("lord_of_souls_owner", player.getUUID()); // Backup owner UUID in mob's NBT
                         }
                         
                         // Add to level
                         level.addFreshEntity(entity);
+                        
+                        // Track the summoned entity using capability
+                        player.getCapability(LordOfSoulsSummonedEntityProvider.LORD_OF_SOULS_SUMMONED_ENTITY_CAPABILITY)
+                                .ifPresent(cap -> cap.addSummonedEntity(entity.getUUID(), player.getUUID()));
+                        
                         spawnedCount++;
                     }
                 }
