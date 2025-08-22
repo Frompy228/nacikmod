@@ -35,12 +35,12 @@ import java.util.Optional;
 import java.util.function.Function;
 
 public class Pocket extends Item {
-    private static final BlockPos SPARTA_POS = new BlockPos(4, 72, 4);
+    private static final BlockPos SPARTA_POS = new BlockPos(4, 108, 4);
     private static final int MANA_COST = 750;
     private static final double RANGE = 5.0;
 
     public Pocket(Properties properties) {
-        super(properties);
+        super(properties.fireResistant());
     }
 
     private static class SimpleTeleporter implements ITeleporter {

@@ -24,7 +24,7 @@ public class DoubleSlash extends Item {
     private static final int COOLDOWN_TICKS = 100;
 
     public DoubleSlash(Properties properties) {
-        super(properties.stacksTo(1));
+        super(properties.stacksTo(1).fireResistant());
     }
 
     @Override

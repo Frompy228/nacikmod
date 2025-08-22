@@ -35,6 +35,9 @@ public class ModBlocks {
     public static final RegistryObject<Block> TEMPORARY_ICE = registerBlock("temporary_ice",
             () -> new TemporaryIce(BlockBehaviour.Properties.copy(Blocks.ICE).noLootTable()));
 
+    public static final RegistryObject<Block> FIRE_TRAP = registerBlock("fire_trap",
+            () -> new net.artur.nacikmod.block.custom.FireTrap(BlockBehaviour.Properties.of().noLootTable().noOcclusion()));
+
 
 
 

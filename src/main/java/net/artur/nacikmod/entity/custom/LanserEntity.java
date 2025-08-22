@@ -120,7 +120,7 @@ public class LanserEntity extends HeroSouls {
                 .add(Attributes.ARMOR_TOUGHNESS, 10)
                 .add(Attributes.MAX_HEALTH, 130.0)
                 .add(Attributes.ATTACK_DAMAGE, 20.0)
-                .add(Attributes.MOVEMENT_SPEED, 0.47)
+                .add(Attributes.MOVEMENT_SPEED, 0.46)
                 .add(ForgeMod.SWIM_SPEED.get(), 2) // Увеличиваем скорость плавания в 1.5 раза
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.2)
                 .add(Attributes.FOLLOW_RANGE, 32.0);
@@ -249,7 +249,7 @@ public class LanserEntity extends HeroSouls {
                 }
 
                 lanser.attackWithMainHand = !lanser.attackWithMainHand;
-                attackCooldown = 17;
+                attackCooldown = 19;
             } else {
                 attackCooldown--;
             }
@@ -265,10 +265,16 @@ public class LanserEntity extends HeroSouls {
         private void applyWeaponEffects(LanserEntity lanser, LivingEntity target, ItemStack weapon) {
             if (weapon.getItem() == ModItems.LANS_OF_NACII.get()) {
                 double damageDealt = target.getMaxHealth() - target.getHealth();
-                int amplifier = (int) Math.floor(damageDealt / 3);
-                if (amplifier > 0) {
-                    target.addEffect(new MobEffectInstance(ModEffects.HEALTH_REDUCTION.get(), 20000, amplifier));
+                
+                // Проверяем, есть ли уже эффект снижения здоровья
+                MobEffectInstance existingEffect = target.getEffect(ModEffects.HEALTH_REDUCTION.get());
+                int newAmplifier = (int) Math.floor(damageDealt / 3);
+                
+                if (existingEffect != null) {
+                    newAmplifier += existingEffect.getAmplifier();
                 }
+                
+                target.addEffect(new MobEffectInstance(ModEffects.HEALTH_REDUCTION.get(), 20000, newAmplifier));
                 target.addEffect(new MobEffectInstance(ModEffects.NO_REGEN.get(), 240, 0));
             }
 

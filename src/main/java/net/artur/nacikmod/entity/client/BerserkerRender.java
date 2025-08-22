@@ -8,12 +8,11 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
+import net.artur.nacikmod.entity.layers.BerserkerOuterLayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.ItemStack;
 
 @OnlyIn(Dist.CLIENT)
 public class BerserkerRender extends HumanoidMobRenderer<BerserkerEntity, BerserkerModel<BerserkerEntity>> {
@@ -30,6 +29,9 @@ public class BerserkerRender extends HumanoidMobRenderer<BerserkerEntity, Berser
                 new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR)),
                 context.getModelManager()
         ));
+        
+        // Добавляем слой внешней текстуры
+        this.addLayer(new BerserkerOuterLayer<>(this, context.getModelSet()));
     }
 
     @Override

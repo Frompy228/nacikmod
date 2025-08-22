@@ -25,7 +25,7 @@ public class BloodWarrior extends Item {
     private static final int COOLDOWN_TICKS = 600;
 
     public BloodWarrior(Properties properties) {
-        super(properties.rarity(Rarity.EPIC).stacksTo(1));
+        super(properties.rarity(Rarity.EPIC).stacksTo(1).fireResistant());
     }
 
     @Override

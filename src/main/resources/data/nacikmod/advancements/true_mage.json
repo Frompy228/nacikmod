@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "nacikmod:mage_mark"
+    },
+    "title": {
+      "translate": "advancement.nacikmod.true_mage"
+    },
+    "description": {
+      "translate": "advancement.nacikmod.true_mage.desc1"
+    },
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "nacikmod:nacik_mod",
+  "criteria": {
+    "max_mana_reached": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "rewards": {
+    "loot": [],
+    "experience": 100
+  }
+}

@@ -28,6 +28,7 @@ public class ModItems {
     public static final RegistryObject<Item> HIRAISHIN_WITHOUT_SEAL = ITEMS.register("hiraishin_without_seal", HiraishinWithoutSeal::new);
     public static final RegistryObject<Item> SPEAR = ITEMS.register("spear", Spear::new);
     public static final RegistryObject<Item> DUBINKA = ITEMS.register("dubinka", () -> new Dubinka());
+    public static final RegistryObject<Item> ASSASSIN_DAGGER = ITEMS.register("assassin_dagger", () -> new AssassinDagger());
     public static final RegistryObject<Item> CURSED_SWORD = ITEMS.register("cursed_sword", () -> new CursedSword());
     public static final RegistryObject<Item> MAGIC_BOW = ITEMS.register("magic_bow", () -> new MagicBow());
     public static final RegistryObject<Item> MAGIC_ARMOR = ITEMS.register("magic_armor", MagicArmor::new);
@@ -67,6 +68,8 @@ public class ModItems {
     public static final RegistryObject<Item> BLOOD_WARRIOR = ITEMS.register("blood_warrior", () -> new BloodWarrior(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> ANCIENT_SEAL = ITEMS.register("ancient_seal", () -> new AncientSeal(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LORD_OF_SOULS = ITEMS.register("lord_of_souls", () -> new LordOfSouls(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> SEAL_OF_RETURN = ITEMS.register("seal_of_return", () -> new SealOfReturn(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> MAGE_MARK = ITEMS.register("mage_mark", () -> new MageMark(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LANSER_SPAWN_EGG = ITEMS.register("lanser_spawn_egg",
             ()-> new ForgeSpawnEggItem(ModEntities.LANSER, 0x5b107e, 0xCF6A84,
                     new Item.Properties()));
@@ -90,5 +93,8 @@ public class ModItems {
                     new Item.Properties()));
     public static final RegistryObject<Item> BLOOD_WARRIOR_SPAWN_EGG = ITEMS.register("blood_warrior_spawn_egg",
             ()-> new ForgeSpawnEggItem(ModEntities.BLOOD_WARRIOR, 0x8B0000, 0xFF0000,
+                    new Item.Properties()));
+    public static final RegistryObject<Item> ASSASSIN_SPAWN_EGG = ITEMS.register("assassin_spawn_egg",
+            ()-> new ForgeSpawnEggItem(ModEntities.ASSASSIN, 0x080808, 0xffffff,
                     new Item.Properties()));
 }

@@ -35,7 +35,7 @@ public class EarthStep extends Item {
     private static final java.util.Set<UUID> activeEarthStepPlayers = new java.util.HashSet<>();
 
     public EarthStep(Properties properties) {
-        super(properties);
+        super(properties.fireResistant());
     }
 
     @Override

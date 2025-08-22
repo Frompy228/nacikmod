@@ -13,7 +13,7 @@ import java.util.List;
 
 public class AncientScroll extends Item {
     public AncientScroll(Properties properties) {
-        super(properties.rarity(AncientSeal.ANCIENT_GOLD).stacksTo(1));
+        super(properties.rarity(AncientSeal.ANCIENT_GOLD).stacksTo(1).fireResistant());
     }
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {

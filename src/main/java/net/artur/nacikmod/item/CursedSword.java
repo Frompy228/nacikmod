@@ -17,7 +17,7 @@ import java.util.List;
 
 public class CursedSword extends SwordItem {
     public CursedSword() {
-        super(new CustomTier(), 5, -2.4f, new Properties().rarity(ShardArtifact.RED));
+        super(new CustomTier(), 5, -2.4f, new Properties().rarity(ShardArtifact.RED).fireResistant());
     }
 
     @Override

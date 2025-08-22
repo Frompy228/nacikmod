@@ -27,19 +27,19 @@ public class LootTableHandler {
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2)));
 
             LootItem.Builder<?> magicArmor = LootItem.lootTableItem(ModItems.MAGIC_ARMOR.get())
-                    .setWeight(10)
+                    .setWeight(8)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
             LootItem.Builder<?> magicCharm = LootItem.lootTableItem(ModItems.MAGIC_CHARM.get())
-                    .setWeight(11)
+                    .setWeight(10)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
             LootItem.Builder<?> manaCrystal = LootItem.lootTableItem(ModItems.MANA_CRYSTAL.get())
-                    .setWeight(7)
+                    .setWeight(6)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
             LootItem.Builder<?> magicSeal = LootItem.lootTableItem(ModItems.MAGIC_SEAL.get())
-                    .setWeight(14)
+                    .setWeight(13)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
             LootItem.Builder<?> ringOfTime = LootItem.lootTableItem(ModItems.RING_OF_TIME.get())
@@ -90,6 +90,11 @@ public class LootTableHandler {
                     .setWeight(1)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
+            LootItem.Builder<?> sealOfReturn = LootItem.lootTableItem(ModItems.SEAL_OF_RETURN.get())
+                    .setWeight(5)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
+
             // Создаём пул лута
             LootPool pool = LootPool.lootPool()
                     .name("nacikmod_loot_pool")
@@ -112,6 +117,7 @@ public class LootTableHandler {
                     .add(breakingBodyLimit)
                     .add(intangibility)
                     .add(bloodWarrior)
+                    .add(sealOfReturn)
                     .build();
 
 

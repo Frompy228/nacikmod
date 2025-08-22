@@ -9,17 +9,17 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RenderGuiOverlayEvent;
+import net.minecraftforge.client.event.RenderGuiEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 
 @OnlyIn(Dist.CLIENT)
-@Mod.EventBusSubscriber(modid = NacikMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT) // Добавлено value = Dist.CLIENT
+@Mod.EventBusSubscriber(modid = NacikMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class ManaOverlayRenderer {
 
     @SubscribeEvent
-    public static void onRenderGuiOverlay(RenderGuiOverlayEvent.Pre event) {
+    public static void onRenderGui(RenderGuiEvent.Post event) {
 
         Minecraft minecraft = Minecraft.getInstance();
         Player player = minecraft.player;
@@ -28,6 +28,7 @@ public class ManaOverlayRenderer {
         player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
             int currentMana = mana.getMana();
             int maxMana = mana.getMaxMana();
+            boolean isTrueMage = mana.isTrueMage();
 
             // Координаты в левом верхнем углу
             int x = 10;
@@ -39,12 +40,16 @@ public class ManaOverlayRenderer {
             poseStack.pushPose();
             RenderSystem.enableBlend();
 
-            // Отрисовка текста
+            // Отрисовка текста маны
             event.getGuiGraphics().drawString(font, "Mana: " + currentMana + "/" + maxMana, x, y, 0x00FFFF, false);
+            
+            // Отображаем статус "True Mage" если он есть
+            if (isTrueMage) {
+                event.getGuiGraphics().drawString(font, "True Mage", x, y + 12, 0x8b0000, false);
+            }
+
             RenderSystem.disableBlend();
             poseStack.popPose();
-
-
         });
 
     }

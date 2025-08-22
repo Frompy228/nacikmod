@@ -1,0 +1,136 @@
+package net.minecraft.client.renderer.entity;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
+import net.minecraft.client.model.DrownedModel;
+import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.renderer.entity.layers.DrownedOuterLayer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.monster.Drowned;
+import net.minecraft.world.entity.monster.Zombie;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
+@OnlyIn(Dist.CLIENT)
+public class DrownedRenderer extends AbstractZombieRenderer<Drowned, DrownedModel<Drowned>> {
+   private static final ResourceLocation DROWNED_LOCATION = new ResourceLocation("textures/entity/zombie/drowned.png");
+
+   public DrownedRenderer(EntityRendererProvider.Context p_173964_) {
+      super(p_173964_, new DrownedModel<>(p_173964_.bakeLayer(ModelLayers.DROWNED)), new DrownedModel<>(p_173964_.bakeLayer(ModelLayers.DROWNED_INNER_ARMOR)), new DrownedModel<>(p_173964_.bakeLayer(ModelLayers.DROWNED_OUTER_ARMOR)));
+      this.addLayer(new DrownedOuterLayer<>(this, p_173964_.getModelSet()));
+   }
+
+   public ResourceLocation getTextureLocation(Zombie p_114115_) {
+      return DROWNED_LOCATION;
+   }
+
+   protected void setupRotations(Drowned p_114109_, PoseStack p_114110_, float p_114111_, float p_114112_, float p_114113_) {
+      super.setupRotations(p_114109_, p_114110_, p_114111_, p_114112_, p_114113_);
+      float f = p_114109_.getSwimAmount(p_114113_);
+      if (f > 0.0F) {
+         float f1 = -10.0F - p_114109_.getXRot();
+         float f2 = Mth.lerp(f, 0.0F, f1);
+         p_114110_.rotateAround(Axis.XP.rotationDegrees(f2), 0.0F, p_114109_.getBbHeight() / 2.0F, 0.0F);
+      }
+
+   }
+}
+package net.minecraft.client.renderer.entity.layers;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.model.DrownedModel;
+import net.minecraft.client.model.geom.EntityModelSet;
+import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.RenderLayerParent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.monster.Drowned;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
+@OnlyIn(Dist.CLIENT)
+public class DrownedOuterLayer<T extends Drowned> extends RenderLayer<T, DrownedModel<T>> {
+   private static final ResourceLocation DROWNED_OUTER_LAYER_LOCATION = new ResourceLocation("textures/entity/zombie/drowned_outer_layer.png");
+   private final DrownedModel<T> model;
+
+   public DrownedOuterLayer(RenderLayerParent<T, DrownedModel<T>> p_174490_, EntityModelSet p_174491_) {
+      super(p_174490_);
+      this.model = new DrownedModel<>(p_174491_.bakeLayer(ModelLayers.DROWNED_OUTER_LAYER));
+   }
+
+   public void render(PoseStack p_116924_, MultiBufferSource p_116925_, int p_116926_, T p_116927_, float p_116928_, float p_116929_, float p_116930_, float p_116931_, float p_116932_, float p_116933_) {
+      coloredCutoutModelCopyLayerRender(this.getParentModel(), this.model, DROWNED_OUTER_LAYER_LOCATION, p_116924_, p_116925_, p_116926_, p_116927_, p_116928_, p_116929_, p_116931_, p_116932_, p_116933_, p_116930_, 1.0F, 1.0F, 1.0F);
+   }
+}
+package net.minecraft.client.model;
+
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
+@OnlyIn(Dist.CLIENT)
+public class DrownedModel<T extends Zombie> extends ZombieModel<T> {
+   public DrownedModel(ModelPart p_170534_) {
+      super(p_170534_);
+   }
+
+   public static LayerDefinition createBodyLayer(CubeDeformation p_170536_) {
+      MeshDefinition meshdefinition = HumanoidModel.createMesh(p_170536_, 0.0F);
+      PartDefinition partdefinition = meshdefinition.getRoot();
+      partdefinition.addOrReplaceChild("left_arm", CubeListBuilder.create().texOffs(32, 48).addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, p_170536_), PartPose.offset(5.0F, 2.0F, 0.0F));
+      partdefinition.addOrReplaceChild("left_leg", CubeListBuilder.create().texOffs(16, 48).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, p_170536_), PartPose.offset(1.9F, 12.0F, 0.0F));
+      return LayerDefinition.create(meshdefinition, 64, 64);
+   }
+
+   public void prepareMobModel(T p_102521_, float p_102522_, float p_102523_, float p_102524_) {
+      this.rightArmPose = HumanoidModel.ArmPose.EMPTY;
+      this.leftArmPose = HumanoidModel.ArmPose.EMPTY;
+      ItemStack itemstack = p_102521_.getItemInHand(InteractionHand.MAIN_HAND);
+      if (itemstack.is(Items.TRIDENT) && p_102521_.isAggressive()) {
+         if (p_102521_.getMainArm() == HumanoidArm.RIGHT) {
+            this.rightArmPose = HumanoidModel.ArmPose.THROW_SPEAR;
+         } else {
+            this.leftArmPose = HumanoidModel.ArmPose.THROW_SPEAR;
+         }
+      }
+
+      super.prepareMobModel(p_102521_, p_102522_, p_102523_, p_102524_);
+   }
+
+   public void setupAnim(T p_102526_, float p_102527_, float p_102528_, float p_102529_, float p_102530_, float p_102531_) {
+      super.setupAnim(p_102526_, p_102527_, p_102528_, p_102529_, p_102530_, p_102531_);
+      if (this.leftArmPose == HumanoidModel.ArmPose.THROW_SPEAR) {
+         this.leftArm.xRot = this.leftArm.xRot * 0.5F - (float)Math.PI;
+         this.leftArm.yRot = 0.0F;
+      }
+
+      if (this.rightArmPose == HumanoidModel.ArmPose.THROW_SPEAR) {
+         this.rightArm.xRot = this.rightArm.xRot * 0.5F - (float)Math.PI;
+         this.rightArm.yRot = 0.0F;
+      }
+
+      if (this.swimAmount > 0.0F) {
+         this.rightArm.xRot = this.rotlerpRad(this.swimAmount, this.rightArm.xRot, -2.5132742F) + this.swimAmount * 0.35F * Mth.sin(0.1F * p_102529_);
+         this.leftArm.xRot = this.rotlerpRad(this.swimAmount, this.leftArm.xRot, -2.5132742F) - this.swimAmount * 0.35F * Mth.sin(0.1F * p_102529_);
+         this.rightArm.zRot = this.rotlerpRad(this.swimAmount, this.rightArm.zRot, -0.15F);
+         this.leftArm.zRot = this.rotlerpRad(this.swimAmount, this.leftArm.zRot, 0.15F);
+         this.leftLeg.xRot -= this.swimAmount * 0.55F * Mth.sin(0.1F * p_102529_);
+         this.rightLeg.xRot += this.swimAmount * 0.55F * Mth.sin(0.1F * p_102529_);
+         this.head.xRot = 0.0F;
+      }
+
+   }
+}

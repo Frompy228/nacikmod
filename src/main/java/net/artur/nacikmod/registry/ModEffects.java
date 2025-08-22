@@ -37,8 +37,6 @@ public class ModEffects {
             EFFECTS.register("enhanced_gravity", EffectEnhancedGravity::new);
     public static final RegistryObject<MobEffect> TRUE_SIGHT =
             EFFECTS.register("true_sight", EffectTrueSight::new);
-    public static final RegistryObject<MobEffect> SENSORY_RAIN =
-            EFFECTS.register("sensory_rain", EffectSensoryRain::new);
     public static final RegistryObject<MobEffect> CURSED_SWORD =
             EFFECTS.register("cursed_sword", EffectCursedSword::new);
     public static final RegistryObject<MobEffect> STRONG_POISON =

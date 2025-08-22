@@ -104,4 +104,9 @@ public class IceSpikeProjectile extends ThrowableItemProjectile {
     public boolean isInWater() {
         return false;
     }
+
+    @Override
+    public boolean fireImmune() {
+        return true;
+    }
 }

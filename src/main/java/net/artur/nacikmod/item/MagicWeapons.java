@@ -26,7 +26,7 @@ public class MagicWeapons extends Item {
     private static final int MAX_DAMAGE = 40;
 
     public MagicWeapons(Properties properties) {
-        super(properties);
+        super(properties.fireResistant());
     }
 
     private int calculateManaDamage(Player player) {

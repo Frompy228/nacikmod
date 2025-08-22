@@ -51,6 +51,14 @@ public class ModMessages {
         );
 
         INSTANCE.registerMessage(packetId++,
+                TrueMageStatusPacket.class,
+                TrueMageStatusPacket::toBytes,
+                TrueMageStatusPacket::new,
+                TrueMageStatusPacket::handle,
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT)
+        );
+
+        INSTANCE.registerMessage(packetId++,
                 PacketSyncEffect.class,
                 PacketSyncEffect::toBytes,
                 PacketSyncEffect::new,
@@ -80,7 +88,11 @@ public class ModMessages {
     }
 
     public static void sendManaToClient(ServerPlayer player, int mana, int maxMana) {
-        INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new ManaSyncPacket(mana, maxMana));
+        INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new ManaSyncPacket(mana, maxMana, false));
+    }
+    
+    public static void sendTrueMageStatusToClient(ServerPlayer player, boolean isTrueMage) {
+        INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new TrueMageStatusPacket(isTrueMage));
     }
 
     public static void sendToServer(TimeStopPacket packet) {

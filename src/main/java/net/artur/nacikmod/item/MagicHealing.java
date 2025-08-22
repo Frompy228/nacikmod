@@ -20,7 +20,7 @@ public class MagicHealing extends Item {
     private static final String HEALING_AMOUNT_TAG = "healing_amount";
 
     public MagicHealing(Properties properties) {
-        super(properties.stacksTo(1));
+        super(properties.stacksTo(1).fireResistant());
     }
 
     @Override

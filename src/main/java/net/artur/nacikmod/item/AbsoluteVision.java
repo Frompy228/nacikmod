@@ -27,7 +27,7 @@ public class AbsoluteVision extends Item {
     private static final int MANA_COST = 3000; // Стоимость маны
 
     public AbsoluteVision(Properties properties) {
-        super(properties);
+        super(properties.fireResistant());
     }
 
     @Override

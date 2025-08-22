@@ -10,11 +10,13 @@ import net.artur.nacikmod.client.renderer.ReleaseAuraRenderer;
 import net.artur.nacikmod.client.renderer.LastMagicAuraRenderer;
 import net.artur.nacikmod.entity.client.*;
 import net.artur.nacikmod.entity.client.SuppressingGateRenderer;
+import net.artur.nacikmod.entity.client.ShamakRenderer;
 import net.artur.nacikmod.entity.client.SuppressingGateModel;
 import net.artur.nacikmod.gui.TimeStopOverlay;
 import net.artur.nacikmod.item.MagicCrystal;
 import net.artur.nacikmod.registry.ModEntities;
 import net.artur.nacikmod.registry.ModItems;
+import net.artur.nacikmod.entity.projectiles.ShamakEntity;
 import net.artur.nacikmod.util.ModItemProperties;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
@@ -38,10 +40,17 @@ public class ModEventBusClientEvents {
     @SubscribeEvent
     public static void registerLayer(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(ModModelLayers.LANSER_LAYER, LanserModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.LANSER_OUTER_LAYER, () -> LanserModel.createBodyLayer(new CubeDeformation(0.2F)));
+        event.registerLayerDefinition(ModModelLayers.ARCHER_OUTER_LAYER, () -> ArcherModel.createBodyLayer(new CubeDeformation(0.2F)));
+        event.registerLayerDefinition(ModModelLayers.BERSERKER_OUTER_LAYER, () -> BerserkerModel.createBodyLayer(new CubeDeformation(0.2F)));
+        event.registerLayerDefinition(ModModelLayers.RED_BERSERKER_OUTER_LAYER, () -> BerserkerModel.createBodyLayer(new CubeDeformation(0.2F)));
+        event.registerLayerDefinition(ModModelLayers.ASSASSIN_OUTER_LAYER, () -> AssassinModel.createBodyLayer(new CubeDeformation(0.2F)));
         event.registerLayerDefinition(ModModelLayers.LEONID_LAYER, LeonidModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.SPARTAN_LAYER, SpartanModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.BERSERKER_LAYER, BerserkerModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.RED_BERSERKER_LAYER, BerserkerModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.ARCHER_LAYER, ArcherModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.ASSASSIN_LAYER, AssassinModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.MYSTERIOUS_TRADER_LAYER, MysteriousTraderModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.MYSTERIOUS_TRADER_BATTLE_CLONE_LAYER, MysteriousTraderBattleCloneModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.BLOOD_WARRIOR_LAYER, BloodWarriorModel::createBodyLayer);
@@ -84,20 +93,29 @@ public class ModEventBusClientEvents {
             EntityRenderers.register(ModEntities.LEONID.get(), LeonidRender::new);
             EntityRenderers.register(ModEntities.SPARTAN.get(), SpartanRender::new);
             EntityRenderers.register(ModEntities.BERSERK.get(), BerserkerRender::new);
+            EntityRenderers.register(ModEntities.RED_BERSERK.get(), RedBerserkerRender::new);
             EntityRenderers.register(ModEntities.ARCHER.get(), ArcherRender::new);
+            EntityRenderers.register(ModEntities.ASSASSIN.get(), AssassinRender::new);
             EntityRenderers.register(ModEntities.MYSTERIOUS_TRADER.get(), MysteriousTraderRender::new);
             EntityRenderers.register(ModEntities.MYSTERIOUS_TRADER_BATTLE_CLONE.get(), MysteriousTraderBattleCloneRender::new);
             EntityRenderers.register(ModEntities.BLOOD_WARRIOR.get(), BloodWarriorRender::new);
             EntityRenderers.register(ModEntities.FIRE_ARROW.get(), FireArrowRenderer::new);
             EntityRenderers.register(ModEntities.MANA_ARROW.get(), ManaArrowRenderer::new);
             EntityRenderers.register(ModEntities.FIRE_CLOUD.get(), FireCloudRenderer::new);
+            EntityRenderers.register(ModEntities.FIRE_HAIL.get(), FireHailRenderer::new);
             EntityRenderers.register(ModEntities.ICE_SPIKE_PROJECTILE.get(), IceSpikeProjectileRenderer::new);
             EntityRenderers.register(ModEntities.SLASH_PROJECTILE.get(), SlashProjectileRenderer::new);
             EntityRenderers.register(ModEntities.DOUBLE_SLASH_PROJECTILE.get(), DoubleSlashProjectileRenderer::new);
             EntityRenderers.register(ModEntities.SUPPRESSING_GATE.get(), SuppressingGateRenderer::new);
-            
+            EntityRenderers.register(ModEntities.SHAMAK.get(), ShamakRenderer::new);
+
             // Register Dark Sphere renderer
             CuriosRendererRegistry.register(ModItems.DARK_SPHERE.get(), () -> new DarkSphereRenderer());
+            // Установка render layer для FIRE_TRAP
+            net.minecraft.client.renderer.ItemBlockRenderTypes.setRenderLayer(
+                net.artur.nacikmod.registry.ModBlocks.FIRE_TRAP.get(),
+                net.minecraft.client.renderer.RenderType.cutout()
+            );
         });
     }
 

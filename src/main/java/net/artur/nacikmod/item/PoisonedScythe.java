@@ -160,7 +160,7 @@ public class PoisonedScythe extends AxeItem {
                     if (effect != null) {
                         int amplifier = effect.getAmplifier();
                         target.removeEffect(ModEffects.STRONG_POISON.get());
-                        float damage = (amplifier + 1) * 10.0f;
+                        float damage = (amplifier + 1) * 12.0f;
                         target.hurt(level.damageSources().playerAttack(player), damage);
                     }
                     i++;

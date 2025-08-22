@@ -24,7 +24,7 @@ public class Slash extends Item {
     private static final int COOLDOWN_TICKS = 100; // 5 секунд (20 тиков * 5)
 
     public Slash(Properties properties) {
-        super(properties.stacksTo(1));
+        super(properties.stacksTo(1).fireResistant());
     }
 
     @Override
