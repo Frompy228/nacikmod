@@ -1,4 +1,7 @@
 {
+  "block.nacikmod.fire_trap": "Огненная Ловушка",
+  "block.nacikmod.fire_trap.desc1": "Создает ловушку, которая вызывает огненный град",
+  "block.nacikmod.fire_trap.desc2": "Урон: 25",
   "item.nacikmod.lans_of_protection": "Копье Защиты",
   "item.nacikmod.lans_of_nacii": "Копье Здоровья",
   "effect.nacikmod.no_regen": "Антихил",
@@ -13,7 +16,9 @@
   "entity.nacikmod.lanser": "Диармайд",
   "entity.nacikmod.leonid": "Леонид",
   "entity.nacikmod.berserker": "Берсеркер",
+  "entity.nacikmod.red_berserker": "Крансый Берсеркер",
   "entity.nacikmod.archer": "Арчер",
+  "entity.nacikmod.assassin": "Ассассин",
   "entity.nacikmod.mysterious_trader": "Мистический торговец",
   "entity.nacikmod.mysterious_trader_battle_clone": "Боевой клон Мистического торговца",
   "effect.nacikmod.roar":"Рев",
@@ -28,6 +33,7 @@
   "item.nacikmod.spartan_spawn_egg": "Яйцо призыва Спартанца",
   "item.nacikmod.berserker_spawn_egg": "Яйцо призыва Берсеркера",
   "item.nacikmod.archer_spawn_egg": "Яйцо призыва Арчера",
+  "item.nacikmod.assassin_spawn_egg": "Яйцо призыва Ассасина",
   "item.nacikmod.mysterious_trader_spawn_egg": "Яйцо призыва Мистического торговца",
   "item.nacikmod.mysterious_trader_battle_clone_spawn_egg": "Яйцо призыва Боевого клона мистического торговца",
   "item.nacikmod.magic_armor": "Магическая броня",
@@ -77,6 +83,8 @@
   "item.nacikmod.blood_warrior": "Кровавый воин",
   "item.nacikmod.ancient_seal": "Древняя печать",
   "item.nacikmod.lord_of_souls": "Повелитель душ",
+  "item.nacikmod.seal_of_return": "Печать возврата",
+  "item.nacikmod.mage_mark": "Печать мага",
   "item.active": "Активировано",
   "item.inactive": "Деактивировано",
   "item.disappears": "Предмет исчезает после использования",
@@ -175,6 +183,10 @@
   "item.nacikmod.lord_of_souls.desc4": "Right-click, чтобы поглотить души",
   "item.nacikmod.lord_of_souls.desc5": "Shift + Right-click, чтобы высвободить души",
   "advancement.nacikmod.kill_hero_souls": "Убийца героических духов",
-  "advancement.nacikmod.kill_hero_souls.desc": "Победи все героически души. Тот, кто первым достигнет этого, получит заклинание прошлого"
-
+  "advancement.nacikmod.kill_hero_souls.desc1": "Победи все героически души. Тот, кто первым достигнет этого, получит заклинание прошлого",
+  "advancement.nacikmod.true_mage": "Истинный маг",
+  "advancement.nacikmod.true_mage.desc1": "Развить свой объем маны до 10000",
+  "item.nacikmod.seal_of_return.desc1": "Печать, которая возвращает к точке возрождения",
+  "item.nacikmod.seal_of_return.desc2": "Затраты маны: 1000",
+  "item.nacikmod.mage_mark.desc1": "Символ, подтверждающий звание мага"
 }

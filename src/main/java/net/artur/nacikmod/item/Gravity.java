@@ -46,7 +46,7 @@ public class Gravity extends Item {
     private static final Set<UUID> activeFlyingPlayers = new HashSet<>();
 
     public Gravity(Properties properties) {
-        super(properties);
+        super(properties.fireResistant());
     }
 
     @SubscribeEvent

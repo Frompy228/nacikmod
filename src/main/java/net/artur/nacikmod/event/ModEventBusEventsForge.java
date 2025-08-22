@@ -30,6 +30,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.AABB;
 import java.util.List;
+import net.artur.nacikmod.effect.EffectManablessing;
+
 
 @Mod.EventBusSubscriber(modid = NacikMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ModEventBusEventsForge {
@@ -62,7 +64,7 @@ public class ModEventBusEventsForge {
     @SubscribeEvent
     public static void onLivingHurt(LivingHurtEvent event) {
         if (event.getSource().getEntity() instanceof Player player) {
-            // Проверяем, держит ли игрок ManaSword
+
             ItemStack heldItem = player.getMainHandItem();
 
             
@@ -117,6 +119,15 @@ public class ModEventBusEventsForge {
             AttackHandler.onAttack(event.getEntity(), player);
         }
     }
+
+    @SubscribeEvent
+    public static void onMobEffectRemove(MobEffectEvent.Remove event) {
+        // Предотвращаем снятие эффектов EffectManablessing и EffectMageMark
+        if (event.getEffect() instanceof EffectManablessing) {
+            event.setCanceled(true);
+        }
+    }
+
 
     @SubscribeEvent
     public static void onLivingDeath(LivingDeathEvent event) {

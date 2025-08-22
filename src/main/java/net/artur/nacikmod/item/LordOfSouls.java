@@ -39,7 +39,7 @@ public class LordOfSouls extends Item {
     private static final int SUMMONED_ENTITY_LIFETIME = 6000; // 5 minutes = 6000 ticks
 
     public LordOfSouls(Properties properties) {
-        super(properties.rarity(AncientSeal.ANCIENT_GOLD).stacksTo(1));
+        super(properties.rarity(AncientSeal.ANCIENT_GOLD).stacksTo(1).fireResistant());
     }
 
     @Override

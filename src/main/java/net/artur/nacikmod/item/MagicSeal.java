@@ -6,6 +6,8 @@ import net.artur.nacikmod.network.ModMessages;
 import net.artur.nacikmod.network.ManaSyncPacket;
 import net.artur.nacikmod.network.PacketSyncEffect;
 import net.artur.nacikmod.registry.ModEffects;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -109,6 +111,8 @@ public class MagicSeal extends Item {
         tooltip.add(net.minecraft.network.chat.Component.translatable("item.nacikmod.magic_seal.desc1"));
         tooltip.add(net.minecraft.network.chat.Component.translatable("item.nacikmod.magic_seal.desc2")
                 .withStyle(style -> style.withColor(0x00FFFF))); // Цвет - голубой
+        tooltip.add(Component.translatable("item.disappears")
+                .withStyle(ChatFormatting.GRAY));
     }
 
 }

@@ -4,6 +4,7 @@ import com.min01.tickrateapi.util.TickrateUtil;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -20,7 +21,8 @@ public class EffectTimeSlow extends MobEffect {
 
     @Override
     public void applyEffectTick(LivingEntity entity, int amplifier) {
-        float SLOWED_TICKRATE = Math.max(1, 20.0f - (5 + amplifier * 5f));
+        int effectiveAmplifier = (entity instanceof Player) ? amplifier : Math.min(amplifier, 2);
+        float SLOWED_TICKRATE = Math.max(1.0f, 20.0f - (5.0f + effectiveAmplifier * 5.0f));
         if (!entity.level().isClientSide && entity !=null && entity.isAlive()) {  // Выполняем только на сервере
             UUID entityId = entity.getUUID();
 

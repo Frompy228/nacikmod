@@ -22,7 +22,7 @@ public class Intangibility extends Item {
     private static final int MANA_COST_PER_SECOND = 50;
 
     public Intangibility(Properties properties) {
-        super(properties.stacksTo(1));
+        super(properties.stacksTo(1).fireResistant());
     }
 
     @Override

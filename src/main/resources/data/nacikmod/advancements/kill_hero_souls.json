@@ -7,7 +7,7 @@
       "translate": "advancement.nacikmod.kill_hero_souls"
     },
     "description": {
-      "translate": "advancement.nacikmod.kill_hero_souls.desc"
+      "translate": "advancement.nacikmod.kill_hero_souls.desc1"
     },
     "show_toast": true,
     "announce_to_chat": true,

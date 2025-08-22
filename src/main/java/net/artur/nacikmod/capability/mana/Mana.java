@@ -3,10 +3,12 @@ package net.artur.nacikmod.capability.mana;
 public class Mana implements IMana {
     private int mana;
     private int maxMana;
+    private boolean isTrueMage;
 
     public Mana() {
         this.mana = 100;  // Начальная мана
         this.maxMana = 100;
+        this.isTrueMage = false;
     }
 
     @Override
@@ -50,5 +52,16 @@ public class Mana implements IMana {
         if (this.mana < this.maxMana) {
             this.mana = Math.min(this.mana + amount, this.maxMana);
         }
+    }
+    
+    // Реализация методов для статуса "Истинный маг"
+    @Override
+    public boolean isTrueMage() {
+        return isTrueMage;
+    }
+    
+    @Override
+    public void setTrueMage(boolean isTrueMage) {
+        this.isTrueMage = isTrueMage;
     }
 }

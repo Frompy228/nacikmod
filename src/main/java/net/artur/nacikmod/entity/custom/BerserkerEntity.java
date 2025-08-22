@@ -43,7 +43,7 @@ public class BerserkerEntity extends HeroSouls {
     private static final float REGENERATION_AMOUNT = 2.0f;
     private static final double BASE_ATTACK_DAMAGE = 22;
     private static final double ENTITY_REACH = 5.0D; // Достигаемость сущностей 5 блоков
-    private static final int ROAR_COOLDOWN = 400; // 15 секунд (20 тиков * 15)
+    private static final int ROAR_COOLDOWN = 300;
     private static final int ROAR_RADIUS = 2; // Радиус разрушения блоков
     private static final int MAX_RESURRECTIONS = 7; // Максимальное количество воскрешений
     private int resurrectionCount = 0; // Счетчик воскрешений
@@ -78,7 +78,6 @@ public class BerserkerEntity extends HeroSouls {
 
     static class CustomMeleeAttackGoal extends MeleeAttackGoal {
         private final BerserkerEntity berserker;
-        private static final double AREA_DAMAGE_RADIUS = 2; // Радиус урона по области
         private int attackCooldown = 0;
 
         public CustomMeleeAttackGoal(BerserkerEntity mob, double speedModifier) {
@@ -241,7 +240,7 @@ public class BerserkerEntity extends HeroSouls {
             // Увеличиваем урон
             AttributeInstance attackDamageAttribute = this.getAttribute(Attributes.ATTACK_DAMAGE);
             if (attackDamageAttribute != null) {
-                attackDamageAttribute.setBaseValue(BASE_ATTACK_DAMAGE * 1.1);
+                attackDamageAttribute.setBaseValue(attackDamageAttribute.getBaseValue() * 1.1);
             }
 
             // Добавляем эффект отскока

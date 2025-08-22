@@ -16,7 +16,7 @@ import java.util.List;
 
 public class DarkSphere extends Item implements ICurioItem {
     public DarkSphere(Properties properties) {
-        super(properties.stacksTo(1));
+        super(properties.stacksTo(1).fireResistant());
     }
 
     @Override

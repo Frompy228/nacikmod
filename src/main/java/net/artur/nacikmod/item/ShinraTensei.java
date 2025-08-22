@@ -31,7 +31,7 @@ public class ShinraTensei extends Item {
     private static final int COOLDOWN_TICKS = 10000;
 
     public ShinraTensei(Properties properties) {
-        super(properties);
+        super(properties.fireResistant());
     }
 
     @Override

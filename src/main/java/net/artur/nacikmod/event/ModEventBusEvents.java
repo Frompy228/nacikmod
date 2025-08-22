@@ -28,7 +28,9 @@ public class ModEventBusEvents {
         event.put(ModEntities.LEONID.get(), LeonidEntity.createAttributes().build());
         event.put(ModEntities.SPARTAN.get(), SpartanEntity.createAttributes().build());
         event.put(ModEntities.BERSERK.get(), BerserkerEntity.createAttributes().build());
+        event.put(ModEntities.RED_BERSERK.get(), RedBerserkerEntity.createAttributes().build());
         event.put(ModEntities.ARCHER.get(), ArcherEntity.createAttributes().build());
+        event.put(ModEntities.ASSASSIN.get(), AssassinEntity.createAttributes().build());
         event.put(ModEntities.MYSTERIOUS_TRADER.get(), MysteriousTraderEntity.createAttributes().build());
         event.put(ModEntities.MYSTERIOUS_TRADER_BATTLE_CLONE.get(), MysteriousTraderBattleCloneEntity.createAttributes().build());
         event.put(ModEntities.BLOOD_WARRIOR.get(), BloodWarriorEntity.createAttributes().build());
@@ -39,7 +41,9 @@ public class ModEventBusEvents {
         event.register(ModEntities.LANSER.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
         event.register(ModEntities.LEONID.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
         event.register(ModEntities.BERSERK.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
+        event.register(ModEntities.RED_BERSERK.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
         event.register(ModEntities.ARCHER.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
+        event.register(ModEntities.ASSASSIN.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
         event.register(ModEntities.MYSTERIOUS_TRADER.get(), SpawnPlacements.Type.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MysteriousTraderEntity::canSpawn, SpawnPlacementRegisterEvent.Operation.REPLACE);
     }
 }

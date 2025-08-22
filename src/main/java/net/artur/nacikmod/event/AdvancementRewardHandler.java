@@ -1,6 +1,7 @@
 package net.artur.nacikmod.event;
 
 import net.artur.nacikmod.NacikMod;
+import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.registry.ModItems;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -23,6 +24,8 @@ public class AdvancementRewardHandler {
         // Проверяем, является ли это нашим достижением
         if (advancementId.equals("nacikmod:kill_hero_souls")) {
             handleHeroSoulsSlayerAdvancement(player, advancementId);
+        } else if (advancementId.equals("nacikmod:true_mage")) {
+            handleTrueMageAdvancement(player, advancementId);
         }
     }
     
@@ -66,6 +69,30 @@ public class AdvancementRewardHandler {
             player.sendSystemMessage(net.minecraft.network.chat.Component.literal(
                 "Congratulations, you were the first to receive the achievement Slayer Hero Souls"
             ));
+
+            for (ServerPlayer serverPlayer : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
+                if (serverPlayer != player) {
+                    serverPlayer.sendSystemMessage(net.minecraft.network.chat.Component.literal(
+                            "Player" + serverPlayer.getName().getString() +
+                                    "the first one achieved the achievement Slayer Hero Souls"
+                    ));
+                }
+            }
         }
+    }
+    
+    private static void handleTrueMageAdvancement(ServerPlayer player, String advancementId) {
+        // Выдаем статус True Mage
+        player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
+            // Устанавливаем статус "Истинный маг"
+            mana.setTrueMage(true);
+        });
+        
+        player.sendSystemMessage(net.minecraft.network.chat.Component.literal(
+            "Congratulations! You have achieved the True Mage status"
+        ));
+        player.sendSystemMessage(net.minecraft.network.chat.Component.literal(
+            "You gained +2 bonus armor!"
+        ));
     }
 } 

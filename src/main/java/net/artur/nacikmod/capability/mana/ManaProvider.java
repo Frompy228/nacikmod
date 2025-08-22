@@ -25,6 +25,9 @@ public class ManaProvider implements ICapabilityProvider, ICapabilitySerializabl
         CompoundTag tag = new CompoundTag();
         tag.putInt("Mana", mana.getMana());
         tag.putInt("MaxMana", mana.getMaxMana());
+        tag.putBoolean("IsTrueMage", mana.isTrueMage());
+
+        
         return tag;
     }
 
@@ -32,6 +35,8 @@ public class ManaProvider implements ICapabilityProvider, ICapabilitySerializabl
     public void deserializeNBT(CompoundTag tag) {
         mana.setMana(tag.getInt("Mana"));
         mana.setMaxMana(tag.getInt("MaxMana"));
+        mana.setTrueMage(tag.getBoolean("IsTrueMage"));
+
     }
 
     // ✅ Сохранение маны после смерти
@@ -45,6 +50,7 @@ public class ManaProvider implements ICapabilityProvider, ICapabilitySerializabl
         oldManaCap.ifPresent(oldMana -> newManaCap.ifPresent(newMana -> {
             newMana.setMana(oldMana.getMana()); // Передаём количество маны
             newMana.setMaxMana(oldMana.getMaxMana()); // Передаём максимальную ману
+            newMana.setTrueMage(oldMana.isTrueMage()); // Передаём статус истинного мага
         }));
     }
 }

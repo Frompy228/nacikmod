@@ -384,6 +384,13 @@ public class LeonidEntity extends HeroSouls {
             this.spawnAtLocation(new ItemStack(ModItems.MAGIC_CIRCUIT.get(), 10));
         }
     }
+
+    @Override
+    public void dropAllDeathLoot(DamageSource source) {
+        this.dropCustomDeathLoot(source, 0, false);
+        this.dropExperience(); // Если нужен опыт
+    }
+
     @Override
     protected void dropExperience() {
         if (!this.level().isClientSide) {

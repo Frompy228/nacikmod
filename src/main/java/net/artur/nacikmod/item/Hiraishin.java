@@ -27,7 +27,7 @@ public class Hiraishin extends SwordItem {
     private static final String OWNER_NAME_TAG = "OwnerName";
 
     public Hiraishin() {
-        super(new CustomTier(), 3, -2F, new Properties().rarity(ShardArtifact.RED));
+        super(new CustomTier(), 3, -2F, new Properties().rarity(ShardArtifact.RED).fireResistant());
     }
 
 

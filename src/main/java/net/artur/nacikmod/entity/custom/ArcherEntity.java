@@ -39,7 +39,7 @@ import net.artur.nacikmod.capability.mana.IMana;
 
 public class ArcherEntity extends HeroSouls implements RangedAttackMob {
     private static final double OPTIMAL_DISTANCE = 20.0;
-    private static final double SWITCH_TO_MELEE_DISTANCE = 6.0;
+    private static final double SWITCH_TO_MELEE_DISTANCE = 3.5;
     private static final double SWITCH_TO_RANGED_DISTANCE = 7.0;
     private static final double MAX_SHOOT_DISTANCE = 32.0;
     private static final double SHOOT_SPEED = 2.8;
@@ -64,7 +64,7 @@ public class ArcherEntity extends HeroSouls implements RangedAttackMob {
                 .add(Attributes.ARMOR_TOUGHNESS, 10)
                 .add(Attributes.MAX_HEALTH, 115.0)
                 .add(Attributes.ATTACK_DAMAGE, 15.0)
-                .add(Attributes.MOVEMENT_SPEED, 0.45)
+                .add(Attributes.MOVEMENT_SPEED, 0.44)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.1)
                 .add(ForgeMod.SWIM_SPEED.get(), 2)
                 .add(Attributes.FOLLOW_RANGE, 40.0);

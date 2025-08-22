@@ -25,7 +25,7 @@ public class IcePrison extends Item {
     private static final int MANA_COST = 250;
 
     public IcePrison(Properties properties) {
-        super(properties);
+        super(properties.fireResistant());
     }
 
     @Override

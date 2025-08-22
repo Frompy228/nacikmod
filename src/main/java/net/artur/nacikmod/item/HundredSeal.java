@@ -22,7 +22,7 @@ public class HundredSeal extends Item {
     private static final int MANA_TRANSFER_AMOUNT = 200;
 
     public HundredSeal(Properties properties) {
-        super(properties.stacksTo(1));
+        super(properties.stacksTo(1).fireResistant());
     }
 
     @Override

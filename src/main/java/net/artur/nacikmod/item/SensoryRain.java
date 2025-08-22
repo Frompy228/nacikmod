@@ -39,7 +39,7 @@ public class SensoryRain extends Item {
     private static final int PARTICLES_PER_TICK = 40; // Количество частиц в тик
 
     public SensoryRain(Properties properties) {
-        super(properties);
+        super(properties.fireResistant());
     }
 
     @Override
