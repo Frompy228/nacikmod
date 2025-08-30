@@ -18,6 +18,10 @@ import net.artur.nacikmod.registry.ModEntities;
 import net.artur.nacikmod.registry.ModItems;
 import net.artur.nacikmod.entity.projectiles.ShamakEntity;
 import net.artur.nacikmod.util.ModItemProperties;
+import net.artur.nacikmod.gui.EnchantmentLimitTableMenu;
+import net.artur.nacikmod.gui.EnchantmentLimitTableScreen;
+import net.artur.nacikmod.registry.ModMenuTypes;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
@@ -116,6 +120,9 @@ public class ModEventBusClientEvents {
                 net.artur.nacikmod.registry.ModBlocks.FIRE_TRAP.get(),
                 net.minecraft.client.renderer.RenderType.cutout()
             );
+            
+            // Регистрация GUI экранов
+            MenuScreens.register(ModMenuTypes.ENCHANTMENT_LIMIT_TABLE_MENU.get(), EnchantmentLimitTableScreen::new);
         });
     }
 

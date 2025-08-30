@@ -2,6 +2,8 @@
   "block.nacikmod.fire_trap": "Огненная Ловушка",
   "block.nacikmod.fire_trap.desc1": "Создает ловушку, которая вызывает огненный град",
   "block.nacikmod.fire_trap.desc2": "Урон: 25",
+  "block.nacikmod.enchantment_limit_table": "Лимит зачарований",
+  "block.nacikmod.enchantment_limit_table.desc1": "Стол, который может преодолеть предел наложения зачарований",
   "item.nacikmod.lans_of_protection": "Копье Защиты",
   "item.nacikmod.lans_of_nacii": "Копье Здоровья",
   "effect.nacikmod.no_regen": "Антихил",

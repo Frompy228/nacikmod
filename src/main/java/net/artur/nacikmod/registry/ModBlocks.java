@@ -1,5 +1,6 @@
 package net.artur.nacikmod.registry;
 import net.artur.nacikmod.NacikMod;
+import net.artur.nacikmod.block.custom.EnchantmentLimitTable;
 import net.artur.nacikmod.block.custom.ModPortalBlock;
 import net.artur.nacikmod.block.custom.TemporaryDirt;
 import net.artur.nacikmod.block.custom.TemporaryIce;
@@ -38,6 +39,12 @@ public class ModBlocks {
     public static final RegistryObject<Block> FIRE_TRAP = registerBlock("fire_trap",
             () -> new net.artur.nacikmod.block.custom.FireTrap(BlockBehaviour.Properties.of().noLootTable().noOcclusion()));
 
+    public static final RegistryObject<Block> ENCHANTMENT_LIMIT_TABLE = registerBlock("enchantment_limit_table",
+            () -> new EnchantmentLimitTable(
+                    BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)
+                            .requiresCorrectToolForDrops()
+                            .lightLevel(s -> 10) // brighter than vanilla tables
+            ));
 
 
 
