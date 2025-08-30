@@ -61,7 +61,7 @@ public class EarthStep extends Item {
                 player.sendSystemMessage(Component.literal("Earth Step activated!").withStyle(ChatFormatting.GREEN));
             }
             // Кулдаун для предотвращения спама
-            player.getCooldowns().addCooldown(this, 20); // 1 сек
+            player.getCooldowns().addCooldown(this, 30); // 1 сек
         }
         return InteractionResultHolder.success(itemStack);
     }

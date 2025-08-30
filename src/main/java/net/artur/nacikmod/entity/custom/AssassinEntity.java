@@ -273,7 +273,7 @@ public class AssassinEntity extends HeroSouls {
 
         // Наносим дополнительный урон
         float baseDamage = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE);
-        float totalDamage = baseDamage + 8.0f;
+        float totalDamage = baseDamage + 20.0f;
 
         invisibilityTarget.hurt(this.damageSources().mobAttack(this), totalDamage);
 
@@ -463,11 +463,11 @@ public class AssassinEntity extends HeroSouls {
             mana.setMana(MAX_MANA);
         });
 
-        // Случайно определяем наличие способности Shamak (10% шанс)
-        hasShamakAbility = this.random.nextDouble() < 0.1;
+        // Случайно определяем наличие способности Shamak (20% шанс)
+        hasShamakAbility = this.random.nextDouble() < 0.2;
 
-        // Случайно определяем наличие способности клонирования (10% шанс)
-        hasCloneAbility = this.random.nextDouble() < 0.1;
+        // Случайно определяем наличие способности клонирования (20% шанс)
+        hasCloneAbility = this.random.nextDouble() < 0.2;
 
         AttributeInstance attribute = this.getAttribute(ModAttributes.BONUS_ARMOR.get());
         attribute.setBaseValue(5.0);
@@ -485,7 +485,7 @@ public class AssassinEntity extends HeroSouls {
         double chanceCircuit = 0.25;
 
         if (random.nextDouble() < chanceCircuit) {
-            this.spawnAtLocation(new ItemStack(ModItems.MAGIC_CIRCUIT.get(), 5));
+            this.spawnAtLocation(new ItemStack(ModItems.MAGIC_CIRCUIT.get(), 4));
         }
     }
 

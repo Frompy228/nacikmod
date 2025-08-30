@@ -110,6 +110,26 @@ public class HeroSouls extends Monster {
         return super.getAmbientSound();
     }
 
+
+    // ... existing code ...
+
+    @Override
+    public boolean startRiding(Entity vehicle) {
+        return startRiding(vehicle, false);
+    }
+
+    @Override
+    public boolean startRiding(Entity vehicle, boolean force) {
+        // Блокируем все типы транспорта
+        if (vehicle instanceof net.minecraft.world.entity.vehicle.Boat ||           // Лодки
+                vehicle instanceof net.minecraft.world.entity.vehicle.AbstractMinecart) { // Все вагонетки
+            return false; // Нельзя сесть в транспорт
+        }
+        return super.startRiding(vehicle, force);
+    }
+
+// ... existing code ...
+
     @Override
     protected SoundEvent getHurtSound(DamageSource pDamageSource) {
         return super.getHurtSound(pDamageSource);

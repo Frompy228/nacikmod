@@ -2,6 +2,8 @@
   "block.nacikmod.fire_trap": "Fire Trap",
   "block.nacikmod.fire_trap.desc1": "Creates a trap that causes fire hail",
   "block.nacikmod.fire_trap.desc2": "Damage: 25",
+  "block.nacikmod.enchantment_limit_table": "Enchant Limit",
+  "block.nacikmod.enchantment_limit_table.desc1": "A table that can overcome the enchantment limit",
   "key.category.nacikmod": "NacikMod",
   "item.nacikmod.lans_of_protection": "Lans of Protection",
   "item.nacikmod.lans_of_nacii": "Lans of Nacii",

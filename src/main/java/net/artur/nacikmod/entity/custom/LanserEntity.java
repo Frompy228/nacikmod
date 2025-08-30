@@ -46,7 +46,13 @@ import java.util.Random;
 public class LanserEntity extends HeroSouls {
 
     private boolean attackWithMainHand = true; // Флаг для чередования атак
-
+    
+    // Константы для прыжков
+    private static final int JUMP_COOLDOWN_TICKS = 60; // 3 секунды между прыжками
+    private static final double VERTICAL_JUMP_THRESHOLD = 2.0; // Минимальная разница высоты для прыжка
+    private static final double MAX_JUMP_HEIGHT = 4.0; // Максимальная высота прыжка
+    
+    private int jumpCooldown = 0;
 
     public LanserEntity(EntityType<? extends HeroSouls> entityType, Level level) {
         super(entityType, level);
@@ -56,11 +62,14 @@ public class LanserEntity extends HeroSouls {
     public void tick() {
         super.tick();
 
+        // Обновляем кулдаун прыжков
+        if (jumpCooldown > 0) jumpCooldown--;
 
         if (!this.level().isClientSide && this.tickCount % 40 == 0) { // 20 тиков = 1 секунда
             this.heal(1.0F);
         }
-        // Получаем ми
+        
+        // Получаем мир
         Level world = this.level();
         if (world == null || world.isClientSide) return; // Проверка на null и клиент
 
@@ -80,8 +89,55 @@ public class LanserEntity extends HeroSouls {
                 entity.addEffect(new MobEffectInstance(ModEffects.LOVE.get(), 12, 0)); // 10 секунд эффекта LOVE
             }
         }
+        
+        // Проверяем необходимость прыжка для достижения цели
+        LivingEntity target = this.getTarget();
+        if (target != null) {
+            checkAndPerformJump(target);
+        }
     }
+    
+    /**
+     * Проверяет необходимость прыжка и выполняет его
+     */
+    /**
+     * Проверяет необходимость прыжка и выполняет его
+     */
+    private void checkAndPerformJump(LivingEntity target) {
+        if (jumpCooldown > 0 || !this.onGround()) return;
 
+        double targetY = target.getY();
+        double thisY = this.getY();
+        double heightDifference = targetY - thisY;
+
+        // Проверяем горизонтальную дистанцию до цели
+        double horizontalDistance = this.distanceTo(target);
+
+        // Если цель выше и разница значительная, и находится на близкой дистанции (до 5 блоков), пытаемся прыгнуть
+        if (heightDifference > VERTICAL_JUMP_THRESHOLD &&
+                horizontalDistance <= 5.0) {
+            // Проверяем, есть ли препятствия между нами и целью
+            if (this.hasLineOfSight(target)) {
+                performJump();
+            }
+        }
+    }
+    
+    /**
+     * Выполняет прыжок вверх
+     */
+    private void performJump() {
+        if (this.onGround() && jumpCooldown <= 0) {
+            // Прыгаем вверх с небольшой случайностью в направлении
+            double jumpPower = 0.7 + (this.random.nextDouble() * 0.2);
+            this.setDeltaMovement(this.getDeltaMovement().add(0, jumpPower, 0));
+            jumpCooldown = JUMP_COOLDOWN_TICKS;
+            
+            // Проигрываем звук прыжка
+            this.level().playSound(null, this.getX(), this.getY(), this.getZ(), 
+                net.minecraft.sounds.SoundEvents.PLAYER_ATTACK_STRONG, net.minecraft.sounds.SoundSource.HOSTILE, 0.5F, 1.2F);
+        }
+    }
 
 
     // Метод для проверки, смотрит ли сущность на голову Лансера

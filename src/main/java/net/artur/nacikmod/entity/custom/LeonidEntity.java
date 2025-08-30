@@ -54,6 +54,13 @@ public class LeonidEntity extends HeroSouls {
     private int regenerationTick = 0;
     private static final int REGENERATION_INTERVAL = 300;
     private boolean hasSpawnedSpartans = false;
+    
+    // Константы для прыжков
+    private static final int JUMP_COOLDOWN_TICKS = 60; // 3 секунды между прыжками
+    private static final double VERTICAL_JUMP_THRESHOLD = 2.0; // Минимальная разница высоты для прыжка
+    private static final double MAX_JUMP_HEIGHT = 4.0; // Максимальная высота прыжка
+    
+    private int jumpCooldown = 0;
 
     public LeonidEntity(EntityType<? extends HeroSouls> entityType, Level level) {
         super(entityType, level);
@@ -156,6 +163,8 @@ public class LeonidEntity extends HeroSouls {
     public void tick() {
         super.tick();
 
+        // Обновляем кулдаун прыжков
+        if (jumpCooldown > 0) jumpCooldown--;
 
         if (shieldBlockCooldown > 0) {
             shieldBlockCooldown--;
@@ -214,6 +223,54 @@ public class LeonidEntity extends HeroSouls {
         if (healthPercentage > 25) thresholdCrossed[2] = false;
 
         lastHealth = currentHealth;
+        
+        // Проверяем необходимость прыжка для достижения цели
+        LivingEntity target = this.getTarget();
+        if (target != null) {
+            checkAndPerformJump(target);
+        }
+    }
+    
+    /**
+     * Проверяет необходимость прыжка и выполняет его
+     */
+    /**
+     * Проверяет необходимость прыжка и выполняет его
+     */
+    private void checkAndPerformJump(LivingEntity target) {
+        if (jumpCooldown > 0 || !this.onGround()) return;
+
+        double targetY = target.getY();
+        double thisY = this.getY();
+        double heightDifference = targetY - thisY;
+
+        // Проверяем горизонтальную дистанцию до цели
+        double horizontalDistance = this.distanceTo(target);
+
+        // Если цель выше и разница значительная, и находится на близкой дистанции (до 5 блоков), пытаемся прыгнуть
+        if (heightDifference > VERTICAL_JUMP_THRESHOLD &&
+                horizontalDistance <= 5.0) {
+            // Проверяем, есть ли препятствия между нами и целью
+            if (this.hasLineOfSight(target)) {
+                performJump();
+            }
+        }
+    }
+    
+    /**
+     * Выполняет прыжок вверх
+     */
+    private void performJump() {
+        if (this.onGround() && jumpCooldown <= 0) {
+            // Прыгаем вверх с небольшой случайностью в направлении
+            double jumpPower = 0.5 + (this.random.nextDouble() * 0.2);
+            this.setDeltaMovement(this.getDeltaMovement().add(0, jumpPower, 0));
+            jumpCooldown = JUMP_COOLDOWN_TICKS;
+            
+            // Проигрываем звук прыжка
+            this.level().playSound(null, this.getX(), this.getY(), this.getZ(), 
+                SoundEvents.PLAYER_ATTACK_STRONG, SoundSource.HOSTILE, 0.5F, 1.2F);
+        }
     }
 
     private void applyRoarEffect() {
