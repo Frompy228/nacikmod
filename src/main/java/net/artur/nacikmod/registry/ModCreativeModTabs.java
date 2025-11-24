@@ -25,6 +25,7 @@ public class ModCreativeModTabs {
                         pOutput.accept(ModItems.MANA_SWORD.get());
                         pOutput.accept(ModItems.CURSED_SWORD.get());
                         pOutput.accept(ModItems.POISONED_SCYTHE.get());
+                        pOutput.accept(ModItems.KATANA.get());
                         pOutput.accept(ModItems.MAGIC_BOW.get());
                         pOutput.accept(ModItems.LEONID_SHIELD.get());
                         pOutput.accept(ModItems.LEONID_HELMET.get());
@@ -32,14 +33,18 @@ public class ModCreativeModTabs {
                         pOutput.accept(ModItems.MAGIC_ARMOR.get());
                         pOutput.accept(ModItems.RING_OF_TIME.get());
                         pOutput.accept(ModItems.DARK_SPHERE.get());
+                        pOutput.accept(ModItems.CROSS.get());
                         pOutput.accept(ModItems.MANA_CRYSTAL.get());
                         pOutput.accept(ModItems.SHARD_OF_ARTIFACT.get());
                         pOutput.accept(ModItems.ANCIENT_SCROLL.get());
                         pOutput.accept(ModItems.MAGIC_SEAL.get());
                         pOutput.accept(ModItems.SEAL_OF_RETURN.get());
+                        pOutput.accept(ModBlocks.BARRIER.get());
                         pOutput.accept(ModItems.MAGIC_CIRCUIT.get());
                         pOutput.accept(ModItems.MANA_BLESSING.get());
                         pOutput.accept(ModItems.GOD_HAND.get());
+                        pOutput.accept(ModItems.GRAIL.get());
+                        pOutput.accept(ModBlocks.ENCHANTMENT_LIMIT_TABLE.get());
                         pOutput.accept(ModItems.LANSER_SPAWN_EGG.get());
                         pOutput.accept(ModItems.LEONID_SPAWN_EGG.get());
                         pOutput.accept(ModItems.SPARTAN_SPAWN_EGG.get());
@@ -48,6 +53,7 @@ public class ModCreativeModTabs {
                         pOutput.accept(ModItems.ASSASSIN_SPAWN_EGG.get());
                         pOutput.accept(ModItems.MYSTERIOUS_TRADER_SPAWN_EGG.get());
                         pOutput.accept(ModItems.MYSTERIOUS_TRADER_BATTLE_CLONE_SPAWN_EGG.get());
+                        pOutput.accept(ModItems.INQUISITOR_SPAWN_EGG.get());
                         pOutput.accept(ModItems.MAGIC_HEALING.get());
                         pOutput.accept(ModItems.HUNDRED_SEAL.get());
                         pOutput.accept(ModItems.RELEASE.get());
@@ -59,6 +65,10 @@ public class ModCreativeModTabs {
                         pOutput.accept(ModItems.SLASH.get());
                         pOutput.accept(ModItems.DOUBLE_SLASH.get());
                         pOutput.accept(ModItems.WORLD_SLASH.get());
+                        pOutput.accept(ModItems.SIMPLE_DOMAIN.get());
+                        pOutput.accept(ModItems.DOMAIN.get());
+                        pOutput.accept(ModItems.BARRIER_SEAL.get());
+                        pOutput.accept(ModItems.BARRIER_WALL.get());
                         pOutput.accept(ModItems.GRAVITY.get());
                         pOutput.accept(ModItems.SHINRA_TENSEI.get());
                         pOutput.accept(ModItems.SENSORY_RAIN.get());

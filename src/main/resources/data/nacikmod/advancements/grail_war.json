@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "nacikmod:grail"
+    },
+    "title": {
+      "translate": "advancement.nacikmod.grail_war"
+    },
+    "description": {
+      "translate": "advancement.nacikmod.grail_war.desc1"
+    },
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "parent": "nacikmod:nacik_mod",
+  "criteria": {
+    "max_mana_reached": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "rewards": {
+    "loot": [],
+    "experience": 7000
+  }
+}

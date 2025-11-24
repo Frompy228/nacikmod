@@ -11,22 +11,19 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.MobEffectEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.artur.nacikmod.effect.EffectManaLastMagic;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.registry.ModEffects;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.AABB;
 import java.util.List;
@@ -55,7 +52,7 @@ public class ModEventBusEventsForge {
 
         if (attribute != null) {
             double bonusArmor = attribute.getValue();
-            double reductionPercentage = Math.min(bonusArmor * 0.02, 0.9);
+            double reductionPercentage = Math.min(bonusArmor * 0.025, 0.9);
             float reducedDamage = (float) (event.getAmount() * (1 - reductionPercentage));
             event.setAmount(reducedDamage);
         }
@@ -73,7 +70,7 @@ public class ModEventBusEventsForge {
                 // Получаем значение бонусной брони у цели
                 AttributeInstance bonusArmor = event.getEntity().getAttribute(ModAttributes.BONUS_ARMOR.get());
                 double bonus = bonusArmor != null ? bonusArmor.getValue() : 0.0;
-                float extraDamage = (float) (bonus * 0.45); // 0.45 урона за 1 бонусной брони
+                float extraDamage = (float) (bonus * 0.90); // 0.45 урона за 1 бонусной брони
                 
                 if (extraDamage > 0) {
                     // Добавляем дополнительный урон к базовому
@@ -205,4 +202,5 @@ public class ModEventBusEventsForge {
             }
         }
     }
+
 }

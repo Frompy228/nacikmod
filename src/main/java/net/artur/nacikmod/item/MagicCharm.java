@@ -23,7 +23,7 @@ public class MagicCharm extends Item implements ICurioItem {
     private static final AttributeModifier BONUS_ARMOR = new AttributeModifier(
             BONUS_ARMOR_UUID,
             "Magic Charm Bonus Armor",
-            4.0,
+            2.0,
             AttributeModifier.Operation.ADDITION
     );
 

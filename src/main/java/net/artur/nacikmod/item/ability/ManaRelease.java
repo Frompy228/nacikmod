@@ -52,8 +52,8 @@ public class ManaRelease {
     }
 
     public static final Level[] LEVELS = {
-        new Level(1, 4, 10, "Level 1", 0.0),
-        new Level(2, 6, 20, "Level 2", 0.02)
+        new Level(1, 2, 10, "Level 1", 0.0),
+        new Level(2, 3, 20, "Level 2", 0.02)
     };
 
     @SubscribeEvent

@@ -51,7 +51,7 @@ public class LanserEntity extends HeroSouls {
     private static final int JUMP_COOLDOWN_TICKS = 60; // 3 секунды между прыжками
     private static final double VERTICAL_JUMP_THRESHOLD = 2.0; // Минимальная разница высоты для прыжка
     private static final double MAX_JUMP_HEIGHT = 4.0; // Максимальная высота прыжка
-    
+    private static int BONUS_ARMOR = 15;
     private int jumpCooldown = 0;
 
     public LanserEntity(EntityType<? extends HeroSouls> entityType, Level level) {
@@ -164,14 +164,14 @@ public class LanserEntity extends HeroSouls {
 
         // Устанавливаем атрибут BONUS_ARMOR вручную
         AttributeInstance attribute = this.getAttribute(ModAttributes.BONUS_ARMOR.get());
-        attribute.setBaseValue(15.0);
+        attribute.setBaseValue(BONUS_ARMOR);
         return data;
     }
 
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(ModAttributes.BONUS_ARMOR.get(),15)
+                .add(ModAttributes.BONUS_ARMOR.get(),BONUS_ARMOR)
                 .add(Attributes.ARMOR, 15)
                 .add(Attributes.ARMOR_TOUGHNESS, 10)
                 .add(Attributes.MAX_HEALTH, 130.0)

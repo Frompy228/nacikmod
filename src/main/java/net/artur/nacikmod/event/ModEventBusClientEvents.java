@@ -5,7 +5,6 @@ import net.artur.nacikmod.armor.models.DarkSphereModel;
 import net.artur.nacikmod.armor.models.LeonidHelmetModel;
 import net.artur.nacikmod.client.renderer.DarkSphereRenderer;
 import net.artur.nacikmod.client.renderer.HundredSealLayer;
-import net.artur.nacikmod.client.renderer.LeonidHelmetRenderer;
 import net.artur.nacikmod.client.renderer.ReleaseAuraRenderer;
 import net.artur.nacikmod.client.renderer.LastMagicAuraRenderer;
 import net.artur.nacikmod.entity.client.*;
@@ -16,13 +15,10 @@ import net.artur.nacikmod.gui.TimeStopOverlay;
 import net.artur.nacikmod.item.MagicCrystal;
 import net.artur.nacikmod.registry.ModEntities;
 import net.artur.nacikmod.registry.ModItems;
-import net.artur.nacikmod.entity.projectiles.ShamakEntity;
 import net.artur.nacikmod.util.ModItemProperties;
-import net.artur.nacikmod.gui.EnchantmentLimitTableMenu;
 import net.artur.nacikmod.gui.EnchantmentLimitTableScreen;
 import net.artur.nacikmod.registry.ModMenuTypes;
 import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
@@ -30,11 +26,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.client.renderer.entity.NoopRenderer;
 import top.theillusivec4.curios.api.client.CuriosRendererRegistry;
 
 
@@ -58,6 +54,8 @@ public class ModEventBusClientEvents {
         event.registerLayerDefinition(ModModelLayers.MYSTERIOUS_TRADER_LAYER, MysteriousTraderModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.MYSTERIOUS_TRADER_BATTLE_CLONE_LAYER, MysteriousTraderBattleCloneModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.BLOOD_WARRIOR_LAYER, BloodWarriorModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.INQUISITOR_LAYER, InquisitorModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.INQUISITOR_OUTER_LAYER, () -> InquisitorModel.createBodyLayer(new CubeDeformation(0.2F)));
         event.registerLayerDefinition(FireArrowModel.LAYER_LOCATION, FireArrowModel::createBodyLayer);
         event.registerLayerDefinition(ProjectileManaSwordModel.LAYER_LOCATION, ProjectileManaSwordModel::createBodyLayer);
         event.registerLayerDefinition(BloodShootProjectileModel.LAYER_LOCATION, BloodShootProjectileModel::createBodyLayer);
@@ -68,6 +66,10 @@ public class ModEventBusClientEvents {
         event.registerLayerDefinition(SlashProjectileModel.LAYER_LOCATION, SlashProjectileModel::createBodyLayer);
         event.registerLayerDefinition(DoubleSlashProjectileModel.LAYER_LOCATION, DoubleSlashProjectileModel::createBodyLayer);
         event.registerLayerDefinition(SuppressingGateModel.LAYER_LOCATION, SuppressingGateModel::createBodyLayer);
+        event.registerLayerDefinition(FireWallModel.LAYER_LOCATION, FireWallModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.GRAAL_LAYER, GraalModel::createBodyLayer);
+        event.registerLayerDefinition(FireballModel.LAYER_LOCATION, FireballModel::createBodyLayer);
+        event.registerLayerDefinition(CrossModel.LAYER_LOCATION, CrossModel::createBodyLayer);
     }
 
 
@@ -82,6 +84,8 @@ public class ModEventBusClientEvents {
             PlayerRenderer renderer = event.getSkin(skinType);
             if (renderer != null) {
                 renderer.addLayer(new MovementSealLayer(renderer));
+                renderer.addLayer(new DomainLayer(renderer));
+                renderer.addLayer(new SimpleDomainLayer(renderer));
             }
         }
     }
@@ -103,15 +107,21 @@ public class ModEventBusClientEvents {
             EntityRenderers.register(ModEntities.MYSTERIOUS_TRADER.get(), MysteriousTraderRender::new);
             EntityRenderers.register(ModEntities.MYSTERIOUS_TRADER_BATTLE_CLONE.get(), MysteriousTraderBattleCloneRender::new);
             EntityRenderers.register(ModEntities.BLOOD_WARRIOR.get(), BloodWarriorRender::new);
+            EntityRenderers.register(ModEntities.INQUISITOR.get(), InquisitorRender::new);
             EntityRenderers.register(ModEntities.FIRE_ARROW.get(), FireArrowRenderer::new);
             EntityRenderers.register(ModEntities.MANA_ARROW.get(), ManaArrowRenderer::new);
             EntityRenderers.register(ModEntities.FIRE_CLOUD.get(), FireCloudRenderer::new);
             EntityRenderers.register(ModEntities.FIRE_HAIL.get(), FireHailRenderer::new);
+            EntityRenderers.register(ModEntities.FIRE_WALL.get(), FireWallRenderer::new);
+            EntityRenderers.register(ModEntities.FIRE_WALL_DAMAGE_ZONE.get(), NoopRenderer::new);
             EntityRenderers.register(ModEntities.ICE_SPIKE_PROJECTILE.get(), IceSpikeProjectileRenderer::new);
             EntityRenderers.register(ModEntities.SLASH_PROJECTILE.get(), SlashProjectileRenderer::new);
             EntityRenderers.register(ModEntities.DOUBLE_SLASH_PROJECTILE.get(), DoubleSlashProjectileRenderer::new);
             EntityRenderers.register(ModEntities.SUPPRESSING_GATE.get(), SuppressingGateRenderer::new);
             EntityRenderers.register(ModEntities.SHAMAK.get(), ShamakRenderer::new);
+            EntityRenderers.register(ModEntities.GRAIL.get(), GraalRenderer::new);
+            EntityRenderers.register(ModEntities.FIREBALL.get(), FireballRenderer::new);
+            EntityRenderers.register(ModEntities.CROSS_PROJECTILE.get(), CrossProjectileRenderer::new);
 
             // Register Dark Sphere renderer
             CuriosRendererRegistry.register(ModItems.DARK_SPHERE.get(), () -> new DarkSphereRenderer());

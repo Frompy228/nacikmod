@@ -91,7 +91,7 @@ public class Hiraishin extends SwordItem {
         super.appendHoverText(stack, level, tooltipComponents, isAdvanced);
 
         if (hasOwner(stack)) {
-            tooltipComponents.add(Component.translatable("item.nacikmod.hiraishin.desc5", stack.getTag().getString(OWNER_NAME_TAG))
+            tooltipComponents.add(Component.translatable("item.owner", stack.getTag().getString(OWNER_NAME_TAG))
                     .withStyle(ChatFormatting.GOLD));
         }
 

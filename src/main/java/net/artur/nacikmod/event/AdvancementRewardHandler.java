@@ -26,6 +26,8 @@ public class AdvancementRewardHandler {
             handleHeroSoulsSlayerAdvancement(player, advancementId);
         } else if (advancementId.equals("nacikmod:true_mage")) {
             handleTrueMageAdvancement(player, advancementId);
+        }else if (advancementId.equals("nacikmod:warrior")) {
+            handleWarriorAdvancement(player, advancementId);
         }
     }
     
@@ -94,5 +96,34 @@ public class AdvancementRewardHandler {
         player.sendSystemMessage(net.minecraft.network.chat.Component.literal(
             "You gained +2 bonus armor!"
         ));
+    }
+
+    private static void handleWarriorAdvancement(ServerPlayer player, String advancementId) {
+        // Проверяем, не выдана ли уже награда (чтобы не дублировать)
+        if (AdvancementRewardManager.isRewardAlreadyGiven(advancementId)) {
+            player.sendSystemMessage(net.minecraft.network.chat.Component.literal(
+                    "You have already received your reward for this achievement."
+            ));
+            return;
+        }
+
+        // Помечаем как выданное
+        AdvancementRewardManager.markAsRewarded(advancementId);
+
+        // Создаём награду
+        ItemStack rewardItem = new ItemStack(ModItems.SIMPLE_DOMAIN.get());
+
+        // Пытаемся добавить в инвентарь
+        if (player.getInventory().add(rewardItem)) {
+            player.sendSystemMessage(net.minecraft.network.chat.Component.literal(
+                    "You received: Simple Possession"
+            ));
+        } else {
+            // Если инвентарь полон
+            player.drop(rewardItem, false);
+            player.sendSystemMessage(net.minecraft.network.chat.Component.literal(
+                    "You received: Simple Possession"
+            ));
+        }
     }
 } 

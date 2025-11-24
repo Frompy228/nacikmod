@@ -39,6 +39,7 @@ public class SpartanEntity extends HeroSouls {
     private int shieldBlockCooldown = 0;
     private boolean shieldBlockedHit = false;
     private static final int SHIELD_BLOCK_COOLDOWN = 140; // 7 секунд (20 тиков * 7)
+    private static int BONUS_ARMOR = 5;
     
     // Константы для прыжков
     private static final int JUMP_COOLDOWN_TICKS = 60; // 3 секунды между прыжками
@@ -55,7 +56,7 @@ public class SpartanEntity extends HeroSouls {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(ModAttributes.BONUS_ARMOR.get(), 5)
+                .add(ModAttributes.BONUS_ARMOR.get(), BONUS_ARMOR)
                 .add(Attributes.ARMOR, 5)
                 .add(Attributes.ARMOR_TOUGHNESS, 5)
                 .add(Attributes.MAX_HEALTH, 50.0)
@@ -251,7 +252,7 @@ public class SpartanEntity extends HeroSouls {
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(ModItems.LEONID_SHIELD.get()));
 
         AttributeInstance attribute = this.getAttribute(ModAttributes.BONUS_ARMOR.get());
-        attribute.setBaseValue(5.0);
+        attribute.setBaseValue(BONUS_ARMOR);
         return data;
     }
 

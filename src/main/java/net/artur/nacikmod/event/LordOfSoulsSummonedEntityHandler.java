@@ -4,6 +4,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
@@ -74,17 +75,8 @@ public class LordOfSoulsSummonedEntityHandler {
             return;
         }
 
-        // Prevent damage to animals
-        if (event.getEntity() instanceof Animal) {
-            event.setCanceled(true);
-            return;
-        }
-
-        // Prevent damage to fish
-        String entityClassName = event.getEntity().getClass().getSimpleName().toLowerCase();
-        if (entityClassName.contains("fish") || entityClassName.contains("salmon") || 
-            entityClassName.contains("cod") || entityClassName.contains("pufferfish") ||
-            entityClassName.contains("tropical")) {
+        // Prevent damage to animals and fish
+        if (event.getEntity() instanceof Animal || event.getEntity() instanceof WaterAnimal) {
             event.setCanceled(true);
             return;
         }

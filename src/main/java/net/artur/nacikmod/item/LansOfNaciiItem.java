@@ -60,15 +60,18 @@ public class LansOfNaciiItem extends SwordItem {
             boolean success = super.hurtEnemy(stack, target, attacker);
             if (!success) return false;
 
-            double damageDealt = target.getMaxHealth() - target.getHealth(); // Разница ХП после удара
-            int amplifier = (int) Math.floor(damageDealt / 3); // Усиление эффекта
-
-            if (amplifier > 0) {
-                target.addEffect(new MobEffectInstance(ModEffects.HEALTH_REDUCTION.get(), 20000, amplifier));
-            }
-            target.addEffect(new MobEffectInstance(ModEffects.NO_REGEN.get(), 180, 0));
-
+            // Проверяем, что атака полностью готова (как у косы)
             if (attacker instanceof Player player) {
+                if (player.getAttackStrengthScale(0.5f) >= 0.9f) {
+                    double damageDealt = target.getMaxHealth() - target.getHealth(); // Разница ХП после удара
+                    int amplifier = (int) Math.floor(damageDealt / 3); // Усиление эффекта
+
+                    if (amplifier > 0) {
+                        target.addEffect(new MobEffectInstance(ModEffects.HEALTH_REDUCTION.get(), 20000, amplifier));
+                    }
+                    target.addEffect(new MobEffectInstance(ModEffects.NO_REGEN.get(), 180, 0));
+                }
+
                 ItemStack mainHandItem = player.getMainHandItem();
                 ItemStack offHandItem = player.getOffhandItem();
                 boolean isMainHand = mainHandItem == stack;

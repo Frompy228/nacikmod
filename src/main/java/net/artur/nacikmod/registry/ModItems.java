@@ -70,6 +70,14 @@ public class ModItems {
     public static final RegistryObject<Item> LORD_OF_SOULS = ITEMS.register("lord_of_souls", () -> new LordOfSouls(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> SEAL_OF_RETURN = ITEMS.register("seal_of_return", () -> new SealOfReturn(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MAGE_MARK = ITEMS.register("mage_mark", () -> new MageMark(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> GRAIL = ITEMS.register("grail", () -> new Grail(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> SIMPLE_DOMAIN = ITEMS.register("simple_domain", () -> new SimpleDomain(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> DOMAIN = ITEMS.register("domain", () -> new Domain());
+    public static final RegistryObject<Item> KATANA = ITEMS.register("katana", () -> new Katana());
+    public static final RegistryObject<Item> BARRIER_SEAL = ITEMS.register("barrier_seal", () -> new BarrierSeal(new Item.Properties()));
+    public static final RegistryObject<Item> BARRIER_WALL = ITEMS.register("barrier_wall", () -> new BarrierWall(new Item.Properties()));
+    public static final RegistryObject<Item> CROSS = ITEMS.register("cross", () -> new Cross(new Item.Properties()));
+
     public static final RegistryObject<Item> LANSER_SPAWN_EGG = ITEMS.register("lanser_spawn_egg",
             ()-> new ForgeSpawnEggItem(ModEntities.LANSER, 0x5b107e, 0xCF6A84,
                     new Item.Properties()));
@@ -96,5 +104,8 @@ public class ModItems {
                     new Item.Properties()));
     public static final RegistryObject<Item> ASSASSIN_SPAWN_EGG = ITEMS.register("assassin_spawn_egg",
             ()-> new ForgeSpawnEggItem(ModEntities.ASSASSIN, 0x080808, 0xffffff,
+                    new Item.Properties()));
+    public static final RegistryObject<Item> INQUISITOR_SPAWN_EGG = ITEMS.register("inquisitor_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.INQUISITOR, 0x3b1f1f, 0xb34b31,
                     new Item.Properties()));
 }

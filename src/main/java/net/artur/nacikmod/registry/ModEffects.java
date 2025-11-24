@@ -2,7 +2,6 @@ package net.artur.nacikmod.registry;
 
 import net.artur.nacikmod.effect.*;
 import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -45,4 +44,8 @@ public class ModEffects {
             EFFECTS.register("god_hand", EffectGodHand::new);
     public static final RegistryObject<MobEffect> SUPPRESSING_GATE =
             EFFECTS.register("suppressing_gate", EffectSuppressingGate::new);
+    public static final RegistryObject<MobEffect> EFFECT_SIMPLE_DOMAIN =
+            EFFECTS.register("effect_simple_domain", EffectSimpleDomain::new);
+    public static final RegistryObject<MobEffect> EFFECT_DOMAIN =
+            EFFECTS.register("effect_domain", EffectDomain::new);
 }

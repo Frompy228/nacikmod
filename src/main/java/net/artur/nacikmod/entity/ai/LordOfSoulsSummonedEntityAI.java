@@ -7,6 +7,7 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.target.TargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.artur.nacikmod.capability.lord_of_souls_summoned_entities.LordOfSoulsSummonedEntityProvider;
@@ -31,16 +32,8 @@ public class LordOfSoulsSummonedEntityAI extends TargetGoal {
                         return false;
                     }
                     
-                    // Don't target animals
-                    if (entity instanceof Animal) {
-                        return false;
-                    }
-                    
-                    // Don't target fish (check class name)
-                    String entityClassName = entity.getClass().getSimpleName().toLowerCase();
-                    if (entityClassName.contains("fish") || entityClassName.contains("salmon") || 
-                        entityClassName.contains("cod") || entityClassName.contains("pufferfish") ||
-                        entityClassName.contains("tropical")) {
+                    // Don't target animals and fish
+                    if (entity instanceof Animal || entity instanceof WaterAnimal) {
                         return false;
                     }
                     

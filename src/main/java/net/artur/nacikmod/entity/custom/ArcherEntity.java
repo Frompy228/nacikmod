@@ -48,6 +48,7 @@ public class ArcherEntity extends HeroSouls implements RangedAttackMob {
     private static final int ROOT_ABILITY_COOLDOWN_TICKS = 300; // 20 секунд
     private static final int ROOT_ABILITY_MANA_COST = 3000;
     private static final int ROOT_ABILITY_DURATION = 180; // 7 секунд
+    private static int BONUS_ARMOR = 11;
     
     // Константы для прыжков
     private static final int JUMP_COOLDOWN_TICKS = 60; // 3 секунды между прыжками
@@ -66,7 +67,7 @@ public class ArcherEntity extends HeroSouls implements RangedAttackMob {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(ModAttributes.BONUS_ARMOR.get(), 11)
+                .add(ModAttributes.BONUS_ARMOR.get(), BONUS_ARMOR)
                 .add(Attributes.ARMOR, 15)
                 .add(Attributes.ARMOR_TOUGHNESS, 10)
                 .add(Attributes.MAX_HEALTH, 115.0)
@@ -201,7 +202,7 @@ public class ArcherEntity extends HeroSouls implements RangedAttackMob {
         this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ModItems.MAGIC_BOW.get()));
         this.setItemSlot(EquipmentSlot.OFFHAND, ItemStack.EMPTY);
         AttributeInstance attribute = this.getAttribute(ModAttributes.BONUS_ARMOR.get());
-        attribute.setBaseValue(11.0);
+        attribute.setBaseValue(BONUS_ARMOR);
         // Устанавливаем максимальную ману 10000
         this.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
             mana.setMaxMana(10000);

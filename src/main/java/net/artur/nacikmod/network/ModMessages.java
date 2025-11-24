@@ -4,6 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
@@ -25,7 +26,6 @@ public class ModMessages {
     private static int packetId = 0;
 
     public static void register() {
-        // Регистрация CooldownSyncPacket
         INSTANCE.registerMessage(packetId++,
                 CooldownSyncPacket.class,
                 CooldownSyncPacket::toBytes,
@@ -81,6 +81,14 @@ public class ModMessages {
                 CustomMoonPacket::handle,
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT)
         );
+
+        INSTANCE.registerMessage(packetId++,
+                EnchantmentSelectionPacket.class,
+                EnchantmentSelectionPacket::write,
+                EnchantmentSelectionPacket::new,
+                EnchantmentSelectionPacket::handle,
+                Optional.of(NetworkDirection.PLAY_TO_SERVER)
+        );
     }
 
     public static void sendToClient(ServerPlayer player, CooldownSyncPacket packet) {
@@ -122,4 +130,5 @@ public class ModMessages {
     public static void sendCustomMoonToAll() {
         INSTANCE.send(PacketDistributor.ALL.noArg(), new CustomMoonPacket());
     }
+
 }
