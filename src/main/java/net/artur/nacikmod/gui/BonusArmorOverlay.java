@@ -44,7 +44,7 @@ public class BonusArmorOverlay {
         int baseY = screenHeight - healthHeight - 39;
 
         double bonusArmor = player.getAttributeValue(ModAttributes.BONUS_ARMOR.get());
-        int bonusArmorIcons = (int) (bonusArmor / 2);
+        int bonusArmorIcons = (int) (bonusArmor);
 
         if (bonusArmorIcons > 0) {
             RenderSystem.enableBlend();

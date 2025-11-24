@@ -30,6 +30,7 @@ public class PlayerRewardsProvider implements ICapabilityProvider, ICapabilitySe
         tag.putBoolean("1hReward", rewards.hasReceived1hReward());
         tag.putBoolean("2hReward", rewards.hasReceived2hReward());
         tag.putBoolean("2h15mReward", rewards.hasReceived2h15mReward());
+        tag.putBoolean("GrailReward", rewards.hasUsedGrailReward());
         return tag;
     }
 
@@ -42,6 +43,7 @@ public class PlayerRewardsProvider implements ICapabilityProvider, ICapabilitySe
         rewards.setReceived1hReward(tag.getBoolean("1hReward"));
         rewards.setReceived2hReward(tag.getBoolean("2hReward"));
         rewards.setReceived2h15mReward(tag.getBoolean("2h15mReward"));
+        rewards.setUsedGrailReward(tag.getBoolean("GrailReward"));
     }
 
     // Сохранение наград после смерти
@@ -60,6 +62,7 @@ public class PlayerRewardsProvider implements ICapabilityProvider, ICapabilitySe
             newRewards.setReceived1hReward(oldRewards.hasReceived1hReward());
             newRewards.setReceived2hReward(oldRewards.hasReceived2hReward());
             newRewards.setReceived2h15mReward(oldRewards.hasReceived2h15mReward());
+            newRewards.setUsedGrailReward(oldRewards.hasUsedGrailReward());
         }));
     }
 } 

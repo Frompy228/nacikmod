@@ -1,9 +1,7 @@
 package net.artur.nacikmod.registry;
 import net.artur.nacikmod.NacikMod;
-import net.artur.nacikmod.block.custom.EnchantmentLimitTable;
-import net.artur.nacikmod.block.custom.ModPortalBlock;
-import net.artur.nacikmod.block.custom.TemporaryDirt;
-import net.artur.nacikmod.block.custom.TemporaryIce;
+import net.artur.nacikmod.block.custom.*;
+import net.artur.nacikmod.block.custom.BarrierBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -11,6 +9,7 @@ import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -43,8 +42,22 @@ public class ModBlocks {
             () -> new EnchantmentLimitTable(
                     BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)
                             .requiresCorrectToolForDrops()
+                            .strength(60.0F, 1200.0F)
                             .lightLevel(s -> 10) // brighter than vanilla tables
             ));
+
+    public static final RegistryObject<Block> BARRIER = registerBlock("barrier",
+            () -> new Barrier(BlockBehaviour.Properties.of()
+                    .noOcclusion()
+                    .strength(0.1F, 0.1F) // почти моментально ломается
+                    .noCollission()));
+
+    public static final RegistryObject<Block> BARRIER_BLOCK = registerBlock("barrier_block",
+            () -> new BarrierBlock(BlockBehaviour.Properties.of()
+                    .noOcclusion()
+                    .strength(0.8F, 0.8F)
+                    .noLootTable()));
+
 
 
 
@@ -55,7 +68,14 @@ public class ModBlocks {
     }
 
     private static <T extends Block> RegistryObject<Item> registerBlockItem(String name, RegistryObject<T> block) {
-        return ModItems.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
+        Item.Properties properties = new Item.Properties();
+
+        // Добавляем редкость только для стола зачарования
+        if (name.equals("enchantment_limit_table")) {
+            properties.rarity(Rarity.EPIC);
+        }
+
+        return ModItems.ITEMS.register(name, () -> new BlockItem(block.get(), properties));
     }
 
     public static void register(IEventBus eventBus) {

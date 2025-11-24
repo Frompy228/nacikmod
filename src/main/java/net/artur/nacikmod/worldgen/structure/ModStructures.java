@@ -139,7 +139,7 @@ public class ModStructures {
 
     // --- Drop structure timed spawn logic ---
     private static int dropTickCounter = 0;
-    private static final int DROP_TICKS_INTERVAL = 700;
+    private static final int DROP_TICKS_INTERVAL = 1000;
     private static final double DROP_SPAWN_CHANCE = 0.01; // 1%
 
     @net.minecraftforge.eventbus.api.SubscribeEvent

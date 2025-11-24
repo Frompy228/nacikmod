@@ -30,7 +30,7 @@ public class LeonidHelmetHandler {
     private static final AttributeModifier ARMOR_MODIFIER = new AttributeModifier(
         ARMOR_MODIFIER_UUID,
         "Leonid Helmet Bonus Armor",
-        4.0D,
+        3.0D,
         AttributeModifier.Operation.ADDITION
     );
 

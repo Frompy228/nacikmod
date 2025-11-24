@@ -49,6 +49,7 @@ public class BerserkerEntity extends HeroSouls {
     private int resurrectionCount = 0; // Счетчик воскрешений
     private static final int BASE_ATTACK_COOLDOWN = 50; // 2 секунды между атаками
     private int currentAttackCooldown = BASE_ATTACK_COOLDOWN; // Текущая перезарядка атаки
+    private static int BONUS_ARMOR = 10;
 
     // Флаг для защиты от повторного входа в performRoar
     private boolean isRoaring = false;
@@ -138,10 +139,10 @@ public class BerserkerEntity extends HeroSouls {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(ModAttributes.BONUS_ARMOR.get(), 10)
+                .add(ModAttributes.BONUS_ARMOR.get(), BONUS_ARMOR)
                 .add(Attributes.ARMOR, 17)
                 .add(Attributes.ARMOR_TOUGHNESS, 15)
-                .add(Attributes.MAX_HEALTH, 115.0)
+                .add(Attributes.MAX_HEALTH, 125.0)
                 .add(Attributes.ATTACK_DAMAGE, BASE_ATTACK_DAMAGE)
                 .add(Attributes.MOVEMENT_SPEED, 0.32)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1)
@@ -266,7 +267,7 @@ public class BerserkerEntity extends HeroSouls {
         this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ModItems.DUBINKA.get()));
 
         AttributeInstance attribute = this.getAttribute(ModAttributes.BONUS_ARMOR.get());
-        attribute.setBaseValue(10.0);
+        attribute.setBaseValue(BONUS_ARMOR);
         return data;
     }
     @Override

@@ -1,0 +1,36 @@
+{
+  "display": {
+    "icon": {
+      "item": "nacikmod:katana"
+    },
+    "title": {
+      "translate": "advancement.nacikmod.warrior"
+    },
+    "description": {
+      "translate": "advancement.nacikmod.warrior.desc1"
+    },
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "nacikmod:nacik_mod",
+  "criteria": {
+    "kill_with_katana": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "player": {
+          "equipment": {
+            "mainhand": {
+              "items": [
+                "nacikmod:katana"
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "rewards": {
+    "experience": 100
+  }
+}

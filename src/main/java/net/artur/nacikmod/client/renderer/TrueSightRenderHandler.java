@@ -1,6 +1,5 @@
-package net.artur.nacikmod.event;
+package net.artur.nacikmod.client.renderer;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.artur.nacikmod.registry.ModEffects;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;

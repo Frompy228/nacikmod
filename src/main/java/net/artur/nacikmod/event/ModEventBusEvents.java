@@ -34,6 +34,8 @@ public class ModEventBusEvents {
         event.put(ModEntities.MYSTERIOUS_TRADER.get(), MysteriousTraderEntity.createAttributes().build());
         event.put(ModEntities.MYSTERIOUS_TRADER_BATTLE_CLONE.get(), MysteriousTraderBattleCloneEntity.createAttributes().build());
         event.put(ModEntities.BLOOD_WARRIOR.get(), BloodWarriorEntity.createAttributes().build());
+        event.put(ModEntities.GRAIL.get(), GraalEntity.createAttributes().build());
+        event.put(ModEntities.INQUISITOR.get(), InquisitorEntity.createAttributes().build());
     }
 
     @SubscribeEvent
@@ -44,6 +46,7 @@ public class ModEventBusEvents {
         event.register(ModEntities.RED_BERSERK.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
         event.register(ModEntities.ARCHER.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
         event.register(ModEntities.ASSASSIN.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
+        event.register(ModEntities.INQUISITOR.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
         event.register(ModEntities.MYSTERIOUS_TRADER.get(), SpawnPlacements.Type.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MysteriousTraderEntity::canSpawn, SpawnPlacementRegisterEvent.Operation.REPLACE);
     }
 }

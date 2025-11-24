@@ -47,6 +47,7 @@ public class AssassinEntity extends HeroSouls {
     private static final int STEALTH_COOLDOWN = 200; // 10 секунд
     private boolean isStealthed = false;
     private static final double STEALTH_SPEED_BONUS = 0.25; // Бонус скорости в стелсе
+    private static int BONUS_ARMOR = 5;
 
     // Переменные для невидимости
     private boolean isInvisibleAbility = false; // флаг именно способности ассасина
@@ -79,7 +80,7 @@ public class AssassinEntity extends HeroSouls {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(ModAttributes.BONUS_ARMOR.get(), 5)
+                .add(ModAttributes.BONUS_ARMOR.get(), BONUS_ARMOR)
                 .add(Attributes.ARMOR, 10)
                 .add(Attributes.ARMOR_TOUGHNESS, 5)
                 .add(Attributes.MAX_HEALTH, 55.0)
@@ -463,14 +464,14 @@ public class AssassinEntity extends HeroSouls {
             mana.setMana(MAX_MANA);
         });
 
-        // Случайно определяем наличие способности Shamak (20% шанс)
-        hasShamakAbility = this.random.nextDouble() < 0.2;
+        // Случайно определяем наличие способности Shamak (16% шанс)
+        hasShamakAbility = this.random.nextDouble() < 0.16;
 
-        // Случайно определяем наличие способности клонирования (20% шанс)
-        hasCloneAbility = this.random.nextDouble() < 0.2;
+        // Случайно определяем наличие способности клонирования (16% шанс)
+        hasCloneAbility = this.random.nextDouble() < 0.16;
 
         AttributeInstance attribute = this.getAttribute(ModAttributes.BONUS_ARMOR.get());
-        attribute.setBaseValue(5.0);
+        attribute.setBaseValue(BONUS_ARMOR);
         return data;
     }
 
@@ -482,7 +483,7 @@ public class AssassinEntity extends HeroSouls {
     @Override
     protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
         Random random = new Random(); // Генератор случайных чисел
-        double chanceCircuit = 0.25;
+        double chanceCircuit = 0.15;
 
         if (random.nextDouble() < chanceCircuit) {
             this.spawnAtLocation(new ItemStack(ModItems.MAGIC_CIRCUIT.get(), 4));
@@ -620,4 +621,5 @@ public class AssassinEntity extends HeroSouls {
             assassin.getLookControl().setLookAt(target, 30.0F, 30.0F);
         }
     }
+
 }

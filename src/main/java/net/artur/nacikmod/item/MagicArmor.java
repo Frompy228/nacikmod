@@ -23,7 +23,7 @@ import java.util.UUID;
 public class MagicArmor extends Item implements ICurioItem {
     private static final UUID BONUS_ARMOR_UUID = UUID.fromString("f25c5e74-8f75-4d1d-91d6-3f5a2e8b5c97");
     private static final AttributeModifier BONUS_ARMOR = new AttributeModifier(
-            BONUS_ARMOR_UUID, "Magic Armor Bonus Armor", 10.0, AttributeModifier.Operation.ADDITION
+            BONUS_ARMOR_UUID, "Magic Armor Bonus Armor", 5.0, AttributeModifier.Operation.ADDITION
     );
 
     public MagicArmor() {

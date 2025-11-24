@@ -48,12 +48,13 @@ public class LeonidEntity extends HeroSouls {
     private static final double ATTACK_RANGE = 3.0D;
     private float lastHealth;
     private boolean[] thresholdCrossed = new boolean[3]; // Для отслеживания пересечения порогов 75%, 50%, 25%
-    private static final int MAX_MANA = 5100;
+    private static final int MAX_MANA = 7100;
     private static final int SPARTAN_SPAWN_MANA_COST = 5000;
     private static final int SPARTAN_SPAWN_RADIUS = 2;
     private int regenerationTick = 0;
     private static final int REGENERATION_INTERVAL = 300;
     private boolean hasSpawnedSpartans = false;
+    private static int BONUS_ARMOR = 13;
     
     // Константы для прыжков
     private static final int JUMP_COOLDOWN_TICKS = 60; // 3 секунды между прыжками
@@ -78,7 +79,7 @@ public class LeonidEntity extends HeroSouls {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(ModAttributes.BONUS_ARMOR.get(),13)
+                .add(ModAttributes.BONUS_ARMOR.get(),BONUS_ARMOR)
                 .add(Attributes.ARMOR,20)
                 .add(Attributes.ARMOR_TOUGHNESS,10)
                 .add(Attributes.MAX_HEALTH, 165.0) // Больше здоровья чем у базового HeroSouls
@@ -410,7 +411,7 @@ public class LeonidEntity extends HeroSouls {
         });
 
         AttributeInstance attribute = this.getAttribute(ModAttributes.BONUS_ARMOR.get());
-        attribute.setBaseValue(13.0);
+        attribute.setBaseValue(BONUS_ARMOR);
         return data;
     }
 

@@ -1,5 +1,7 @@
 package net.artur.nacikmod.item.ability;
 
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -57,15 +59,7 @@ public class HundredSealAbility {
             if (stack.getItem() instanceof HundredSeal) {
                 stack.getOrCreateTag().putBoolean(ACTIVE_TAG, true);
                 
-                // Применяем эффекты
-                player.addEffect(new net.minecraft.world.effect.MobEffectInstance(
-                    net.minecraft.world.effect.MobEffects.REGENERATION, 
-                    -1, // Бесконечная длительность
-                    4, // Уровень 5 (индекс 4)
-                    false, false, true
-                ));
-                
-                // Добавляем +10 к максимальному здоровью через атрибут
+                // Добавляем +20 к максимальному здоровью через атрибут
                 net.minecraft.world.entity.ai.attributes.AttributeModifier healthModifier = 
                     new net.minecraft.world.entity.ai.attributes.AttributeModifier(
                         HEALTH_MODIFIER_UUID,
@@ -187,6 +181,21 @@ public class HundredSealAbility {
 
         // Если эффект активен и предмет есть в инвентаре
         if (activeHundredSealPlayers.contains(player.getUUID()) && hundredSealItem != null) {
+            // Применяем эффект регенерации только если его нет или осталось мало времени
+            // Это позволяет эффекту успевать тикать (применять исцеление)
+            MobEffectInstance existingEffect = player.getEffect(MobEffects.REGENERATION);
+            if (existingEffect == null || existingEffect.getDuration() < 40) {
+                // Применяем эффект только если его нет или осталось меньше 2 секунд
+            player.addEffect(new MobEffectInstance(
+                    MobEffects.REGENERATION,
+                        100,  // Длительность 5 секунд (100 тиков) - достаточно для нескольких тиков
+                    4,   // Уровень 5 (Regeneration V)
+                    false,
+                    false,
+                    true
+            ));
+            }
+
             // Тратим ману каждую секунду
             if (player.tickCount % MANA_CHECK_INTERVAL == 0) {
                 int storedMana = getStoredMana(hundredSealItem);
@@ -194,19 +203,15 @@ public class HundredSealAbility {
                     setStoredMana(hundredSealItem, storedMana - MANA_COST_PER_SECOND);
                 } else {
                     stopHundredSeal(player);
-                    if (player instanceof ServerPlayer) {
-                        player.sendSystemMessage(Component.literal("Hundred Seal deactivated - not enough mana")
-                                .withStyle(ChatFormatting.RED));
-                    }
+                    player.sendSystemMessage(Component.literal("Hundred Seal deactivated - not enough mana")
+                            .withStyle(ChatFormatting.RED));
                     return;
                 }
             }
 
             // Мгновенное исцеление каждые 5 секунд
             if (player.tickCount % HEALING_INTERVAL == 0) {
-                if (player.getHealth() < player.getMaxHealth()) {
-                    player.heal(8.0f); // Исцеляем на 4 сердца (8 HP)
-                }
+                player.heal(8.0f); // Исцеляем на 4 сердца (8 HP)
             }
         }
     }

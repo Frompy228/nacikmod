@@ -1,6 +1,7 @@
 package net.artur.nacikmod.datagen;
 
 import net.artur.nacikmod.NacikMod;
+import net.artur.nacikmod.registry.ModBlocks;
 import net.artur.nacikmod.registry.ModItems;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -94,6 +95,30 @@ public class LootTableHandler {
                     .setWeight(5)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
+            LootItem.Builder<?> fireTrap = LootItem.lootTableItem(ModBlocks.FIRE_TRAP.get())
+                    .setWeight(6)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
+            LootItem.Builder<?> magicHealing = LootItem.lootTableItem(ModItems.MAGIC_HEALING.get())
+                    .setWeight(2)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
+            LootItem.Builder<?> release = LootItem.lootTableItem(ModItems.RELEASE.get())
+                    .setWeight(2)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
+            LootItem.Builder<?> simpleDomain = LootItem.lootTableItem(ModItems.SIMPLE_DOMAIN.get())
+                    .setWeight(2)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
+            LootItem.Builder<?> barrierSeal = LootItem.lootTableItem(ModItems.BARRIER_SEAL.get())
+                    .setWeight(2)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
+            LootItem.Builder<?> barrierWall = LootItem.lootTableItem(ModItems.BARRIER_WALL.get())
+                    .setWeight(2)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
 
             // Создаём пул лута
             LootPool pool = LootPool.lootPool()
@@ -118,6 +143,12 @@ public class LootTableHandler {
                     .add(intangibility)
                     .add(bloodWarrior)
                     .add(sealOfReturn)
+                    .add(fireTrap)
+                    .add(magicHealing)
+                    .add(release)
+                    .add(simpleDomain)
+                    .add(barrierSeal)
+                    .add(barrierWall)
                     .build();
 
 
