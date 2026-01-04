@@ -1,0 +1,233 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
+package alcoholmod.Mathioks.TransformationsRealPackage;
+
+import alcoholmod.Mathioks.AlcoholMod;
+import alcoholmod.Mathioks.ExtendedPlayer;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.Phase;
+import java.util.List;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.passive.EntityAnimal;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.AxisAlignedBB;
+
+public class ByakuganTick {
+    private int particleTick;
+    private int hungerTick;
+    private int howlTick;
+
+    @SubscribeEvent
+    public void playerTick(TickEvent.PlayerTickEvent event) {
+        if (event.phase == Phase.START) {
+            EntityPlayer player = event.player;
+            ExtendedPlayer props = ExtendedPlayer.get(player);
+            if (props.getByakuganActive() || props.getJouganActive()) {
+                ++this.particleTick;
+            }
+
+            if (this.particleTick > 19) {
+                int range = 80;
+                player.field_70170_p.func_72872_a(EntityLivingBase.class, AxisAlignedBB.func_72330_a(player.field_70165_t - (double)range, player.field_70163_u - (double)range, player.field_70161_v - (double)range, player.field_70165_t + (double)range, player.field_70163_u + (double)range, player.field_70161_v + (double)range));
+                List<Entity> playerentities = player.field_70170_p.func_72872_a(EntityPlayer.class, AxisAlignedBB.func_72330_a(player.field_70165_t - (double)range, player.field_70163_u - (double)range, player.field_70161_v - (double)range, player.field_70165_t + (double)range, player.field_70163_u + (double)range, player.field_70161_v + (double)range));
+                List<Entity> animalentities = player.field_70170_p.func_72872_a(EntityAnimal.class, AxisAlignedBB.func_72330_a(player.field_70165_t - (double)range, player.field_70163_u - (double)range, player.field_70161_v - (double)range, player.field_70165_t + (double)range, player.field_70163_u + (double)range, player.field_70161_v + (double)range));
+                List<Entity> mobentities = player.field_70170_p.func_72872_a(EntityMob.class, AxisAlignedBB.func_72330_a(player.field_70165_t - (double)range, player.field_70163_u - (double)range, player.field_70161_v - (double)range, player.field_70165_t + (double)range, player.field_70163_u + (double)range, player.field_70161_v + (double)range));
+
+                for(Entity e : playerentities) {
+                    if (props.trackAll) {
+                        String user = event.player.func_110124_au().toString();
+                        if (!e.func_110124_au().toString().equals(user)) {
+                            AlcoholMod.proxy.generateScentParticles(e, 0.0F, 0.0F, 1.0F);
+                        }
+                    }
+                }
+
+                for(Entity e : animalentities) {
+                    if (props.trackAll) {
+                        AlcoholMod.proxy.generateScentParticles(e, 0.0F, 1.0F, 0.0F);
+                    }
+                }
+
+                for(Entity e : mobentities) {
+                    if (props.trackAll) {
+                        AlcoholMod.proxy.generateScentParticles(e, 1.0F, 0.0F, 0.0F);
+                    }
+                }
+
+                this.particleTick = 0;
+            }
+        }
+
+    }
+}
+package alcoholmod.Mathioks.TransformationsRealPackage;
+
+import java.util.ArrayDeque;
+import java.util.Queue;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.particle.EntityFX;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
+import org.lwjgl.opengl.GL11;
+
+public class ByakuganTrack extends EntityFX {
+  public static Queue<ByakuganTrack> queuedRenders = new ArrayDeque<>();
+
+  public static Queue<ByakuganTrack> queuedDepthIgnoringRenders = new ArrayDeque<>();
+
+  float f;
+
+  float f1;
+
+  float f2;
+
+  float f3;
+
+  float f4;
+
+  float f5;
+
+  boolean depthTest = false;
+
+  public ByakuganTrack(World parWorld, double parX, double parY, double parZ, double parMotionX, double parMotionY, double parMotionZ, float red, float green, float blue) {
+    super(parWorld, parX, parY, parZ, parMotionX, parMotionY, parMotionZ);
+    float f = this.field_70146_Z.nextFloat() * 0.1F + 0.2F;
+    this.field_70552_h = red;
+    this.field_70553_i = green;
+    this.field_70551_j = blue;
+    func_70105_a(0.02F, 0.02F);
+    this.field_70544_f *= this.field_70146_Z.nextFloat() * 0.8F + 0.5F;
+    this.field_70159_w *= 0.01999999955296516D;
+    this.field_70181_x *= 0.01999999955296516D;
+    this.field_70179_y *= 0.01999999955296516D;
+    this.field_70547_e = (int)(20.0D / (Math.random() * 0.8D + 0.2D));
+    this.field_70145_X = true;
+  }
+
+  public static void dispatchQueuedRenders(Tessellator tessellator) {
+    (Minecraft.func_71410_x()).field_71446_o.func_110577_a(new ResourceLocation("tm:textures/entity/Byakugan.png"));
+    if (!queuedRenders.isEmpty()) {
+      tessellator.func_78382_b();
+      for (ByakuganTrack wisp : queuedRenders)
+        wisp.renderQueued(tessellator, true);
+      tessellator.func_78381_a();
+    }
+    if (!queuedDepthIgnoringRenders.isEmpty()) {
+      GL11.glDisable(2929);
+      tessellator.func_78382_b();
+      for (ByakuganTrack wisp : queuedDepthIgnoringRenders)
+        wisp.renderQueued(tessellator, false);
+      tessellator.func_78381_a();
+      GL11.glEnable(2929);
+    }
+    queuedRenders.clear();
+    queuedDepthIgnoringRenders.clear();
+  }
+
+  private void renderQueued(Tessellator tessellator, boolean depthEnabled) {
+    float f10 = 0.5F * this.field_70544_f;
+    float f11 = (float)(this.field_70169_q + (this.field_70165_t - this.field_70169_q) * this.f - EntityFX.field_70556_an);
+    float f12 = (float)(this.field_70167_r + (this.field_70163_u - this.field_70167_r) * this.f - EntityFX.field_70554_ao);
+    float f13 = (float)(this.field_70166_s + (this.field_70161_v - this.field_70166_s) * this.f - EntityFX.field_70555_ap);
+    tessellator.func_78369_a(this.field_70552_h, this.field_70553_i, this.field_70551_j, 0.1F);
+    tessellator.func_78374_a((f11 - this.f1 * f10 - this.f4 * f10), (f12 - this.f2 * f10), (f13 - this.f3 * f10 - this.f5 * f10), 0.0D, 1.0D);
+    tessellator.func_78374_a((f11 - this.f1 * f10 + this.f4 * f10), (f12 + this.f2 * f10), (f13 - this.f3 * f10 + this.f5 * f10), 1.0D, 1.0D);
+    tessellator.func_78374_a((f11 + this.f1 * f10 + this.f4 * f10), (f12 + this.f2 * f10), (f13 + this.f3 * f10 + this.f5 * f10), 1.0D, 0.0D);
+    tessellator.func_78374_a((f11 + this.f1 * f10 - this.f4 * f10), (f12 - this.f2 * f10), (f13 + this.f3 * f10 - this.f5 * f10), 0.0D, 0.0D);
+  }
+
+  public void func_70539_a(Tessellator tessellator, float f, float f1, float f2, float f3, float f4, float f5) {
+    this.f = f;
+    this.f1 = f1;
+    this.f2 = f2;
+    this.f3 = f3;
+    this.f4 = f4;
+    this.f5 = f5;
+    if (this.depthTest) {
+      queuedRenders.add(this);
+    } else {
+      queuedDepthIgnoringRenders.add(this);
+    }
+  }
+
+  public void func_70071_h_() {
+    this.field_70169_q = this.field_70165_t;
+    this.field_70167_r = this.field_70163_u;
+    this.field_70166_s = this.field_70161_v;
+    func_70091_d(this.field_70159_w, this.field_70181_x, this.field_70179_y);
+    this.field_70159_w *= 0.99D;
+    this.field_70181_x *= 0.99D;
+    this.field_70179_y *= 0.99D;
+    if (this.field_70547_e-- <= 0)
+      func_70106_y();
+  }
+}
+package alcoholmod.Mathioks.proxys;
+
+import alcoholmod.Mathioks.AlcoholMod;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.IGuiHandler;
+import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import java.util.HashMap;
+import java.util.Map;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
+
+public class ServerProxy implements IGuiHandler {
+  private static final Map<String, NBTTagCompound> extendedEntityData = new HashMap<>();
+
+  public void registerKeyBindings() {}
+
+  public void registerRenderers() {}
+
+  public void preInit() {}
+
+  public static void storeEntityData(String name, NBTTagCompound compound) {
+    extendedEntityData.put(name, compound);
+  }
+
+  public static NBTTagCompound getEntityData(String name) {
+    return extendedEntityData.remove(name);
+  }
+
+  public void registerArmorThings() {}
+
+  public void registerRenderThings() {}
+
+  public void registerRenders() {}
+
+  public World getClientWorld() {
+    return null;
+  }
+
+  public void preInit(FMLPreInitializationEvent event) {}
+
+  public EntityPlayer getPlayerEntity(MessageContext ctx) {
+    AlcoholMod.logger.info("Retrieving player from CommonProxy for message on side " + ctx.side);
+    return (EntityPlayer)(ctx.getServerHandler()).field_147369_b;
+  }
+
+  public void initialize() {}
+
+  public void init(FMLInitializationEvent event) {}
+
+  public void generateScentParticles(Entity theEntity, float red, float green, float blue) {}
+
+  public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+    return null;
+  }
+
+  public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+    return null;
+  }
+}

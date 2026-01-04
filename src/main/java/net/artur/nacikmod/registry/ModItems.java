@@ -67,6 +67,11 @@ public class ModItems {
     public static final RegistryObject<Item> BLOOD_WARRIOR = ITEMS.register("blood_warrior", () -> new BloodWarrior(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> ANCIENT_SEAL = ITEMS.register("ancient_seal", () -> new AncientSeal(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LORD_OF_SOULS = ITEMS.register("lord_of_souls", () -> new LordOfSouls(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> BURIAL = ITEMS.register("burial", () -> new Burial());
+    public static final RegistryObject<Item> FIRE_PILLAR = ITEMS.register("fire_pillar", () -> new FirePillarItem(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> MANA_SEAL = ITEMS.register("mana_seal", () -> new ManaSeal(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> EYE = ITEMS.register("eye", () -> new Eye(new Item.Properties().stacksTo(1)));
+
     public static final RegistryObject<Item> LANSER_SPAWN_EGG = ITEMS.register("lanser_spawn_egg",
             ()-> new ForgeSpawnEggItem(ModEntities.LANSER, 0x5b107e, 0xCF6A84,
                     new Item.Properties()));

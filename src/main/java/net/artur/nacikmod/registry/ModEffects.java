@@ -47,4 +47,6 @@ public class ModEffects {
             EFFECTS.register("god_hand", EffectGodHand::new);
     public static final RegistryObject<MobEffect> SUPPRESSING_GATE =
             EFFECTS.register("suppressing_gate", EffectSuppressingGate::new);
+    public static final RegistryObject<MobEffect> MANA_SEAL =
+            EFFECTS.register("mana_seal", EffectManaSeal::new);
 }

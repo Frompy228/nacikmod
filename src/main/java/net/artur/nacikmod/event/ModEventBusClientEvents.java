@@ -5,9 +5,11 @@ import net.artur.nacikmod.armor.models.DarkSphereModel;
 import net.artur.nacikmod.armor.models.LeonidHelmetModel;
 import net.artur.nacikmod.client.renderer.DarkSphereRenderer;
 import net.artur.nacikmod.client.renderer.HundredSealLayer;
-import net.artur.nacikmod.client.renderer.LeonidHelmetRenderer;
 import net.artur.nacikmod.client.renderer.ReleaseAuraRenderer;
 import net.artur.nacikmod.client.renderer.LastMagicAuraRenderer;
+import net.artur.nacikmod.client.renderer.eye.EyeLayer;
+import net.artur.nacikmod.client.renderer.eye.EyeModel;
+import net.artur.nacikmod.client.renderer.particle.EyeTrackParticle;
 import net.artur.nacikmod.entity.client.*;
 import net.artur.nacikmod.entity.client.SuppressingGateRenderer;
 import net.artur.nacikmod.entity.client.SuppressingGateModel;
@@ -16,15 +18,14 @@ import net.artur.nacikmod.item.MagicCrystal;
 import net.artur.nacikmod.registry.ModEntities;
 import net.artur.nacikmod.registry.ModItems;
 import net.artur.nacikmod.util.ModItemProperties;
-import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -55,8 +56,14 @@ public class ModEventBusClientEvents {
         event.registerLayerDefinition(SlashProjectileModel.LAYER_LOCATION, SlashProjectileModel::createBodyLayer);
         event.registerLayerDefinition(DoubleSlashProjectileModel.LAYER_LOCATION, DoubleSlashProjectileModel::createBodyLayer);
         event.registerLayerDefinition(SuppressingGateModel.LAYER_LOCATION, SuppressingGateModel::createBodyLayer);
+        event.registerLayerDefinition(EyeModel.LAYER_LOCATION, EyeModel::createBodyLayer);
     }
 
+
+    @SubscribeEvent
+    public static void registerParticles(RegisterParticleProvidersEvent event) {
+        event.registerSpriteSet(ModParticles.EYE_TRACK.get(), EyeTrackParticle.Factory::new);
+    }
 
     @SubscribeEvent
     public static void registerOverlays(RegisterGuiOverlaysEvent event) {
@@ -95,6 +102,7 @@ public class ModEventBusClientEvents {
             EntityRenderers.register(ModEntities.SLASH_PROJECTILE.get(), SlashProjectileRenderer::new);
             EntityRenderers.register(ModEntities.DOUBLE_SLASH_PROJECTILE.get(), DoubleSlashProjectileRenderer::new);
             EntityRenderers.register(ModEntities.SUPPRESSING_GATE.get(), SuppressingGateRenderer::new);
+            EntityRenderers.register(ModEntities.FIRE_PILLAR.get(), FirePillarRenderer::new);
             
             // Register Dark Sphere renderer
             CuriosRendererRegistry.register(ModItems.DARK_SPHERE.get(), () -> new DarkSphereRenderer());
@@ -116,6 +124,9 @@ public class ModEventBusClientEvents {
             renderer.addLayer(new ReleaseAuraRenderer(renderer));
             renderer.addLayer(new LastMagicAuraRenderer(renderer));
             renderer.addLayer(new HundredSealLayer.Vanilla<>(renderer));
+            
+            // Регистрируем слой глаз
+            renderer.addLayer(new EyeLayer(renderer, event.getEntityModels()));
         }
     }
 }

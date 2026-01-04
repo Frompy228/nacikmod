@@ -73,6 +73,14 @@ public class ModMessages {
                 CustomMoonPacket::handle,
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT)
         );
+
+        INSTANCE.registerMessage(packetId++,
+                EyeParticlePacket.class,
+                EyeParticlePacket::toBytes,
+                EyeParticlePacket::new,
+                EyeParticlePacket::handle,
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT)
+        );
     }
 
     public static void sendToClient(ServerPlayer player, CooldownSyncPacket packet) {

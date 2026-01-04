@@ -143,6 +143,15 @@ public class ModEntities {
                             .updateInterval(2)
                             .build("suppressing_gate"));
 
+    public static final RegistryObject<EntityType<FirePillarEntity>> FIRE_PILLAR =
+            ENTITY_TYPES.register("fire_pillar",
+                    () -> EntityType.Builder.<FirePillarEntity>of((type, level) -> new FirePillarEntity(type, level), MobCategory.MISC)
+                            .sized(3.0F, 15.0F)
+                            .clientTrackingRange(16)
+                            .updateInterval(2)
+                            .build("fire_pillar"));
+
+
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);
     }
