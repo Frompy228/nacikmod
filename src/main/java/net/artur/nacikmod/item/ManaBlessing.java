@@ -1,11 +1,8 @@
 package net.artur.nacikmod.item;
 
-import net.artur.nacikmod.capability.mana.IMana;
-import net.artur.nacikmod.capability.mana.ManaProvider;
-import net.artur.nacikmod.network.ModMessages;
 import net.artur.nacikmod.registry.ModEffects;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -14,7 +11,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -22,7 +18,7 @@ import java.util.List;
 public class ManaBlessing extends Item {
     public ManaBlessing(Properties properties) {
         super(new Item.Properties()
-                .rarity(Rarity.RARE)); // Редкость
+                .rarity(Rarity.RARE).fireResistant()); // Редкость
     }
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
@@ -45,5 +41,8 @@ public class ManaBlessing extends Item {
         super.appendHoverText(stack, level, tooltipComponents, isAdvanced);
 
         tooltipComponents.add(Component.translatable("item.nacikmod.mana_blessing.desc1"));
+
+        tooltipComponents.add(Component.translatable("item.disappears")
+                .withStyle(ChatFormatting.GRAY));
     }
 }

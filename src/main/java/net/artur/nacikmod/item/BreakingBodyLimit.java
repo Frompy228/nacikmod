@@ -19,7 +19,7 @@ public class BreakingBodyLimit extends Item {
     private static final String ACTIVE_TAG = "active";
 
     public BreakingBodyLimit(Properties properties) {
-        super(properties.stacksTo(1).rarity(Rarity.EPIC));
+        super(properties.stacksTo(1).rarity(Rarity.EPIC).fireResistant());
     }
 
     @Override

@@ -2,13 +2,11 @@ package net.artur.nacikmod.item.ability;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.artur.nacikmod.NacikMod;
 import net.artur.nacikmod.registry.ModEffects;
-import net.artur.nacikmod.network.ModMessages;
 import net.artur.nacikmod.network.AbilityStateManager;
 
 import java.util.HashSet;

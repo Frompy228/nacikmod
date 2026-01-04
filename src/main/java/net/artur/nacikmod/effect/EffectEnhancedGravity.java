@@ -13,7 +13,7 @@ public class EffectEnhancedGravity extends MobEffect {
     private static final UUID GRAVITY_MODIFIER_ID = UUID.fromString("cf0b6d12-1b7a-4f3f-a9d3-3f0e9a7a5b6f");
     private static final UUID SPEED_MODIFIER_ID = UUID.fromString("cf0b6d12-1b7a-4f3f-a9d3-3f0e9a7a5b7f");
     private static final int DAMAGE_INTERVAL = 20; // 1 second (20 ticks)
-    private static final float DAMAGE_AMOUNT = 7.0f;
+    private static final float DAMAGE_AMOUNT = 13.0f;
 
     public EffectEnhancedGravity() {
         super(MobEffectCategory.HARMFUL, 0x808080); // Gray color for the effect

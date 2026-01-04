@@ -21,7 +21,7 @@ public class BloodShoot extends Item {
     private static final int MANA_COST = 75;
 
     public BloodShoot(Properties properties) {
-        super(properties.rarity(Rarity.EPIC).stacksTo(1));
+        super(properties.rarity(Rarity.EPIC).stacksTo(1).fireResistant());
     }
 
     @Override

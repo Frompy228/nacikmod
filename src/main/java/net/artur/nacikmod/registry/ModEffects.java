@@ -2,7 +2,6 @@ package net.artur.nacikmod.registry;
 
 import net.artur.nacikmod.effect.*;
 import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -37,8 +36,6 @@ public class ModEffects {
             EFFECTS.register("enhanced_gravity", EffectEnhancedGravity::new);
     public static final RegistryObject<MobEffect> TRUE_SIGHT =
             EFFECTS.register("true_sight", EffectTrueSight::new);
-    public static final RegistryObject<MobEffect> SENSORY_RAIN =
-            EFFECTS.register("sensory_rain", EffectSensoryRain::new);
     public static final RegistryObject<MobEffect> CURSED_SWORD =
             EFFECTS.register("cursed_sword", EffectCursedSword::new);
     public static final RegistryObject<MobEffect> STRONG_POISON =
@@ -47,6 +44,12 @@ public class ModEffects {
             EFFECTS.register("god_hand", EffectGodHand::new);
     public static final RegistryObject<MobEffect> SUPPRESSING_GATE =
             EFFECTS.register("suppressing_gate", EffectSuppressingGate::new);
-    public static final RegistryObject<MobEffect> MANA_SEAL =
-            EFFECTS.register("mana_seal", EffectManaSeal::new);
+    public static final RegistryObject<MobEffect> EFFECT_SIMPLE_DOMAIN =
+            EFFECTS.register("effect_simple_domain", EffectSimpleDomain::new);
+    public static final RegistryObject<MobEffect> EFFECT_DOMAIN =
+            EFFECTS.register("effect_domain", EffectDomain::new);
+    public static final RegistryObject<MobEffect> EFFECT_BASE_DOMAIN =
+            EFFECTS.register("effect_base_domain", EffectBaseDomain::new);
+    public static final RegistryObject<MobEffect> EFFECT_MANA_SEAL =
+            EFFECTS.register("effect_mana_seal", EffectManaSeal::new);
 }

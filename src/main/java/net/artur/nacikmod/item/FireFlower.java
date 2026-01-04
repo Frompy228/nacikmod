@@ -22,7 +22,7 @@ public class FireFlower extends Item {
     private static final double CLOUD_DISTANCE = 5; // Расстояние от игрока до облаков
 
     public FireFlower(Properties properties) {
-        super(properties);
+        super(properties.fireResistant());
     }
 
     @Override

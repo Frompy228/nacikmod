@@ -13,7 +13,7 @@ public class LeonidArmorMaterial implements ArmorMaterial {
 
     @Override
     public int getDurabilityForType(Type type) {
-        return BASE_DURABILITY[type.getSlot().getIndex()] * 80;
+        return BASE_DURABILITY[type.getSlot().getIndex()] * 60;
     }
 
     @Override

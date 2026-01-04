@@ -30,14 +30,23 @@ import org.jetbrains.annotations.Nullable;
 import java.util.EnumSet;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 
 public class SpartanEntity extends HeroSouls {
     private static final double ATTACK_RANGE = 3.75D;
     private int attackCooldown = 0;
-    private static final int ATTACK_COOLDOWN_TICKS = 20;
+    private static final int ATTACK_COOLDOWN_TICKS = 19;
     private int shieldBlockCooldown = 0;
     private boolean shieldBlockedHit = false;
     private static final int SHIELD_BLOCK_COOLDOWN = 140; // 7 секунд (20 тиков * 7)
+    private static int BONUS_ARMOR = 7;
+    
+    // Константы для прыжков
+    private static final int JUMP_COOLDOWN_TICKS = 60; // 3 секунды между прыжками
+    private static final double VERTICAL_JUMP_THRESHOLD = 2.0; // Минимальная разница высоты для прыжка
+    private static final double MAX_JUMP_HEIGHT = 4.0; // Максимальная высота прыжка
+    
+    private int jumpCooldown = 0;
 
     public SpartanEntity(EntityType<? extends HeroSouls> entityType, Level level) {
         super(entityType, level);
@@ -47,11 +56,11 @@ public class SpartanEntity extends HeroSouls {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(ModAttributes.BONUS_ARMOR.get(), 5)
+                .add(ModAttributes.BONUS_ARMOR.get(), BONUS_ARMOR)
                 .add(Attributes.ARMOR, 5)
                 .add(Attributes.ARMOR_TOUGHNESS, 5)
-                .add(Attributes.MAX_HEALTH, 50.0)
-                .add(Attributes.ATTACK_DAMAGE, 12.0)
+                .add(Attributes.MAX_HEALTH, 70.0)
+                .add(Attributes.ATTACK_DAMAGE, 14.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.37)
                 .add(ForgeMod.SWIM_SPEED.get(), 2)
                 .add(Attributes.FOLLOW_RANGE, 35.0);
@@ -60,10 +69,11 @@ public class SpartanEntity extends HeroSouls {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new SpearAttackGoal(this, 1D));
-        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 0.8D));
-        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(1, new OpenDoorGoal(this, true)); // Открытие дверей во время боя
+        this.goalSelector.addGoal(2, new SpearAttackGoal(this, 1D));
+        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 0.8D));
+        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
 
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this, LeonidEntity.class).setAlertOthers(SpartanEntity.class));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
@@ -127,11 +137,62 @@ public class SpartanEntity extends HeroSouls {
     public void tick() {
         super.tick();
 
+        // Обновляем кулдаун прыжков
+        if (jumpCooldown > 0) jumpCooldown--;
+
         if (shieldBlockCooldown > 0) {
             shieldBlockCooldown--;
             if (shieldBlockCooldown <= 0) {
                 shieldBlockedHit = false;
             }
+        }
+        
+        // Проверяем необходимость прыжка для достижения цели
+        LivingEntity target = this.getTarget();
+        if (target != null) {
+            checkAndPerformJump(target);
+        }
+    }
+    
+    /**
+     * Проверяет необходимость прыжка и выполняет его
+     */
+    /**
+     * Проверяет необходимость прыжка и выполняет его
+     */
+    private void checkAndPerformJump(LivingEntity target) {
+        if (jumpCooldown > 0 || !this.onGround()) return;
+
+        double targetY = target.getY();
+        double thisY = this.getY();
+        double heightDifference = targetY - thisY;
+
+        // Проверяем горизонтальную дистанцию до цели
+        double horizontalDistance = this.distanceTo(target);
+
+        // Если цель выше и разница значительная, и находится на близкой дистанции (до 5 блоков), пытаемся прыгнуть
+        if (heightDifference > VERTICAL_JUMP_THRESHOLD &&
+                horizontalDistance <= 5.0) {
+            // Проверяем, есть ли препятствия между нами и целью
+            if (this.hasLineOfSight(target)) {
+                performJump();
+            }
+        }
+    }
+    
+    /**
+     * Выполняет прыжок вверх
+     */
+    private void performJump() {
+        if (this.onGround() && jumpCooldown <= 0) {
+            // Прыгаем вверх с небольшой случайностью в направлении
+            double jumpPower = 0.45 + (this.random.nextDouble() * 0.2);
+            this.setDeltaMovement(this.getDeltaMovement().add(0, jumpPower, 0));
+            jumpCooldown = JUMP_COOLDOWN_TICKS;
+            
+            // Проигрываем звук прыжка
+            this.level().playSound(null, this.getX(), this.getY(), this.getZ(), 
+                SoundEvents.PLAYER_ATTACK_STRONG, SoundSource.HOSTILE, 0.5F, 1.2F);
         }
     }
 
@@ -192,7 +253,7 @@ public class SpartanEntity extends HeroSouls {
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(ModItems.LEONID_SHIELD.get()));
 
         AttributeInstance attribute = this.getAttribute(ModAttributes.BONUS_ARMOR.get());
-        attribute.setBaseValue(5.0);
+        attribute.setBaseValue(BONUS_ARMOR);
         return data;
     }
 

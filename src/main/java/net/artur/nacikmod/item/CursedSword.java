@@ -1,23 +1,22 @@
 package net.artur.nacikmod.item;
 
-import net.artur.nacikmod.registry.ModAttributes;
 import net.artur.nacikmod.item.ability.CursedSwordAbility;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.item.*;
+import net.artur.nacikmod.registry.ModEnchantments;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.*;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class CursedSword extends SwordItem {
     public CursedSword() {
-        super(new CustomTier(), 5, -2.4f, new Properties().rarity(ShardArtifact.RED));
+        super(new CustomTier(), 5, -2.4f, new Properties().rarity(ShardArtifact.RED).fireResistant());
     }
 
     @Override
@@ -54,6 +53,21 @@ public class CursedSword extends SwordItem {
         return InteractionResultHolder.success(itemStack);
     }
 
+    @Override
+    public ItemStack getDefaultInstance() {
+        ItemStack stack = super.getDefaultInstance();
+        stack.enchant(ModEnchantments.MAGIC_BURN.get(), 1);
+        return stack;
+    }
+
+    @Override
+    public void inventoryTick(ItemStack stack, Level level, net.minecraft.world.entity.Entity entity, int slotId, boolean isSelected) {
+        super.inventoryTick(stack, level, entity, slotId, isSelected);
+        if (!level.isClientSide && EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.MAGIC_BURN.get(), stack) <= 0) {
+            stack.enchant(ModEnchantments.MAGIC_BURN.get(), 1);
+        }
+    }
+
 
     private static class CustomTier implements Tier {
         @Override
@@ -76,4 +90,13 @@ public class CursedSword extends SwordItem {
 
         tooltipComponents.add(Component.translatable("item.nacikmod.cursed_sword.desc1"));
     }
+    @Override
+    public boolean isFoil(ItemStack stack) {
+        if (stack.getEnchantmentLevel(ModEnchantments.MAGIC_BURN.get()) > 0
+                && stack.getAllEnchantments().size() == 1) {
+            return false; // только Magic Burn, не показываем glow
+        }
+        return super.isFoil(stack);
+    }
+
 }

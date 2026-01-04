@@ -46,7 +46,7 @@ public class Gravity extends Item {
     private static final Set<UUID> activeFlyingPlayers = new HashSet<>();
 
     public Gravity(Properties properties) {
-        super(properties);
+        super(properties.fireResistant());
     }
 
     @SubscribeEvent
@@ -297,10 +297,10 @@ public class Gravity extends Item {
 
         boolean isActive = stack.hasTag() && stack.getTag().getBoolean(ACTIVE_TAG);
         if (isActive) {
-            tooltipComponents.add(Component.translatable("item.nacikmod.gravity.active")
+            tooltipComponents.add(Component.translatable("item.active")
                     .withStyle(ChatFormatting.GREEN));
         } else {
-            tooltipComponents.add(Component.translatable("item.nacikmod.gravity.inactive")
+            tooltipComponents.add(Component.translatable("item.inactive")
                     .withStyle(ChatFormatting.RED));
         }
     }

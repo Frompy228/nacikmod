@@ -1,7 +1,7 @@
 package net.artur.nacikmod.effect;
 
 import net.artur.nacikmod.capability.mana.ManaProvider;
-import net.artur.nacikmod.network.ModMessages;
+import net.artur.nacikmod.registry.ModMessages;
 import net.artur.nacikmod.registry.ModEffects;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
@@ -29,7 +29,7 @@ public class EffectManaSeal extends MobEffect {
             applySealEffect(entity);
             
             // Удаляем эффект после срабатывания
-            entity.removeEffect(ModEffects.MANA_SEAL.get());
+            entity.removeEffect(ModEffects.EFFECT_MANA_SEAL.get());
         }
     }
 

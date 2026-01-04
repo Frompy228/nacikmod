@@ -5,6 +5,7 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
@@ -38,6 +39,12 @@ public class BloodWarriorEntity extends Monster {
 
     public BloodWarriorEntity(EntityType<? extends Monster> entityType, Level level) {
         super(entityType, level);
+        
+        // Разрешаем открывать двери / калитки и лучше плавать
+        if (this.getNavigation() instanceof GroundPathNavigation groundNav) {
+            groundNav.setCanOpenDoors(true);
+        }
+        this.getNavigation().setCanFloat(true);
     }
     
     private boolean effectApplied = false;
@@ -56,11 +63,12 @@ public class BloodWarriorEntity extends Monster {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new BloodWarriorAttackGoal(this, 1.0D));
-        this.goalSelector.addGoal(2, new FollowOwnerGoal(this));
-        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 0.8D));
-        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(1, new OpenDoorGoal(this, true));
+        this.goalSelector.addGoal(2, new BloodWarriorAttackGoal(this, 1.0D));
+        this.goalSelector.addGoal(3, new FollowOwnerGoal(this));
+        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.8D));
+        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
 
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this, BloodWarriorEntity.class).setAlertOthers(BloodWarriorEntity.class));
         this.targetSelector.addGoal(2, new ProtectOwnerGoal(this));

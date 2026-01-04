@@ -1,17 +1,16 @@
 package net.artur.nacikmod;
 
 import com.mojang.logging.LogUtils;
+import net.artur.nacikmod.capability.mana.ManaAdvancementTracker;
 import net.artur.nacikmod.capability.mana.ManaSyncOnDeath;
 import net.artur.nacikmod.capability.reward.RewardEvents;
 import net.artur.nacikmod.capability.reward.RewardSyncOnDeath;
 import net.artur.nacikmod.capability.killcount.KillCountEvents;
 import net.artur.nacikmod.capability.killcount.KillCountHandler;
 import net.artur.nacikmod.capability.killcount.KillCountSyncOnDeath;
-import net.artur.nacikmod.capability.cooldowns.CooldownsProvider;
-import net.artur.nacikmod.capability.cooldowns.ICooldowns;
 import net.artur.nacikmod.datagen.ModWorldGenProvider;
 import net.artur.nacikmod.registry.ModCreativeModTabs;
-import net.artur.nacikmod.network.ModMessages;
+import net.artur.nacikmod.registry.ModMessages;
 import net.artur.nacikmod.registry.*;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
@@ -41,6 +40,7 @@ public class NacikMod
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         ModItems.register(modEventBus);
+        ModEnchantments.register(modEventBus);
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::gatherData);
@@ -49,7 +49,8 @@ public class NacikMod
         ModAttributes.ATTRIBUTES.register(modEventBus);
         ModSounds.register(modEventBus);
         ModBlocks.register(modEventBus);
-        ModParticles.register(modEventBus);
+        ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
+        ModMenuTypes.register(modEventBus);
         ModMessages.register();
         MinecraftForge.EVENT_BUS.register(ManaSyncOnDeath.class);
         MinecraftForge.EVENT_BUS.register(RewardEvents.class);
@@ -57,6 +58,7 @@ public class NacikMod
         MinecraftForge.EVENT_BUS.register(KillCountEvents.class);
         MinecraftForge.EVENT_BUS.register(KillCountHandler.class);
         MinecraftForge.EVENT_BUS.register(KillCountSyncOnDeath.class);
+        MinecraftForge.EVENT_BUS.register(ManaAdvancementTracker.class);
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
         ModCreativeModTabs.register(modEventBus);

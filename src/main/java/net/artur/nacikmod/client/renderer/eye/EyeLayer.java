@@ -3,9 +3,8 @@ package net.artur.nacikmod.client.renderer.eye;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.artur.nacikmod.NacikMod;
-import net.artur.nacikmod.item.ability.EyeAbility;
+import net.artur.nacikmod.item.ability.VisionBlessingAbility;
 import net.minecraft.client.model.PlayerModel;
-import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -13,19 +12,17 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.client.model.geom.ModelPart;
 
 public class EyeLayer extends RenderLayer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> {
 
     private static final ResourceLocation EYE_TEXTURE =
-            new ResourceLocation(NacikMod.MOD_ID, "textures/entity/eye.png");
+            new ResourceLocation(NacikMod.MOD_ID, "textures/entity/kodaigan.png");
 
     private final EyeModel<AbstractClientPlayer> eyeModel;
 
-    public EyeLayer(RenderLayerParent<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> parent,
-                    EntityModelSet modelSet) {
+    public EyeLayer(RenderLayerParent<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> parent) {
         super(parent);
-        this.eyeModel = new EyeModel<>(modelSet.bakeLayer(EyeModel.LAYER_LOCATION));
+        this.eyeModel = new EyeModel<>(EyeModel.createBodyLayer().bakeRoot());
     }
 
     @Override
@@ -42,8 +39,8 @@ public class EyeLayer extends RenderLayer<AbstractClientPlayer, PlayerModel<Abst
             float headPitch
     ) {
 
-        // 🔴 проверка способности
-        if (!EyeAbility.hasEyesActive(player)) {
+        // Проверка активности Кодайгана
+        if (!VisionBlessingAbility.isKodaiActive(player)) {
             return;
         }
 

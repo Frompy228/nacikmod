@@ -1,0 +1,16 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": [
+    "minecraft:basalt_deltas",
+    "minecraft:crimson_forest",
+    "minecraft:nether_wastes",
+    "minecraft:soul_sand_valley",
+    "minecraft:warped_forest"
+  ],
+  "spawners": {
+    "type": "nacikmod:red_berserker",
+    "weight": 1,
+    "minCount": 1,
+    "maxCount": 1
+  }
+}

@@ -2,11 +2,11 @@ package net.artur.nacikmod.network;
 
 import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.item.RingOfTime;
+import net.artur.nacikmod.registry.ModMessages;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.util.UUID;
 import java.util.function.Supplier;
 
 import static net.artur.nacikmod.item.ability.TimeStop.activate;

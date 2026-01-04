@@ -35,7 +35,7 @@ public class EarthStep extends Item {
     private static final java.util.Set<UUID> activeEarthStepPlayers = new java.util.HashSet<>();
 
     public EarthStep(Properties properties) {
-        super(properties);
+        super(properties.fireResistant());
     }
 
     @Override
@@ -61,7 +61,7 @@ public class EarthStep extends Item {
                 player.sendSystemMessage(Component.literal("Earth Step activated!").withStyle(ChatFormatting.GREEN));
             }
             // Кулдаун для предотвращения спама
-            player.getCooldowns().addCooldown(this, 20); // 1 сек
+            player.getCooldowns().addCooldown(this, 30); // 1 сек
         }
         return InteractionResultHolder.success(itemStack);
     }
@@ -85,7 +85,7 @@ public class EarthStep extends Item {
             return;
         }
         // Каждый тик: эффекты и земля
-        player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 25, SPEED_AMPLIFIER, true, false));
+        player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 35, SPEED_AMPLIFIER, true, false));
         if (!player.isShiftKeyDown()) {
             createEarthBlocksUnderPlayer(player.level(), player);
         }

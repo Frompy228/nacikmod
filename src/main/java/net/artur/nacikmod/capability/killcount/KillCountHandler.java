@@ -62,16 +62,29 @@ public class KillCountHandler {
                 
                 // Проверяем, достиг ли игрок нужного количества убийств для получения World Slash
                 if (!killCount.hasReceivedWorldSlashReward() && killCount.getSlashKills() >= REQUIRED_KILLS_FOR_WORLD_SLASH) {
-                    // Выдаем World Slash
-                    serverKiller.addItem(new ItemStack(ModItems.WORLD_SLASH.get()));
-                    serverKiller.addItem(new ItemStack(ModItems.ANCIENT_SCROLL.get()));
+                    // Создаем предметы наград
+                    ItemStack worldSlashItem = new ItemStack(ModItems.WORLD_SLASH.get());
+                    ItemStack ancientScrollItem = new ItemStack(ModItems.ANCIENT_SCROLL.get());
                     
                     // Помечаем, что игрок получил награду
                     killCount.setReceivedWorldSlashReward(true);
                     
+                    // Пытаемся добавить предметы в инвентарь
+                    boolean worldSlashAdded = serverKiller.getInventory().add(worldSlashItem);
+                    boolean ancientScrollAdded = serverKiller.getInventory().add(ancientScrollItem);
+                    
                     // Отправляем сообщение игроку
                     serverKiller.sendSystemMessage(Component.literal("You have mastered the art of slashing! You received World Slash!")
                             .withStyle(ChatFormatting.GOLD));
+                    
+                    // Если инвентарь полон, выбрасываем предметы рядом с игроком
+                    if (!worldSlashAdded) {
+                        serverKiller.drop(worldSlashItem, false);
+                    }
+                    
+                    if (!ancientScrollAdded) {
+                        serverKiller.drop(ancientScrollItem, false);
+                    }
                 }
             }
         });

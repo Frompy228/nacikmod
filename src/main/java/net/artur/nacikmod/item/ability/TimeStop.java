@@ -52,7 +52,7 @@ public class TimeStop {
 
                     // Рассчитываем базовый amplifier от маны владельца
                     int amplifier;
-                    if (ownerMana >= 100000) {
+                    if (ownerMana >= 25000) {
                         amplifier = 3;
                     } else if (ownerMana >= 10000) {
                         amplifier = 2;

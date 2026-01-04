@@ -32,7 +32,7 @@ public class WorldSlash extends Item {
     private static final double HALF_HEIGHT = 25.0;
 
     public WorldSlash(Properties properties) {
-        super(properties.rarity(Rarity.EPIC).stacksTo(1));
+        super(properties.rarity(Rarity.EPIC).stacksTo(1).fireResistant());
     }
 
     @Override

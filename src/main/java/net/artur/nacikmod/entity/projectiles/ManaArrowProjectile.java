@@ -1,41 +1,64 @@
 package net.artur.nacikmod.entity.projectiles;
 
-import net.artur.nacikmod.registry.ModEffects;
 import net.artur.nacikmod.registry.ModEntities;
 import net.artur.nacikmod.registry.ModItems;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkHooks;
 
 public class ManaArrowProjectile extends AbstractArrow {
-    private static final float BASE_DAMAGE = 5F;
-    private int powerLevel = 0;
-    private int punchLevel = 0;
+    // ЭКСТРЕМАЛЬНЫЙ БАЗОВЫЙ УРОН:
+    // На полном заряде (скорость 5.0 * база 7.0) = 35 урона без чар.
+    private static final double EXTREME_BASE_FACTOR = 7.0D;
     private boolean flame = false;
 
     public ManaArrowProjectile(EntityType<? extends AbstractArrow> type, Level level) {
         super(type, level);
-        this.setBaseDamage(BASE_DAMAGE);
-        this.setKnockback(0); // Стандартный откидывающий эффект
-        this.pickup = Pickup.DISALLOWED; // Нельзя подобрать
+        this.pickup = Pickup.DISALLOWED;
     }
 
     public ManaArrowProjectile(Level level, LivingEntity shooter) {
         super(ModEntities.MANA_ARROW.get(), shooter, level);
-        this.setBaseDamage(BASE_DAMAGE);
-        this.setKnockback(0);
         this.pickup = Pickup.DISALLOWED;
+    }
+
+    /**
+     * @param power значение натяжения от 0.0 до 1.0
+     */
+    public void applyEnchantments(ItemStack bowStack, float power) {
+        // Базовый урон теперь напрямую зависит от силы натяжения.
+        // Если прокликать быстро, power будет ~0.05 -> урон будет ничтожным.
+        double dynamicBase = EXTREME_BASE_FACTOR * power;
+
+        int powerLevel = bowStack.getEnchantmentLevel(Enchantments.POWER_ARROWS);
+        if (powerLevel > 0) {
+            // Зачарование "Сила" добавляет бонус, который также масштабируется от натяжения
+            dynamicBase += ((double)powerLevel * 0.8D + 0.5D) * power;
+        }
+
+        this.setBaseDamage(dynamicBase);
+
+        // Откидывание
+        int punchLevel = bowStack.getEnchantmentLevel(Enchantments.PUNCH_ARROWS);
+        if (punchLevel > 0) {
+            this.setKnockback(punchLevel);
+        }
+
+        // Огонь
+        if (bowStack.getEnchantmentLevel(Enchantments.FLAMING_ARROWS) > 0) {
+            this.flame = true;
+            this.setSecondsOnFire(100);
+        }
     }
 
     @Override
@@ -46,16 +69,10 @@ public class ManaArrowProjectile extends AbstractArrow {
     @Override
     protected void onHitEntity(EntityHitResult result) {
         super.onHitEntity(result);
-
-        if (!this.level().isClientSide()) {
-            if (result.getEntity() instanceof LivingEntity target) {
-                // Наложение эффекта замедления на 1 сек (20 тиков)
-                target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 20, 0));
-                // Если есть Flame, поджигаем цель
-                if (flame) {
-                    target.setSecondsOnFire(5);
-                }
-            }
+        if (!this.level().isClientSide() && result.getEntity() instanceof LivingEntity target) {
+            // Замедление на 1.5 сек
+            target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 30, 1));
+            if (this.flame) target.setSecondsOnFire(5);
         }
     }
 
@@ -63,15 +80,13 @@ public class ManaArrowProjectile extends AbstractArrow {
     protected void onHit(HitResult result) {
         super.onHit(result);
         if (!this.level().isClientSide()) {
-            this.discard(); // Удаляем стрелу после попадания
+            this.discard();
         }
     }
 
     @Override
     public void tick() {
         super.tick();
-
-        // Удаляем стрелу через 10 секунд
         if (!this.level().isClientSide() && this.tickCount > 200) {
             this.discard();
         }
@@ -79,23 +94,6 @@ public class ManaArrowProjectile extends AbstractArrow {
 
     @Override
     public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        // Для корректного отображения клиенту
         return NetworkHooks.getEntitySpawningPacket(this);
-    }
-
-    public void setPowerLevel(int powerLevel) {
-        this.powerLevel = powerLevel;
-        // Vanilla: Power увеличивает урон на 1.5 за уровень
-        this.setBaseDamage(BASE_DAMAGE + powerLevel * 1.5F);
-    }
-
-    public void setPunchLevel(int punchLevel) {
-        this.punchLevel = punchLevel;
-        this.setKnockback(punchLevel);
-    }
-
-    public void setFlame(boolean flame) {
-        this.flame = flame;
-        if (flame) this.setSecondsOnFire(100);
     }
 }

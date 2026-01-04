@@ -2,7 +2,7 @@ package net.artur.nacikmod.item;
 
 import net.artur.nacikmod.event.KeyBindings;
 import net.artur.nacikmod.network.CooldownSyncPacket;
-import net.artur.nacikmod.network.ModMessages;
+import net.artur.nacikmod.registry.ModMessages;
 import net.artur.nacikmod.network.TimeStopPacket;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;

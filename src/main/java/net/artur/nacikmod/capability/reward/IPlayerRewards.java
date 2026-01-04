@@ -21,4 +21,13 @@ public interface IPlayerRewards {
 
     boolean hasReceived2h15mReward();
     void setReceived2h15mReward(boolean value);
+
+    boolean hasUsedGrailReward();
+    void setUsedGrailReward(boolean value);
+
+    boolean hasReceived5kManaReward();
+    void setReceived5kManaReward(boolean value);
+
+    boolean hasReceived15kManaReward();
+    void setReceived15kManaReward(boolean value);
 } 

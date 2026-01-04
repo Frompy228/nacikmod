@@ -2,6 +2,7 @@ package net.artur.nacikmod.registry;
 
 import net.artur.nacikmod.entity.custom.*;
 import net.artur.nacikmod.entity.projectiles.*;
+import net.artur.nacikmod.entity.projectiles.ShamakEntity;
 import net.artur.nacikmod.NacikMod;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -143,14 +144,97 @@ public class ModEntities {
                             .updateInterval(2)
                             .build("suppressing_gate"));
 
+    public static final RegistryObject<EntityType<FireHailEntity>> FIRE_HAIL =
+            ENTITY_TYPES.register("fire_hail",
+                    () -> EntityType.Builder.<FireHailEntity>of((type, level) -> new net.artur.nacikmod.entity.projectiles.FireHailEntity(type, level), MobCategory.MISC)
+                            .sized(1.0F, 1.0F)
+                            .clientTrackingRange(16)
+                            .updateInterval(2)
+                            .build("fire_hail"));
+
+    public static final RegistryObject<EntityType<FireWallEntity>> FIRE_WALL =
+            ENTITY_TYPES.register("fire_wall",
+                    () -> EntityType.Builder.<FireWallEntity>of(FireWallEntity::new, MobCategory.MISC)
+                            .sized(3.0F, 4.0F)
+                            .clientTrackingRange(32)
+                            .updateInterval(10)
+                            .build("fire_wall"));
+
+    public static final RegistryObject<EntityType<FireWallDamageZone>> FIRE_WALL_DAMAGE_ZONE =
+            ENTITY_TYPES.register("fire_wall_damage_zone",
+                    () -> EntityType.Builder.<FireWallDamageZone>of(FireWallDamageZone::new, MobCategory.MISC)
+                            .sized(3.0F, 4.0F)
+                            .clientTrackingRange(32)
+                            .updateInterval(10)
+                            .build("fire_wall_damage_zone"));
+
+    public static final RegistryObject<EntityType<AssassinEntity>> ASSASSIN =
+            ENTITY_TYPES.register("assassin", () ->
+                    EntityType.Builder.of(AssassinEntity::new, MobCategory.MONSTER)
+                            .sized(0.6f, 1.8f)
+                            .build("assassin")
+            );
+
+    public static final RegistryObject<EntityType<RedBerserkerEntity>> RED_BERSERK =
+            ENTITY_TYPES.register("red_berserker", () ->
+                    EntityType.Builder.of(RedBerserkerEntity::new, MobCategory.MONSTER)
+                            .sized(1.2f, 3.6f)
+                            .build("red_berserker")
+            );
+
+    public static final RegistryObject<EntityType<ShamakEntity>> SHAMAK =
+            ENTITY_TYPES.register("shamak",
+                    () -> EntityType.Builder.<ShamakEntity>of((type, level) -> new ShamakEntity(type, level), MobCategory.MISC)
+                            .sized(9.0F, 5.0F) // Размер 9x5x9
+                            .clientTrackingRange(16)
+                            .updateInterval(2)
+                            .build("shamak"));
+
+    public static final RegistryObject<EntityType<GraalEntity>> GRAIL =
+            ENTITY_TYPES.register("grail", () ->
+                    EntityType.Builder.of(GraalEntity::new, MobCategory.MONSTER)
+                            .sized(10.0f, 10.0f) // Размер увеличен в 20 раз (было 1.0f, 2.0f)
+                            .build("grail")
+            );
+
+    public static final RegistryObject<EntityType<InquisitorEntity>> INQUISITOR =
+            ENTITY_TYPES.register("inquisitor", () ->
+                    EntityType.Builder.of(InquisitorEntity::new, MobCategory.MONSTER)
+                            .sized(0.6f, 1.8f)
+                            .build("inquisitor")
+            );
+
+    public static final RegistryObject<EntityType<FireballEntity>> FIREBALL =
+            ENTITY_TYPES.register("fireball",
+                    () -> EntityType.Builder.<FireballEntity>of((type, level) -> new FireballEntity(type, level), MobCategory.MISC)
+                            .sized(2.4F, 2.4F) // Увеличен в 3 раза (было 0.8F)
+                            .clientTrackingRange(16)
+                            .updateInterval(2)
+                            .build("fireball"));
+
+    public static final RegistryObject<EntityType<CrossProjectile>> CROSS_PROJECTILE =
+            ENTITY_TYPES.register("cross_projectile",
+                    () -> EntityType.Builder.<CrossProjectile>of((type, level) -> new CrossProjectile(type, level), MobCategory.MISC)
+                            .sized(2.5F, 3.5F) // Приблизительный размер креста
+                            .clientTrackingRange(16)
+                            .updateInterval(2)
+                            .build("cross_projectile"));
+
     public static final RegistryObject<EntityType<FirePillarEntity>> FIRE_PILLAR =
             ENTITY_TYPES.register("fire_pillar",
                     () -> EntityType.Builder.<FirePillarEntity>of((type, level) -> new FirePillarEntity(type, level), MobCategory.MISC)
-                            .sized(3.0F, 15.0F)
+                            .sized(3.0F, 15.0F) // Ширина 3 блока, высота 15 блоков
                             .clientTrackingRange(16)
                             .updateInterval(2)
                             .build("fire_pillar"));
 
+    public static final RegistryObject<EntityType<FireAnnihilationEntity>> FIRE_ANNIHILATION =
+            ENTITY_TYPES.register("fire_annihilation",
+                    () -> EntityType.Builder.<FireAnnihilationEntity>of((type, level) -> new FireAnnihilationEntity(type, level), MobCategory.MISC)
+                            .sized(8.25F, 8.25F)
+                            .clientTrackingRange(16)
+                            .updateInterval(2)
+                            .build("fire_annihilation"));
 
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);

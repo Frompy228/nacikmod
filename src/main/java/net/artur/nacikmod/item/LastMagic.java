@@ -17,7 +17,7 @@ import java.util.List;
 
 public class LastMagic extends Item {
     public LastMagic(Properties properties) {
-        super(properties.rarity(Rarity.EPIC).stacksTo(1));
+        super(properties.rarity(Rarity.EPIC).stacksTo(1).fireResistant());
     }
 
 

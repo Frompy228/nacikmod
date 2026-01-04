@@ -2,17 +2,17 @@ package net.artur.nacikmod.item;
 
 import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.capability.root.RootProvider;
-import net.artur.nacikmod.network.ModMessages;
-import net.artur.nacikmod.network.ManaSyncPacket;
+import net.artur.nacikmod.registry.ModMessages;
 import net.artur.nacikmod.network.PacketSyncEffect;
 import net.artur.nacikmod.registry.ModEffects;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -109,6 +109,8 @@ public class MagicSeal extends Item {
         tooltip.add(net.minecraft.network.chat.Component.translatable("item.nacikmod.magic_seal.desc1"));
         tooltip.add(net.minecraft.network.chat.Component.translatable("item.nacikmod.magic_seal.desc2")
                 .withStyle(style -> style.withColor(0x00FFFF))); // Цвет - голубой
+        tooltip.add(Component.translatable("item.disappears")
+                .withStyle(ChatFormatting.GRAY));
     }
 
 }

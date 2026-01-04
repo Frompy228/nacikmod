@@ -1,6 +1,7 @@
 package net.artur.nacikmod.datagen;
 
 import net.artur.nacikmod.NacikMod;
+import net.artur.nacikmod.registry.ModBlocks;
 import net.artur.nacikmod.registry.ModItems;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -23,23 +24,23 @@ public class LootTableHandler {
         if (tableName.getPath().startsWith("chests/")) {
 
             LootItem.Builder<?> magicCircuit = LootItem.lootTableItem(ModItems.MAGIC_CIRCUIT.get())
-                    .setWeight(140)
+                    .setWeight(150)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2)));
 
             LootItem.Builder<?> magicArmor = LootItem.lootTableItem(ModItems.MAGIC_ARMOR.get())
-                    .setWeight(10)
+                    .setWeight(8)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
             LootItem.Builder<?> magicCharm = LootItem.lootTableItem(ModItems.MAGIC_CHARM.get())
-                    .setWeight(11)
+                    .setWeight(10)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
             LootItem.Builder<?> manaCrystal = LootItem.lootTableItem(ModItems.MANA_CRYSTAL.get())
-                    .setWeight(7)
+                    .setWeight(6)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
             LootItem.Builder<?> magicSeal = LootItem.lootTableItem(ModItems.MAGIC_SEAL.get())
-                    .setWeight(14)
+                    .setWeight(13)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
             LootItem.Builder<?> ringOfTime = LootItem.lootTableItem(ModItems.RING_OF_TIME.get())
@@ -90,6 +91,56 @@ public class LootTableHandler {
                     .setWeight(1)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
+            LootItem.Builder<?> sealOfReturn = LootItem.lootTableItem(ModItems.SEAL_OF_RETURN.get())
+                    .setWeight(5)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
+            LootItem.Builder<?> fireTrap = LootItem.lootTableItem(ModBlocks.FIRE_TRAP.get())
+                    .setWeight(6)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
+            LootItem.Builder<?> magicHealing = LootItem.lootTableItem(ModItems.MAGIC_HEALING.get())
+                    .setWeight(2)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
+            LootItem.Builder<?> release = LootItem.lootTableItem(ModItems.RELEASE.get())
+                    .setWeight(2)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
+            LootItem.Builder<?> simpleDomain = LootItem.lootTableItem(ModItems.SIMPLE_DOMAIN.get())
+                    .setWeight(2)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
+            LootItem.Builder<?> barrierSeal = LootItem.lootTableItem(ModItems.BARRIER_SEAL.get())
+                    .setWeight(2)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
+            LootItem.Builder<?> barrierWall = LootItem.lootTableItem(ModItems.BARRIER_WALL.get())
+                    .setWeight(2)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
+            LootItem.Builder<?> fireFlower = LootItem.lootTableItem(ModItems.FIRE_FLOWER.get())
+                    .setWeight(2)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
+            LootItem.Builder<?> earthStep = LootItem.lootTableItem(ModItems.EARTH_STEP.get())
+                    .setWeight(2)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
+            LootItem.Builder<?> icePrison = LootItem.lootTableItem(ModItems.ICE_PRISON.get())
+                    .setWeight(2)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
+            LootItem.Builder<?> firePillar = LootItem.lootTableItem(ModItems.FIRE_PILLAR.get())
+                    .setWeight(2)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
+
+            LootItem.Builder<?> manaSeal = LootItem.lootTableItem(ModItems.MANA_SEAL.get())
+                    .setWeight(2)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+
+
             // Создаём пул лута
             LootPool pool = LootPool.lootPool()
                     .name("nacikmod_loot_pool")
@@ -112,6 +163,18 @@ public class LootTableHandler {
                     .add(breakingBodyLimit)
                     .add(intangibility)
                     .add(bloodWarrior)
+                    .add(sealOfReturn)
+                    .add(fireTrap)
+                    .add(magicHealing)
+                    .add(release)
+                    .add(simpleDomain)
+                    .add(barrierSeal)
+                    .add(barrierWall)
+                    .add(fireFlower)
+                    .add(earthStep)
+                    .add(icePrison)
+                    .add(firePillar)
+                    .add(manaSeal)
                     .build();
 
 

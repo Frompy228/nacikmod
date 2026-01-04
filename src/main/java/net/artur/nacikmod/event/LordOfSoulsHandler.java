@@ -7,13 +7,13 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.artur.nacikmod.NacikMod;
 import net.artur.nacikmod.item.LordOfSouls;
 import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.capability.lord_of_souls_summoned_entities.LordOfSoulsSummonedEntityProvider;
+import net.artur.nacikmod.registry.ModEntities;
 
 import java.util.List;
 
@@ -22,6 +22,10 @@ public class LordOfSoulsHandler {
 
     @SubscribeEvent
     public static void onEntityDeath(LivingDeathEvent event) {
+        // If death was canceled by another handler (e.g., a save mechanic), do nothing
+        if (event.isCanceled()) {
+            return;
+        }
         Entity killer = event.getSource().getEntity();
         if (!(killer instanceof Player player)) {
             return;
@@ -32,9 +36,14 @@ public class LordOfSoulsHandler {
             return;
         }
 
+        // Check if killed entity is a grail - don't absorb grail souls
+        if (event.getEntity().getType() == ModEntities.GRAIL.get()) {
+            return;
+        }
+
         // Check if killed entity was a summoned entity - don't absorb summoned entity souls
         boolean isSummonedEntity = false;
-        
+
         // Check capability first (if owner is online)
         for (Player onlinePlayer : event.getEntity().level().players()) {
             if (onlinePlayer.getCapability(LordOfSoulsSummonedEntityProvider.LORD_OF_SOULS_SUMMONED_ENTITY_CAPABILITY)
@@ -43,7 +52,7 @@ public class LordOfSoulsHandler {
                 break;
             }
         }
-        
+
         // Check NBT backup if not found (for offline owners)
         if (!isSummonedEntity) {
             var entityData = event.getEntity().getPersistentData();
@@ -51,7 +60,7 @@ public class LordOfSoulsHandler {
                 isSummonedEntity = true;
             }
         }
-        
+
         if (isSummonedEntity) {
             // This was a summoned entity, don't absorb its soul
             return;
@@ -77,11 +86,11 @@ public class LordOfSoulsHandler {
 
         // Consume mana and add soul
         player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> mana.removeMana(LordOfSouls.MANA_COST));
-        
+
         int soulsBefore = LordOfSouls.getSoulsCount(lordOfSoulsItem);
         LordOfSouls.addSoul(lordOfSoulsItem, event.getEntity());
         int soulsAfter = LordOfSouls.getSoulsCount(lordOfSoulsItem);
-        
+
         if (soulsAfter > soulsBefore) {
             player.sendSystemMessage(Component.literal("Soul absorbed! Souls: " + soulsAfter + "/10")
                     .withStyle(ChatFormatting.DARK_PURPLE));
@@ -92,14 +101,8 @@ public class LordOfSoulsHandler {
     }
 
     @SubscribeEvent
-    public static void onPlayerHurt(LivingHurtEvent event) {
+    public static void onPlayerDeath(LivingDeathEvent event) {
         if (!(event.getEntity() instanceof Player player)) {
-            return;
-        }
-
-        // Check if damage would be lethal
-        float remainingHealth = player.getHealth() - event.getAmount();
-        if (remainingHealth > 0) {
             return;
         }
 

@@ -16,9 +16,8 @@
           "weight": 1,
           "functions": [
             {
-              "function": "minecraft:set_potion",
-              "id": "minecraft:luck",
-              "conditions": []
+              "function": "minecraft:set_nbt",
+              "tag": "{CustomPotionEffects:[{Id:26b,Amplifier:3b,Duration:2500,ShowParticles:1b}],CustomPotionColor:16711680}"
             }
           ]
         },
@@ -49,11 +48,6 @@
         },
         {
           "type": "minecraft:item",
-          "name": "nacikmod:magic_circuit",
-          "weight": 3
-        },
-        {
-          "type": "minecraft:item",
           "name": "minecraft:enchanted_golden_apple",
           "weight": 1
         },
@@ -65,16 +59,11 @@
         {
           "type": "minecraft:item",
           "name": "minecraft:netherite_ingot",
-          "weight": 2
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:allay_spawn_egg",
           "weight": 1
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:diamond_leggings",
+          "name": "minecraft:allay_spawn_egg",
           "weight": 1
         },
         {
@@ -85,18 +74,26 @@
         {
           "type": "minecraft:item",
           "name": "minecraft:netherite_block",
-          "weight": 1,
-          "quality": 1
+          "weight": 1
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:diamond_block",
-          "quality": 1
+          "weight": 1
         },
         {
           "type": "minecraft:item",
           "name": "nacikmod:magic_circuit",
-          "weight": 2
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 10,
+                "max": 20
+              }
+            }
+          ]
         },
         {
           "type": "minecraft:item",
@@ -106,13 +103,28 @@
         {
           "type": "minecraft:item",
           "name": "nacikmod:dark_sphere",
-          "weight": 1,
-          "quality": 0
+          "weight": 1
         },
         {
           "type": "minecraft:item",
           "name": "nacikmod:absolute_vision",
           "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nacikmod:domain",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nacikmod:katana",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{Enchantments:[{id:\"minecraft:sharpness\",lvl:25s},{id:\"minecraft:fire_aspect\",lvl:10s}]}"
+            }
+          ]
         },
         {
           "type": "minecraft:item",
@@ -129,17 +141,7 @@
           "name": "nacikmod:gravity",
           "weight": 1
         }
-
-      ],
-      "functions": [
-        {
-          "function": "minecraft:enchant_with_levels",
-          "levels": 70,
-          "treasure": true,
-          "conditions": []
-        }
-      ],
-      "conditions": []
+      ]
     }
   ]
 }

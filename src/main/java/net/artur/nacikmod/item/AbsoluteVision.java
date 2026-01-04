@@ -1,5 +1,6 @@
 package net.artur.nacikmod.item;
 
+import net.artur.nacikmod.registry.ModMessages;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -11,7 +12,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.artur.nacikmod.client.MoonTextureManager;
 import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.registry.ModItems;
 import net.artur.nacikmod.util.PlayerCooldowns;
@@ -23,11 +23,11 @@ import java.util.List;
 
 public class AbsoluteVision extends Item {
     private static final int NIGHT_TIME = 13000; // Время ночи в тиках (13000 = полночь)
-    private static final int COOLDOWN_TICKS = 15000; // 12.5 минут кулдауна
+    private static final int COOLDOWN_TICKS = 17000;
     private static final int MANA_COST = 3000; // Стоимость маны
 
     public AbsoluteVision(Properties properties) {
-        super(properties);
+        super(properties.fireResistant());
     }
 
     @Override
@@ -94,7 +94,7 @@ public class AbsoluteVision extends Item {
             }
 
             // Активируем кастомную луну для всех игроков
-            net.artur.nacikmod.network.ModMessages.sendCustomMoonToAll();
+            ModMessages.sendCustomMoonToAll();
 
             // Сохраняем кулдаун в capability игрока
             PlayerCooldowns.setCooldown(player, this, COOLDOWN_TICKS);

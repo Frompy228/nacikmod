@@ -27,7 +27,7 @@ public class Hiraishin extends SwordItem {
     private static final String OWNER_NAME_TAG = "OwnerName";
 
     public Hiraishin() {
-        super(new CustomTier(), 3, -2F, new Properties().rarity(ShardArtifact.RED));
+        super(new CustomTier(), 3, -2F, new Properties().rarity(ShardArtifact.RED).fireResistant());
     }
 
 
@@ -91,7 +91,7 @@ public class Hiraishin extends SwordItem {
         super.appendHoverText(stack, level, tooltipComponents, isAdvanced);
 
         if (hasOwner(stack)) {
-            tooltipComponents.add(Component.translatable("item.nacikmod.hiraishin.desc5", stack.getTag().getString(OWNER_NAME_TAG))
+            tooltipComponents.add(Component.translatable("item.owner", stack.getTag().getString(OWNER_NAME_TAG))
                     .withStyle(ChatFormatting.GOLD));
         }
 

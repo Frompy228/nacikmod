@@ -10,4 +10,11 @@ public interface IMana {
     void setMaxMana(int amount);
     void addMaxMana(int amount);
     void regenerateMana(int amount);
+
+    // Статус "Истинный маг"
+    boolean isTrueMage();
+    void setTrueMage(boolean isTrueMage);
+
+    boolean hasVisionBlessing();
+    void setVisionBlessing(boolean hasVisionBlessing);
 }

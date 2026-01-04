@@ -6,7 +6,10 @@
     "minecraft:snowy_taiga",
     "minecraft:snowy_plains",
     "minecraft:snowy_slopes",
-    "minecraft:ice_spikes"
+    "minecraft:ice_spikes",
+    "minecraft:frozen_peaks",
+    "minecraft:jagged_peaks",
+    "minecraft:frozen_river"
   ],
   "spawners": {
     "type": "nacikmod:archer",

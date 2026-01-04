@@ -57,20 +57,23 @@ public class LansOfProtectionItem extends SwordItem {
             boolean success = super.hurtEnemy(stack, target, attacker);
             if (!success) return false;
 
-            // Получаем реально нанесенный урон
-            double damageDealt = target.getMaxHealth() - target.getHealth();
-            
-            // Проверяем, есть ли уже эффект снижения брони
-            MobEffectInstance existingEffect = target.getEffect(ModEffects.ARMOR_REDUCTION.get());
-            int newAmplifier = (int) Math.floor(damageDealt / 3);
-            
-            if (existingEffect != null) {
-                newAmplifier += existingEffect.getAmplifier();
-            }
-
-            target.addEffect(new MobEffectInstance(ModEffects.ARMOR_REDUCTION.get(), 240, newAmplifier));
-
+            // Проверяем, что атака полностью готова (как у косы)
             if (attacker instanceof Player player) {
+                if (player.getAttackStrengthScale(0.5f) >= 0.9f) {
+                    // Получаем реально нанесенный урон
+                    double damageDealt = target.getMaxHealth() - target.getHealth();
+                    
+                    // Проверяем, есть ли уже эффект снижения брони
+                    MobEffectInstance existingEffect = target.getEffect(ModEffects.ARMOR_REDUCTION.get());
+                    int newAmplifier = (int) Math.floor(damageDealt / 3);
+                    
+                    if (existingEffect != null) {
+                        newAmplifier += existingEffect.getAmplifier();
+                    }
+
+                    target.addEffect(new MobEffectInstance(ModEffects.ARMOR_REDUCTION.get(), 240, newAmplifier));
+                }
+
                 ItemStack mainHandItem = player.getMainHandItem();
                 ItemStack offHandItem = player.getOffhandItem();
                 boolean isMainHand = mainHandItem == stack;

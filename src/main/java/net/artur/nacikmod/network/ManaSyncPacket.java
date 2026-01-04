@@ -13,20 +13,24 @@ import java.util.function.Supplier;
 public class ManaSyncPacket  {
     private final int mana;
     private final int maxMana;
+    private final boolean isTrueMage;
 
-    public ManaSyncPacket(int mana, int maxMana) {
+    public ManaSyncPacket(int mana, int maxMana, boolean isTrueMage) {
         this.mana = mana;
         this.maxMana = maxMana;
+        this.isTrueMage = isTrueMage;
     }
 
     public ManaSyncPacket(FriendlyByteBuf buf) {
         this.mana = buf.readInt();
         this.maxMana = buf.readInt();
+        this.isTrueMage = buf.readBoolean();
     }
 
     public void toBytes(FriendlyByteBuf buf) {
         buf.writeInt(mana);
         buf.writeInt(maxMana);
+        buf.writeBoolean(isTrueMage);
     }
 
     public boolean handle(Supplier<NetworkEvent.Context> supplier) {

@@ -23,7 +23,7 @@ public class LeonidShileld extends ShieldItem {
     private static final UUID SPEED_MODIFIER_UUID = UUID.fromString("8e1f5ea1-2c3a-4d5e-9f6a-7b8c9d0e1f2a");
     
     public LeonidShileld(Item.Properties properties) {
-        super(properties.durability(400).rarity(ShardArtifact.RED));
+        super(properties.durability(300).rarity(ShardArtifact.RED).fireResistant());
     }
 
     @Override

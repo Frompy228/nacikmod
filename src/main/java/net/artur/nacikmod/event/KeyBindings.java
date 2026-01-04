@@ -16,9 +16,17 @@ public class KeyBindings {
             GLFW.GLFW_KEY_P,
             "key.category.nacikmod"
     );
+    
+    public static final KeyMapping KODAI_KEY = new KeyMapping(
+            "key.nacikmod.kodai_key",
+            GLFW.GLFW_KEY_Z,
+            "key.category.nacikmod"
+    );
+    
     @SubscribeEvent
     public static void registerKeys(RegisterKeyMappingsEvent event) {
         event.register(KeyBindings.ABILITY_KEY);
+        event.register(KeyBindings.KODAI_KEY);
     }
 
 }

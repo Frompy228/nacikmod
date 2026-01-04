@@ -13,7 +13,7 @@ import java.util.List;
 
 public class GodHand extends Item {
     public GodHand(Properties properties) {
-        super(properties.rarity(Rarity.RARE)); // Редкость + поддержка stacksTo(1)
+        super(properties.rarity(Rarity.RARE).fireResistant()); // Редкость + поддержка stacksTo(1)
     }
 
     @Override

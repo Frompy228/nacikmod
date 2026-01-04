@@ -32,22 +32,36 @@ public class KillCountCommand {
     private static int showSlashStats(CommandSourceStack source, ServerPlayer player) {
         player.getCapability(KillCountProvider.KILL_COUNT_CAPABILITY).ifPresent(killCount -> {
             int currentKills = killCount.getSlashKills();
-            int remainingKills = Math.max(0, REQUIRED_KILLS_FOR_WORLD_SLASH - currentKills);
+            boolean hasReceivedReward = killCount.hasReceivedWorldSlashReward();
             
             source.sendSuccess(() -> Component.literal("=== Slash Statistics for " + player.getName().getString() + " ===")
                     .withStyle(ChatFormatting.GOLD), false);
-            source.sendSuccess(() -> Component.literal("Current slash kills: " + currentKills)
-                    .withStyle(ChatFormatting.GREEN), false);
-            source.sendSuccess(() -> Component.literal("Kills needed for World Slash: " + remainingKills)
-                    .withStyle(ChatFormatting.YELLOW), false);
-            source.sendSuccess(() -> Component.literal("World Slash reward received: " + (killCount.hasReceivedWorldSlashReward() ? "Yes" : "No"))
-                    .withStyle(ChatFormatting.LIGHT_PURPLE), false);
             
-            if (currentKills > 0) {
-                double progress = (double) currentKills / REQUIRED_KILLS_FOR_WORLD_SLASH * 100;
-                source.sendSuccess(() -> Component.literal("Progress: " + String.format("%.1f", progress) + "%")
-                        .withStyle(ChatFormatting.AQUA), false);
+            // Показываем статус получения награды в первую очередь
+            if (hasReceivedReward) {
+                source.sendSuccess(() -> Component.literal("✅ World Slash REWARD ALREADY RECEIVED!")
+                        .withStyle(ChatFormatting.GREEN), false);
+                source.sendSuccess(() -> Component.literal("Current slash kills: " + currentKills + " (after receiving reward)")
+                        .withStyle(ChatFormatting.GRAY), false);
+            } else {
+                int remainingKills = Math.max(0, REQUIRED_KILLS_FOR_WORLD_SLASH - currentKills);
+                source.sendSuccess(() -> Component.literal("❌ World Slash reward NOT RECEIVED yet")
+                        .withStyle(ChatFormatting.RED), false);
+                source.sendSuccess(() -> Component.literal("Current slash kills: " + currentKills)
+                        .withStyle(ChatFormatting.GREEN), false);
+                source.sendSuccess(() -> Component.literal("Kills needed for World Slash: " + remainingKills)
+                        .withStyle(ChatFormatting.YELLOW), false);
+                
+                if (currentKills > 0) {
+                    double progress = (double) currentKills / REQUIRED_KILLS_FOR_WORLD_SLASH * 100;
+                    source.sendSuccess(() -> Component.literal("Progress: " + String.format("%.1f", progress) + "%")
+                            .withStyle(ChatFormatting.AQUA), false);
+                }
             }
+            
+            // Дополнительная информация
+            source.sendSuccess(() -> Component.literal("Required kills for World Slash: " + REQUIRED_KILLS_FOR_WORLD_SLASH)
+                    .withStyle(ChatFormatting.LIGHT_PURPLE), false);
         });
         return 1;
     }

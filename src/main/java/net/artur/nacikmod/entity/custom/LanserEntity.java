@@ -46,7 +46,13 @@ import java.util.Random;
 public class LanserEntity extends HeroSouls {
 
     private boolean attackWithMainHand = true; // Флаг для чередования атак
-
+    
+    // Константы для прыжков
+    private static final int JUMP_COOLDOWN_TICKS = 60; // 3 секунды между прыжками
+    private static final double VERTICAL_JUMP_THRESHOLD = 2.0; // Минимальная разница высоты для прыжка
+    private static final double MAX_JUMP_HEIGHT = 4.0; // Максимальная высота прыжка
+    private static int BONUS_ARMOR = 17;
+    private int jumpCooldown = 0;
 
     public LanserEntity(EntityType<? extends HeroSouls> entityType, Level level) {
         super(entityType, level);
@@ -56,11 +62,14 @@ public class LanserEntity extends HeroSouls {
     public void tick() {
         super.tick();
 
+        // Обновляем кулдаун прыжков
+        if (jumpCooldown > 0) jumpCooldown--;
 
         if (!this.level().isClientSide && this.tickCount % 40 == 0) { // 20 тиков = 1 секунда
             this.heal(1.0F);
         }
-        // Получаем ми
+        
+        // Получаем мир
         Level world = this.level();
         if (world == null || world.isClientSide) return; // Проверка на null и клиент
 
@@ -80,8 +89,55 @@ public class LanserEntity extends HeroSouls {
                 entity.addEffect(new MobEffectInstance(ModEffects.LOVE.get(), 12, 0)); // 10 секунд эффекта LOVE
             }
         }
+        
+        // Проверяем необходимость прыжка для достижения цели
+        LivingEntity target = this.getTarget();
+        if (target != null) {
+            checkAndPerformJump(target);
+        }
     }
+    
+    /**
+     * Проверяет необходимость прыжка и выполняет его
+     */
+    /**
+     * Проверяет необходимость прыжка и выполняет его
+     */
+    private void checkAndPerformJump(LivingEntity target) {
+        if (jumpCooldown > 0 || !this.onGround()) return;
 
+        double targetY = target.getY();
+        double thisY = this.getY();
+        double heightDifference = targetY - thisY;
+
+        // Проверяем горизонтальную дистанцию до цели
+        double horizontalDistance = this.distanceTo(target);
+
+        // Если цель выше и разница значительная, и находится на близкой дистанции (до 5 блоков), пытаемся прыгнуть
+        if (heightDifference > VERTICAL_JUMP_THRESHOLD &&
+                horizontalDistance <= 5.0) {
+            // Проверяем, есть ли препятствия между нами и целью
+            if (this.hasLineOfSight(target)) {
+                performJump();
+            }
+        }
+    }
+    
+    /**
+     * Выполняет прыжок вверх
+     */
+    private void performJump() {
+        if (this.onGround() && jumpCooldown <= 0) {
+            // Прыгаем вверх с небольшой случайностью в направлении
+            double jumpPower = 0.7 + (this.random.nextDouble() * 0.2);
+            this.setDeltaMovement(this.getDeltaMovement().add(0, jumpPower, 0));
+            jumpCooldown = JUMP_COOLDOWN_TICKS;
+            
+            // Проигрываем звук прыжка
+            this.level().playSound(null, this.getX(), this.getY(), this.getZ(), 
+                net.minecraft.sounds.SoundEvents.PLAYER_ATTACK_STRONG, net.minecraft.sounds.SoundSource.HOSTILE, 0.5F, 1.2F);
+        }
+    }
 
 
     // Метод для проверки, смотрит ли сущность на голову Лансера
@@ -108,19 +164,19 @@ public class LanserEntity extends HeroSouls {
 
         // Устанавливаем атрибут BONUS_ARMOR вручную
         AttributeInstance attribute = this.getAttribute(ModAttributes.BONUS_ARMOR.get());
-        attribute.setBaseValue(15.0);
+        attribute.setBaseValue(BONUS_ARMOR);
         return data;
     }
 
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(ModAttributes.BONUS_ARMOR.get(),15)
+                .add(ModAttributes.BONUS_ARMOR.get(),BONUS_ARMOR)
                 .add(Attributes.ARMOR, 15)
                 .add(Attributes.ARMOR_TOUGHNESS, 10)
-                .add(Attributes.MAX_HEALTH, 130.0)
+                .add(Attributes.MAX_HEALTH, 195.0)
                 .add(Attributes.ATTACK_DAMAGE, 20.0)
-                .add(Attributes.MOVEMENT_SPEED, 0.47)
+                .add(Attributes.MOVEMENT_SPEED, 0.46)
                 .add(ForgeMod.SWIM_SPEED.get(), 2) // Увеличиваем скорость плавания в 1.5 раза
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.2)
                 .add(Attributes.FOLLOW_RANGE, 32.0);
@@ -129,13 +185,14 @@ public class LanserEntity extends HeroSouls {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new RetreatOnLowHealthGoal(this)); // Рывок назад при низком ХП
-        this.goalSelector.addGoal(2, new CustomMeleeAttackGoal(this, 1.0)); // Атака
-        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 0.5)); // Блуждание
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Mob.class, 10, true, false, this::isValidTarget));
-        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0f));
-        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(1, new OpenDoorGoal(this, true)); // Открытие дверей во время боя
+        this.goalSelector.addGoal(2, new RetreatOnLowHealthGoal(this)); // Рывок назад при низком ХП
+        this.goalSelector.addGoal(3, new CustomMeleeAttackGoal(this, 1.0)); // Атака
+        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.5)); // Блуждание
+        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        this.targetSelector.addGoal(6, new NearestAttackableTargetGoal<>(this, Mob.class, 10, true, false, this::isValidTarget));
+        this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0f));
+        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
     }
 
 
@@ -206,6 +263,11 @@ public class LanserEntity extends HeroSouls {
             super.tick();
             LivingEntity target = lanser.getTarget();
             if (target == null || target instanceof Animal || target instanceof WaterAnimal) return;
+            // Защита от самоатаки
+            if (target == lanser) {
+                lanser.setTarget(null);
+                return;
+            }
 
             double squaredDistance = lanser.distanceToSqr(target);
             double minDistance = preferredDistance - 0.5;
@@ -249,7 +311,7 @@ public class LanserEntity extends HeroSouls {
                 }
 
                 lanser.attackWithMainHand = !lanser.attackWithMainHand;
-                attackCooldown = 17;
+                attackCooldown = 19;
             } else {
                 attackCooldown--;
             }
@@ -265,10 +327,16 @@ public class LanserEntity extends HeroSouls {
         private void applyWeaponEffects(LanserEntity lanser, LivingEntity target, ItemStack weapon) {
             if (weapon.getItem() == ModItems.LANS_OF_NACII.get()) {
                 double damageDealt = target.getMaxHealth() - target.getHealth();
-                int amplifier = (int) Math.floor(damageDealt / 3);
-                if (amplifier > 0) {
-                    target.addEffect(new MobEffectInstance(ModEffects.HEALTH_REDUCTION.get(), 20000, amplifier));
+                
+                // Проверяем, есть ли уже эффект снижения здоровья
+                MobEffectInstance existingEffect = target.getEffect(ModEffects.HEALTH_REDUCTION.get());
+                int newAmplifier = (int) Math.floor(damageDealt / 3);
+                
+                if (existingEffect != null) {
+                    newAmplifier += existingEffect.getAmplifier();
                 }
+                
+                target.addEffect(new MobEffectInstance(ModEffects.HEALTH_REDUCTION.get(), 20000, newAmplifier));
                 target.addEffect(new MobEffectInstance(ModEffects.NO_REGEN.get(), 240, 0));
             }
 
@@ -333,7 +401,8 @@ public class LanserEntity extends HeroSouls {
         }
 
         if (random.nextDouble() < chanceCircuit) {
-            this.spawnAtLocation(new ItemStack(ModItems.MAGIC_CIRCUIT.get(), 12));
+            int circuitCount = random.nextInt(12, 15);
+            this.spawnAtLocation(new ItemStack(ModItems.MAGIC_CIRCUIT.get(), circuitCount));
         }
     }
 

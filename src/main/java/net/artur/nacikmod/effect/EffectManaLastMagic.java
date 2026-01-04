@@ -33,7 +33,7 @@ public class EffectManaLastMagic extends MobEffect {
         this.addAttributeModifier(Attributes.ATTACK_DAMAGE, DAMAGE_MODIFIER_UUID.toString(),
                 15.0, AttributeModifier.Operation.ADDITION);
         this.addAttributeModifier(ModAttributes.BONUS_ARMOR.get(), ARMOR_MODIFIER_UUID.toString(),
-                25.0, AttributeModifier.Operation.ADDITION);
+                10.0, AttributeModifier.Operation.ADDITION);
         this.addAttributeModifier(Attributes.MOVEMENT_SPEED, SPEED_MODIFIER_UUID.toString(),
                 0.2, AttributeModifier.Operation.ADDITION);
         this.addAttributeModifier(Attributes.JUMP_STRENGTH, JUMP_MODIFIER_UUID.toString(),

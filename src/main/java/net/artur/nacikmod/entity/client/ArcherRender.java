@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
+import net.artur.nacikmod.entity.layers.ArcherOuterLayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -23,6 +24,9 @@ public class ArcherRender extends HumanoidMobRenderer<ArcherEntity, ArcherModel<
                 new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR)),
                 context.getModelManager()
         ));
+        
+        // Добавляем слой внешней текстуры
+        this.addLayer(new ArcherOuterLayer<>(this, context.getModelSet()));
     }
 
     @Override

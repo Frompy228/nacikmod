@@ -85,4 +85,9 @@ public class BloodShootProjectile extends ThrowableItemProjectile {
     public boolean isInWater() {
         return false; // Disable water resistance
     }
+
+    @Override
+    public boolean fireImmune() {
+        return true;
+    }
 }

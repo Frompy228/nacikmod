@@ -29,8 +29,7 @@ public class AncientSeal extends Item {
     public static final Rarity ANCIENT_GOLD = Rarity.create("ANCIENT_GOLD", ChatFormatting.GOLD);
 
     public AncientSeal(Properties properties) {
-        super(new Item.Properties().rarity(ANCIENT_GOLD).stacksTo(1)
-        );
+        super(new Item.Properties().rarity(ANCIENT_GOLD).stacksTo(1).fireResistant());
     }
 
     @Override
