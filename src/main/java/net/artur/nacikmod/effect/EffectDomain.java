@@ -33,7 +33,6 @@ public class EffectDomain extends MobEffect {
                 AttributeModifier.Operation.ADDITION
         );
 
-        // Увеличиваем скорость атаки на 1
         this.addAttributeModifier(
                 Attributes.ATTACK_SPEED,
                 ATTACK_SPEED_MODIFIER_ID.toString(),

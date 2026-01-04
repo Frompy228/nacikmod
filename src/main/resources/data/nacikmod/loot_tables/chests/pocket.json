@@ -9,7 +9,8 @@
           "type": "minecraft:item",
           "name": "minecraft:lodestone",
           "weight": 1
-        },{
+        },
+        {
           "type": "minecraft:item",
           "name": "minecraft:splash_potion",
           "weight": 1,
@@ -89,7 +90,7 @@
               "function": "minecraft:set_count",
               "count": {
                 "min": 10,
-                "max": 10
+                "max": 20
               }
             }
           ]

@@ -16,7 +16,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.List;
 
 public class DoubleSlashProjectile extends ThrowableItemProjectile {
-    private static final float DAMAGE = 40.0F;
+    private static final float DAMAGE = 60.0F;
     private int lifetime = 0;
     private static final int MAX_LIFETIME = 60;
 

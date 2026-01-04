@@ -22,6 +22,7 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.client.renderer.item.ItemPropertyFunction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -70,6 +71,7 @@ public class ModEventBusClientEvents {
         event.registerLayerDefinition(ModModelLayers.GRAAL_LAYER, GraalModel::createBodyLayer);
         event.registerLayerDefinition(FireballModel.LAYER_LOCATION, FireballModel::createBodyLayer);
         event.registerLayerDefinition(CrossModel.LAYER_LOCATION, CrossModel::createBodyLayer);
+        event.registerLayerDefinition(net.artur.nacikmod.client.renderer.eye.EyeModel.LAYER_LOCATION, net.artur.nacikmod.client.renderer.eye.EyeModel::createBodyLayer);
     }
 
 
@@ -83,9 +85,9 @@ public class ModEventBusClientEvents {
         for (String skinType : event.getSkins()) {
             PlayerRenderer renderer = event.getSkin(skinType);
             if (renderer != null) {
-                renderer.addLayer(new MovementSealLayer(renderer));
-                renderer.addLayer(new DomainLayer(renderer));
-                renderer.addLayer(new SimpleDomainLayer(renderer));
+            renderer.addLayer(new MovementSealLayer(renderer));
+            renderer.addLayer(new DomainLayer(renderer));
+            renderer.addLayer(new SimpleDomainLayer(renderer));
             }
         }
     }
@@ -95,6 +97,7 @@ public class ModEventBusClientEvents {
         event.enqueueWork(() -> {
             ModItemProperties.addCustomItemProperties();
             ModEventBusClientEvents.registerItemProperties();
+            ModEventBusClientEvents.registerShieldProperties();
             EntityRenderers.register(ModEntities.MANA_SWORD_PROJECTILE.get(), ManaSwordProjectileRenderer::new);
             EntityRenderers.register(ModEntities.BLOOD_SHOOT_PROJECTILE.get(), BloodShootProjectileRenderer::new);
             EntityRenderers.register(ModEntities.LANSER.get(), LanserRender::new);
@@ -122,6 +125,8 @@ public class ModEventBusClientEvents {
             EntityRenderers.register(ModEntities.GRAIL.get(), GraalRenderer::new);
             EntityRenderers.register(ModEntities.FIREBALL.get(), FireballRenderer::new);
             EntityRenderers.register(ModEntities.CROSS_PROJECTILE.get(), CrossProjectileRenderer::new);
+            EntityRenderers.register(ModEntities.FIRE_ANNIHILATION.get(), FireAnnihilationRenderer::new);
+            EntityRenderers.register(ModEntities.FIRE_PILLAR.get(), FirePillarRenderer::new);
 
             // Register Dark Sphere renderer
             CuriosRendererRegistry.register(ModItems.DARK_SPHERE.get(), () -> new DarkSphereRenderer());
@@ -135,6 +140,18 @@ public class ModEventBusClientEvents {
             MenuScreens.register(ModMenuTypes.ENCHANTMENT_LIMIT_TABLE_MENU.get(), EnchantmentLimitTableScreen::new);
         });
     }
+
+    public static void registerShieldProperties() {
+        ItemPropertyFunction blockFn = (stack, level, entity, seed) ->
+                entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F;
+
+        ItemProperties.register(
+                ModItems.LEONID_SHIELD.get(),
+                new ResourceLocation("minecraft:blocking"),
+                blockFn
+        );
+    }
+
 
     public static void registerItemProperties() {
         ItemProperties.register(ModItems.MANA_CRYSTAL.get(),
@@ -151,8 +168,10 @@ public class ModEventBusClientEvents {
             renderer.addLayer(new ReleaseAuraRenderer(renderer));
             renderer.addLayer(new LastMagicAuraRenderer(renderer));
             renderer.addLayer(new HundredSealLayer.Vanilla<>(renderer));
+            renderer.addLayer(new net.artur.nacikmod.client.renderer.eye.EyeLayer(renderer));
         }
     }
+
 }
 
 

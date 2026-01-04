@@ -2,6 +2,7 @@ package net.artur.nacikmod.item;
 
 import net.artur.nacikmod.NacikMod;
 import net.artur.nacikmod.capability.mana.ManaProvider;
+import net.artur.nacikmod.item.ability.DomainAbility;
 import net.artur.nacikmod.registry.ModEffects;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -26,7 +27,6 @@ public class Domain extends Item {
 
     private static final int MANA_COST_PER_SECOND = 10;
     private static final String ACTIVE_TAG = "active";
-    private static final Set<UUID> activePlayers = new HashSet<>();
 
     public Domain() {
         super(new Item.Properties().stacksTo(1).fireResistant());
@@ -40,7 +40,7 @@ public class Domain extends Item {
             boolean isActive = item.hasTag() && item.getTag().getBoolean(ACTIVE_TAG);
 
             if (isActive) {
-                deactivate(player);
+                DomainAbility.stopDomain(player);
                 player.sendSystemMessage(Component.literal("Domain deactivated!").withStyle(ChatFormatting.RED));
             } else {
                 if (!player.getCapability(ManaProvider.MANA_CAPABILITY)
@@ -50,7 +50,7 @@ public class Domain extends Item {
                     return InteractionResultHolder.fail(item);
                 }
 
-                activate(player);
+                DomainAbility.startDomain(player);
                 player.sendSystemMessage(Component.literal("Domain activated!").withStyle(ChatFormatting.GREEN));
             }
 
@@ -60,24 +60,6 @@ public class Domain extends Item {
         return InteractionResultHolder.success(item);
     }
 
-    private static void activate(Player player) {
-        activePlayers.add(player.getUUID());
-        for (ItemStack stack : player.getInventory().items) {
-            if (stack.getItem() instanceof Domain) {
-                stack.getOrCreateTag().putBoolean(ACTIVE_TAG, true);
-                break;
-            }
-        }
-    }
-
-    private static void deactivate(Player player) {
-        activePlayers.remove(player.getUUID());
-        for (ItemStack stack : player.getInventory().items) {
-            if (stack.getItem() instanceof Domain) {
-                stack.getOrCreateTag().putBoolean(ACTIVE_TAG, false);
-            }
-        }
-    }
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
@@ -86,7 +68,7 @@ public class Domain extends Item {
 
         UUID uuid = player.getUUID();
 
-        if (!activePlayers.contains(uuid)) return;
+        if (!DomainAbility.activeDomainPlayers.contains(uuid)) return;
 
         ItemStack activeItem = null;
         for (ItemStack stack : player.getInventory().items) {
@@ -97,18 +79,18 @@ public class Domain extends Item {
         }
 
         if (activeItem == null) {
-            deactivate(player);
+            DomainAbility.stopDomain(player);
             return;
         }
 
         if (player.tickCount % 20 == 0) {
             player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
                 if (mana.getMana() < MANA_COST_PER_SECOND) {
-                    deactivate(player);
+                    DomainAbility.stopDomain(player);
                     player.sendSystemMessage(Component.literal("Not enough mana! Domain deactivated.").withStyle(ChatFormatting.RED));
                 } else {
                     mana.removeMana(MANA_COST_PER_SECOND);
-
+                    // Накладываем эффект для игровой механики (не для визуализации - визуализация через Ability)
                     player.addEffect(new MobEffectInstance(ModEffects.EFFECT_DOMAIN.get(), 40, 0, false, false, true));
                 }
             });
@@ -117,7 +99,7 @@ public class Domain extends Item {
 
     @SubscribeEvent
     public static void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-        activePlayers.remove(event.getEntity().getUUID());
+        DomainAbility.activeDomainPlayers.remove(event.getEntity().getUUID());
     }
 
     @Override

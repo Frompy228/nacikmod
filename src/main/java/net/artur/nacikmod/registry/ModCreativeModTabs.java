@@ -42,6 +42,7 @@ public class ModCreativeModTabs {
                         pOutput.accept(ModBlocks.BARRIER.get());
                         pOutput.accept(ModItems.MAGIC_CIRCUIT.get());
                         pOutput.accept(ModItems.MANA_BLESSING.get());
+                        pOutput.accept(ModItems.VISION_BLESSING.get());
                         pOutput.accept(ModItems.GOD_HAND.get());
                         pOutput.accept(ModItems.GRAIL.get());
                         pOutput.accept(ModBlocks.ENCHANTMENT_LIMIT_TABLE.get());
@@ -60,6 +61,8 @@ public class ModCreativeModTabs {
                         pOutput.accept(ModItems.MAGIC_WEAPONS.get());
                         pOutput.accept(ModItems.FIRE_FLOWER.get());
                         pOutput.accept(ModBlocks.FIRE_TRAP.get());
+                        pOutput.accept(ModItems.FIRE_PILLAR.get());
+                        pOutput.accept(ModItems.FIRE_ANNIHILATION.get());
                         pOutput.accept(ModItems.ICE_PRISON.get());
                         pOutput.accept(ModItems.EARTH_STEP.get());
                         pOutput.accept(ModItems.SLASH.get());
@@ -69,6 +72,7 @@ public class ModCreativeModTabs {
                         pOutput.accept(ModItems.DOMAIN.get());
                         pOutput.accept(ModItems.BARRIER_SEAL.get());
                         pOutput.accept(ModItems.BARRIER_WALL.get());
+                        pOutput.accept(ModItems.MANA_SEAL.get());
                         pOutput.accept(ModItems.GRAVITY.get());
                         pOutput.accept(ModItems.SHINRA_TENSEI.get());
                         pOutput.accept(ModItems.SENSORY_RAIN.get());

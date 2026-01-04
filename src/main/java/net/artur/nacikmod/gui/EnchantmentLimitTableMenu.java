@@ -115,7 +115,7 @@ public class EnchantmentLimitTableMenu extends AbstractContainerMenu {
             }
         };
 
-        // Выходной слот (справа по центру)
+        // Выходной слот (справа по центру) - как в наковальне
         resultSlot = new Slot(resultContainer, 0, 152, 32) {
             @Override
             public boolean mayPlace(ItemStack stack) {
@@ -124,62 +124,70 @@ public class EnchantmentLimitTableMenu extends AbstractContainerMenu {
 
             @Override
             public boolean mayPickup(Player player) {
-                // Нельзя забирать результат, если не хватает уровней опыта
-                return player.experienceLevel >= requiredXpLevels && super.mayPickup(player);
+                // Проверяем уровни опыта на сервере
+                return access.evaluate((level, pos) -> {
+                    return player.experienceLevel >= requiredXpLevels || player.getAbilities().instabuild;
+                }, true);
             }
 
             @Override
             public void onTake(Player player, ItemStack stack) {
-                // Тратим уровни опыта, ману, ShardArtifact и уменьшаем исходный предмет
-                ItemStack enchantedItem = enchantedItemSlot.getItem();
-                ItemStack crystalItem = crystalSlot.getItem();
-                ItemStack shardItem = shardSlot.getItem();
+                // Выполняем на сервере
+                access.execute((level, pos) -> {
+                    ItemStack enchantedItem = enchantedItemSlot.getItem();
+                    ItemStack crystalItem = crystalSlot.getItem();
+                    ItemStack shardItem = shardSlot.getItem();
 
-                if (!enchantedItem.isEmpty() && !crystalItem.isEmpty()) {
-                    // Списываем уровни опыта
-                    if (requiredXpLevels > 0 && player.experienceLevel >= requiredXpLevels) {
-                        player.giveExperienceLevels(-requiredXpLevels);
-                    }
+                    if (!enchantedItem.isEmpty() && !crystalItem.isEmpty()) {
+                        // Тратим уровни опыта ДО уменьшения предметов
+                        if (requiredXpLevels > 0 && !player.getAbilities().instabuild) {
+                            player.giveExperienceLevels(-requiredXpLevels);
+                        }
 
-                    // Тратим ману
-                    int storedMana = MagicCrystal.getStoredMana(crystalItem);
-                    MagicCrystal.setStoredMana(crystalItem, storedMana - MANA_COST);
+                        // Тратим ману
+                        int storedMana = MagicCrystal.getStoredMana(crystalItem);
+                        MagicCrystal.setStoredMana(crystalItem, storedMana - MANA_COST);
 
-                    // Проверяем, нужен ли ShardArtifact для выбранных зачарований
-                    boolean needsShard = false;
-                    boolean hasSelectedEnchantments = false;
-                    for (Map.Entry<Enchantment, Boolean> entry : selectedEnchantments.entrySet()) {
-                        if (entry.getValue()) { // Если зачарование выбрано
-                            hasSelectedEnchantments = true;
-                            Enchantment enchantment = entry.getKey();
-                            int currentLevel = availableEnchantments.get(enchantment);
-                            int maxLevel = enchantment.getMaxLevel();
+                        // Проверяем, нужен ли ShardArtifact для выбранных зачарований
+                        boolean needsShard = false;
+                        boolean hasSelectedEnchantments = false;
+                        for (Map.Entry<Enchantment, Boolean> entry : selectedEnchantments.entrySet()) {
+                            if (entry.getValue()) { // Если зачарование выбрано
+                                hasSelectedEnchantments = true;
+                                Enchantment enchantment = entry.getKey();
+                                int currentLevel = availableEnchantments.get(enchantment);
+                                int maxLevel = enchantment.getMaxLevel();
 
-                            if (maxLevel > 1 && currentLevel >= maxLevel) {
-                                needsShard = true;
-                                break;
+                                if (maxLevel > 1 && currentLevel >= maxLevel) {
+                                    needsShard = true;
+                                    break;
+                                }
                             }
                         }
+
+                        // Если нет выбранных зачарований, не тратим ресурсы
+                        if (!hasSelectedEnchantments) {
+                            resultContainer.setItem(0, ItemStack.EMPTY);
+                            return;
+                        }
+
+                        // Тратим ShardArtifact если нужен
+                        if (needsShard && !shardItem.isEmpty()) {
+                            shardItem.shrink(1);
+                            shardSlot.setChanged();
+                        }
+
+                        // Уменьшаем количество в исходном слоте (как в наковальне)
+                        enchantedItem.shrink(1);
+                        enchantedItemSlot.setChanged();
+
+                        // Обновляем слот кристалла
+                        crystalSlot.setChanged();
+
+                        // Очищаем слот результата после взятия
+                        resultContainer.setItem(0, ItemStack.EMPTY);
                     }
-
-                    // Если нет выбранных зачарований, не тратим ресурсы
-                    if (!hasSelectedEnchantments) {
-                        return;
-                    }
-
-                    // Тратим ShardArtifact если нужен
-                    if (needsShard && !shardItem.isEmpty()) {
-                        shardItem.shrink(1);
-                        shardSlot.setChanged();
-                    }
-
-                    // Уменьшаем количество в исходном слоте
-                    enchantedItem.shrink(1);
-
-                    // Обновляем слоты
-                    enchantedItemSlot.setChanged();
-                    crystalSlot.setChanged();
-                }
+                });
 
                 super.onTake(player, stack);
             }
@@ -193,6 +201,7 @@ public class EnchantmentLimitTableMenu extends AbstractContainerMenu {
         // Инициализируем список доступных зачарований
         updateAvailableEnchantments();
     }
+
 
     @Override
     public void slotsChanged(Container container) {
@@ -274,6 +283,7 @@ public class EnchantmentLimitTableMenu extends AbstractContainerMenu {
                 // Проверяем, что предмет имеет зачарования и это не книга
                 if (enchantedItem.is(Items.BOOK) || enchantedItem.is(Items.ENCHANTED_BOOK)) {
                     this.resultSlot.set(ItemStack.EMPTY);
+                    syncedXpLevels.set(0);
                     return;
                 }
 
@@ -300,10 +310,8 @@ public class EnchantmentLimitTableMenu extends AbstractContainerMenu {
                 requiredXpLevels = upgradableCount * XP_LEVEL_COST_PER_ENCHANT;
 
                 if (upgradableCount > 0) {
-                    // Дополнительно проверяем уровни опыта: если не хватает — не показываем результат
-                    if (player.experienceLevel < requiredXpLevels) {
-                        resultStack = ItemStack.EMPTY;
-                    } else {
+                    // Проверяем уровни опыта: если не хватает — не показываем результат
+                    if (player.experienceLevel >= requiredXpLevels || player.getAbilities().instabuild) {
                         // Повышаем уровень только выбранных зачарований
                         ItemStack upgradedItem = enchantedItem.copy();
                         boolean success = upgradeSelectedEnchantments(upgradedItem);
@@ -312,8 +320,6 @@ public class EnchantmentLimitTableMenu extends AbstractContainerMenu {
                             resultStack = upgradedItem;
                         }
                     }
-                } else {
-                    // No enchantments can be upgraded
                 }
             }
         }
@@ -322,7 +328,6 @@ public class EnchantmentLimitTableMenu extends AbstractContainerMenu {
             this.resultSlot.set(resultStack);
         }
         syncedXpLevels.set(requiredXpLevels);
-
     }
 
     @Override
@@ -330,6 +335,7 @@ public class EnchantmentLimitTableMenu extends AbstractContainerMenu {
         super.broadcastChanges();
         syncedXpLevels.set(requiredXpLevels); // 🔹 всегда обновляем перед отправкой клиенту
     }
+
 
 
     @Override
@@ -350,11 +356,16 @@ public class EnchantmentLimitTableMenu extends AbstractContainerMenu {
         // Проверяем, является ли слот одним из слотов инвентаря игрока
         if (index < 36) {
             // Это слот инвентаря игрока, пытаемся переместить в слоты блока
-            if (!moveItemStackTo(sourceStack, 36, 39, false)) {
+            if (!moveItemStackTo(sourceStack, 36, 40, false)) {
                 return ItemStack.EMPTY;
             }
-        } else if (index < 39) {
-            // Это слот блока, пытаемся переместить в инвентарь игрока
+        } else if (index >= 36 && index < 39) {
+            // Это слот блока (входные), пытаемся переместить в инвентарь игрока
+            if (!moveItemStackTo(sourceStack, 0, 36, true)) {
+                return ItemStack.EMPTY;
+            }
+        } else if (index == 39) {
+            // Это слот результата, пытаемся переместить в инвентарь игрока
             if (!moveItemStackTo(sourceStack, 0, 36, true)) {
                 return ItemStack.EMPTY;
             }
@@ -434,62 +445,13 @@ public class EnchantmentLimitTableMenu extends AbstractContainerMenu {
         return syncedXpLevels.get(); // 🔹 теперь клиент получает актуальное значение
     }
 
-    // Обработка повышения зачарований
-    private boolean upgradeEnchantments(ItemStack stack) {
-        var enchantments = EnchantmentHelper.getEnchantments(stack);
-        if (enchantments.isEmpty()) {
-            return false;
-        }
-
-        boolean upgraded = false;
-
-        // Сначала очищаем все зачарования
-        stack.removeTagKey("Enchantments");
-
-        for (var entry : enchantments.entrySet()) {
-            var enchantment = entry.getKey();
-            int currentLevel = entry.getValue();
-            int maxLevel = enchantment.getMaxLevel();
-            int allowedMaxLevel = maxLevel + 2; // Разрешаем +2 от максимума
-
-            // Проверяем, можно ли повысить зачарование
-            if (maxLevel == 1) {
-                // Зачарования с максимумом 1 нельзя повысить
-                stack.enchant(enchantment, currentLevel);
-            } else if (currentLevel < maxLevel) {
-                // Стандартное улучшение (не нужен ShardArtifact)
-                stack.enchant(enchantment, currentLevel + 1);
-                upgraded = true;
-            } else if (currentLevel < allowedMaxLevel) {
-                // Улучшение выше максимума (нужен ShardArtifact)
-                // Проверяем, есть ли ShardArtifact в слоте
-                if (!shardSlot.getItem().isEmpty()) {
-                    stack.enchant(enchantment, currentLevel + 1);
-                    upgraded = true;
-                } else {
-                    // ShardArtifact отсутствует - сохраняем текущий уровень
-                    stack.enchant(enchantment, currentLevel);
-                }
-            } else {
-                // Сохраняем текущий уровень
-                stack.enchant(enchantment, currentLevel);
-            }
-        }
-
-        if (upgraded) {
-            // Проверяем результат
-            var newEnchantments = EnchantmentHelper.getEnchantments(stack);
-        }
-
-        return upgraded;
-    }
 
     // Обработка повышения выбранных зачарований
     private boolean upgradeSelectedEnchantments(ItemStack stack) {
         boolean upgraded = false;
 
-        // Получаем исходные зачарования
-        var originalEnchantments = EnchantmentHelper.getEnchantments(enchantedItemSlot.getItem());
+        // Получаем исходные зачарования из переданного стека (он уже копия исходного предмета)
+        var originalEnchantments = EnchantmentHelper.getEnchantments(stack);
 
         // Сначала очищаем все зачарования
         stack.removeTagKey("Enchantments");
@@ -512,7 +474,7 @@ public class EnchantmentLimitTableMenu extends AbstractContainerMenu {
                     upgraded = true;
                 } else if (currentLevel < allowedMaxLevel) {
                     // Улучшение выше максимума (нужен ShardArtifact)
-                    // Проверяем, есть ли ShardArtifact в слоте
+                    // Проверяем, есть ли ShardArtifact в слоте (получаем актуальное состояние)
                     if (!shardSlot.getItem().isEmpty()) {
                         stack.enchant(enchantment, currentLevel + 1);
                         upgraded = true;

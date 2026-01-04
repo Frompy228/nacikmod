@@ -44,8 +44,16 @@ public class ManaOverlayRenderer {
             event.getGuiGraphics().drawString(font, "Mana: " + currentMana + "/" + maxMana, x, y, 0x00FFFF, false);
             
             // Отображаем статус "True Mage" если он есть
+            int yOffset = 12;
             if (isTrueMage) {
-                event.getGuiGraphics().drawString(font, "True Mage", x, y + 12, 0x8b0000, false);
+                event.getGuiGraphics().drawString(font, "True Mage", x, y + yOffset, 0x8b0000, false);
+                yOffset += 12;
+            }
+            
+            // Отображаем статус "Vision Blessing" если он есть
+            boolean hasVisionBlessing = mana.hasVisionBlessing();
+            if (hasVisionBlessing) {
+                event.getGuiGraphics().drawString(font, "Vision Blessing", x, y + yOffset, 0x280800, false);
             }
 
             RenderSystem.disableBlend();

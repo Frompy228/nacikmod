@@ -13,6 +13,7 @@ import net.artur.nacikmod.NacikMod;
 import net.artur.nacikmod.item.LordOfSouls;
 import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.capability.lord_of_souls_summoned_entities.LordOfSoulsSummonedEntityProvider;
+import net.artur.nacikmod.registry.ModEntities;
 
 import java.util.List;
 
@@ -32,6 +33,11 @@ public class LordOfSoulsHandler {
 
         // Check if killed entity is a player - don't absorb player souls
         if (event.getEntity() instanceof Player) {
+            return;
+        }
+
+        // Check if killed entity is a grail - don't absorb grail souls
+        if (event.getEntity().getType() == ModEntities.GRAIL.get()) {
             return;
         }
 

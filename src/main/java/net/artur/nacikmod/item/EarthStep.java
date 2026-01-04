@@ -85,7 +85,7 @@ public class EarthStep extends Item {
             return;
         }
         // Каждый тик: эффекты и земля
-        player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 25, SPEED_AMPLIFIER, true, false));
+        player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 35, SPEED_AMPLIFIER, true, false));
         if (!player.isShiftKeyDown()) {
             createEarthBlocksUnderPlayer(player.level(), player);
         }

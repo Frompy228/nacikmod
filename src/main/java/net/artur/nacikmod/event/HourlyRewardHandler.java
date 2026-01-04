@@ -30,6 +30,8 @@ public class HourlyRewardHandler {
     private static final int REQUIRED_MAX_MANA = 50000; // Требуемая максимальная мана для Shinra Tensei
     private static final int REQUIRED_2H_PLAY_TIME = 7200; // 2 часа в секундах
     private static final int REQUIRED_2H15M_PLAY_TIME = 8100; // 2 часа 15 минут в секундах
+    private static final int REQUIRED_5K_MANA = 5000; // 5к максимальной маны
+    private static final int REQUIRED_15K_MANA = 15000; // 15к максимальной маны
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
@@ -179,6 +181,33 @@ public class HourlyRewardHandler {
                         }
                     });
                 }
+            }
+
+            // Проверяем награду за достижение 5к максимальной маны
+            if (!rewards.hasReceived5kManaReward()) {
+                player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
+                    if (mana.getMaxMana() >= REQUIRED_5K_MANA) {
+                        // Помечаем, что игрок получил награду
+                        rewards.setReceived5kManaReward(true);
+                        
+                        // Отправляем сообщение игроку
+                        player.sendSystemMessage(Component.literal("Your mana regeneration has been permanently increased by +1!"));
+                    }
+                });
+            }
+
+            // Проверяем награду за достижение 15к максимальной маны
+            if (!rewards.hasReceived15kManaReward()) {
+                player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
+                    if (mana.getMaxMana() >= REQUIRED_15K_MANA) {
+                        // Помечаем, что игрок получил награду
+                        rewards.setReceived15kManaReward(true);
+                        
+                        // Отправляем сообщение игроку
+                        // Модификатор BONUS_ARMOR будет применен автоматически в ManaRegenerationHandler
+                        player.sendSystemMessage(Component.literal("Your mana regeneration has been permanently increased by +1 and you gained +1 BONUS_ARMOR!"));
+                    }
+                });
             }
         });
     }

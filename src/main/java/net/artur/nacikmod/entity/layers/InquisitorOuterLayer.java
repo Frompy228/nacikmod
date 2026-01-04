@@ -36,3 +36,25 @@ public class InquisitorOuterLayer<T extends InquisitorEntity> extends RenderLaye
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

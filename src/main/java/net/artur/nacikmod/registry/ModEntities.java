@@ -220,6 +220,22 @@ public class ModEntities {
                             .updateInterval(2)
                             .build("cross_projectile"));
 
+    public static final RegistryObject<EntityType<FirePillarEntity>> FIRE_PILLAR =
+            ENTITY_TYPES.register("fire_pillar",
+                    () -> EntityType.Builder.<FirePillarEntity>of((type, level) -> new FirePillarEntity(type, level), MobCategory.MISC)
+                            .sized(3.0F, 15.0F) // Ширина 3 блока, высота 15 блоков
+                            .clientTrackingRange(16)
+                            .updateInterval(2)
+                            .build("fire_pillar"));
+
+    public static final RegistryObject<EntityType<FireAnnihilationEntity>> FIRE_ANNIHILATION =
+            ENTITY_TYPES.register("fire_annihilation",
+                    () -> EntityType.Builder.<FireAnnihilationEntity>of((type, level) -> new FireAnnihilationEntity(type, level), MobCategory.MISC)
+                            .sized(8.25F, 8.25F)
+                            .clientTrackingRange(16)
+                            .updateInterval(2)
+                            .build("fire_annihilation"));
+
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);
     }

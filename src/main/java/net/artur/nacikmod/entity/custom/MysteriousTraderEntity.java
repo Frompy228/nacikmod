@@ -19,6 +19,7 @@ import java.util.List;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -71,12 +72,18 @@ public class MysteriousTraderEntity extends PathfinderMob implements Merchant, M
 
     public MysteriousTraderEntity(EntityType<? extends PathfinderMob> entityType, Level level) {
         super(entityType, level);
+        
+        // Разрешаем открывать двери / калитки и лучше плавать (как у Villager)
+        if (this.getNavigation() instanceof GroundPathNavigation groundNav) {
+            groundNav.setCanOpenDoors(true);
+        }
+        this.getNavigation().setCanFloat(true);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return PathfinderMob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 60.0)
-                .add(ModAttributes.BONUS_ARMOR.get(),15)
+                .add(Attributes.MAX_HEALTH, 75.0)
+                .add(ModAttributes.BONUS_ARMOR.get(),17)
                 .add(Attributes.ARMOR, 5.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.32)
                 .add(ForgeMod.SWIM_SPEED.get(), 2)
@@ -670,18 +677,16 @@ public class MysteriousTraderEntity extends PathfinderMob implements Merchant, M
     }
 
     public static boolean canSpawn(EntityType<MysteriousTraderEntity> type, ServerLevelAccessor world, MobSpawnType reason, BlockPos pos, RandomSource random) {
-        // Проверка времени суток: день
+        // Проверка времени суток: день (Остается без изменений)
         long timeOfDay = world.getLevel().getDayTime() % 24000L;
         boolean isDay = timeOfDay >= 0 && timeOfDay < 12000;
 
-        // Проверка освещения
-        int lightLevel = world.getLevel().getMaxLocalRawBrightness(pos);
-        boolean lightOk = lightLevel >= 5;
+        boolean skyOk = world.canSeeSky(pos);
 
-        // Проверка блока под мобом
+
         boolean groundSolid = world.getBlockState(pos.below()).isSolid();
 
-        return isDay && lightOk && groundSolid;
+        return isDay && skyOk && groundSolid;
     }
 
     // Goal для стрельбы торговца

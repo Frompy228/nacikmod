@@ -53,51 +53,82 @@ public class BarrierWallEventHandler {
         }
     }
 
-    // Обработка разрушения блоков barrier_block
+    // Обработка разрушения блоков barrier_block и блоков в pending позициях
     @SubscribeEvent
     public static void onBlockBreak(BlockEvent.BreakEvent event) {
         if (event.getLevel().isClientSide()) return;
         if (!(event.getLevel() instanceof ServerLevel serverLevel)) return;
 
-        BlockState state = event.getState();
-        if (!state.is(ModBlocks.BARRIER_BLOCK.get())) return;
-
         BlockPos pos = event.getPos();
-        
-        // Ищем активный барьер, которому принадлежит этот блок
-        for (ServerPlayer player : serverLevel.getServer().getPlayerList().getPlayers()) {
-            for (ItemStack stack : player.getInventory().items) {
-                if (!(stack.getItem() instanceof BarrierWall)) continue;
-                if (!BarrierWall.hasOwner(stack) || !BarrierWall.isOwner(stack, player)) continue;
-                
-                List<BarrierWall.ActiveBarrierInfo> activeBarriers = BarrierWall.getActiveBarriers(stack, serverLevel);
-                for (BarrierWall.ActiveBarrierInfo barrierInfo : activeBarriers) {
-                    if (barrierInfo.wallBlocks.contains(pos)) {
-                        // Сохраняем информацию о сломанном блоке для восстановления
-                        // Блок будет восстановлен в следующем тике, если у владельца есть мана
-                        brokenBlocks.put(pos, new BrokenBlockInfo(pos, barrierInfo.ownerUUID, stack, barrierInfo.slot));
-                        return;
+        BlockState state = event.getState();
+
+        // Оставляем ТОЛЬКО логику восстановления уже существующего барьера
+        if (state.is(ModBlocks.BARRIER_BLOCK.get())) {
+            for (ServerPlayer player : serverLevel.getServer().getPlayerList().getPlayers()) {
+                for (ItemStack stack : player.getInventory().items) {
+                    if (!(stack.getItem() instanceof BarrierWall)) continue;
+                    if (!BarrierWall.hasOwner(stack) || !BarrierWall.isOwner(stack, player)) continue;
+
+                    List<BarrierWall.ActiveBarrierInfo> activeBarriers = BarrierWall.getActiveBarriers(stack, serverLevel);
+                    for (BarrierWall.ActiveBarrierInfo barrierInfo : activeBarriers) {
+                        // Используем эффективную проверку вместо contains() на большом списке
+                        if (BarrierWall.isWallBlockPosition(pos, barrierInfo.barrierPos, BarrierWall.BARRIER_RADIUS)) {
+                            brokenBlocks.put(pos, new BrokenBlockInfo(pos, barrierInfo.ownerUUID, stack, barrierInfo.slot));
+                            return;
+                        }
                     }
                 }
             }
         }
+
+        // ЛОГИКУ ПРОВЕРКИ PendingPositions ОТСЮДА УДАЛЯЕМ ПОЛНОСТЬЮ.
+        // Она мешает стандартному разрушению блока земли.
     }
 
-    // Обработка тиков сервера - восстановление блоков, удаление истекших барьеров, применение эффектов
     @SubscribeEvent
     public static void onServerTick(TickEvent.ServerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
-        
-        // Проверяем каждую секунду
-        if (event.getServer().getTickCount() % 20 != 0) return;
 
-        // Обрабатываем все уровни
+        // Чтобы барьер появлялся быстрее после поломки земли,
+        // можно проверять PendingPositions чаще (например, каждые 5 тиков = 0.25 сек)
+        boolean checkPending = event.getServer().getTickCount() % 5 == 0;
+        boolean checkFull = event.getServer().getTickCount() % 20 == 0;
+
+        if (!checkPending && !checkFull) return;
+
         for (ServerLevel level : event.getServer().getAllLevels()) {
-            // Восстановление сломанных блоков
-            restoreBrokenBlocks(level);
-            
-            // Удаление истекших барьеров и применение эффектов
-            processActiveBarriers(level);
+            if (checkFull) {
+                restoreBrokenBlocks(level);
+            }
+
+            // Выносим обработку активных барьеров
+            processActiveBarriers(level, checkPending, checkFull);
+        }
+    }
+
+    private static void processActiveBarriers(ServerLevel level, boolean checkPending, boolean checkFull) {
+        for (ServerPlayer player : level.getServer().getPlayerList().getPlayers()) {
+            for (ItemStack stack : player.getInventory().items) {
+                if (!(stack.getItem() instanceof BarrierWall)) continue;
+
+                List<BarrierWall.ActiveBarrierInfo> activeBarriers = BarrierWall.getActiveBarriers(stack, level);
+                for (BarrierWall.ActiveBarrierInfo barrierInfo : activeBarriers) {
+
+                    // 1. Попытка поставить блоки в пустые места (теперь работает чаще)
+                    if (checkPending) {
+                        tryPlacePendingBlocks(level, stack, barrierInfo);
+                    }
+
+                    // 2. Проверка времени жизни (раз в секунду)
+                    if (checkFull) {
+                        long currentTime = level.getGameTime();
+                        if (currentTime - barrierInfo.activeTime >= DURATION_TICKS) {
+                            removeBarrierWalls(level, barrierInfo);
+                            deactivateBarrier(level, barrierInfo.barrierPos, stack, barrierInfo.slot);
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -139,7 +170,8 @@ public class BarrierWallEventHandler {
             List<BarrierWall.ActiveBarrierInfo> activeBarriers = BarrierWall.getActiveBarriers(info.itemStack, level);
             boolean barrierStillActive = false;
             for (BarrierWall.ActiveBarrierInfo barrierInfo : activeBarriers) {
-                if (barrierInfo.slot == info.slot && barrierInfo.wallBlocks.contains(pos)) {
+                if (barrierInfo.slot == info.slot && 
+                    BarrierWall.isWallBlockPosition(pos, barrierInfo.barrierPos, BarrierWall.BARRIER_RADIUS)) {
                     barrierStillActive = true;
                     break;
                 }
@@ -189,6 +221,9 @@ public class BarrierWallEventHandler {
                 List<BarrierWall.ActiveBarrierInfo> activeBarriers = BarrierWall.getActiveBarriers(stack, level);
                 
                 for (BarrierWall.ActiveBarrierInfo barrierInfo : activeBarriers) {
+                    // Пытаемся дозаставить pending‑позиции, если блоки стали доступны
+                    tryPlacePendingBlocks(level, stack, barrierInfo);
+
                     long currentTime = level.getGameTime();
                     long elapsed = currentTime - barrierInfo.activeTime;
                     
@@ -198,7 +233,7 @@ public class BarrierWallEventHandler {
                         removeBarrierWalls(level, barrierInfo);
                         
                         // Деактивируем барьер в NBT
-                        deactivateBarrier(stack, barrierInfo.slot);
+                        deactivateBarrier(level, barrierInfo.barrierPos, stack, barrierInfo.slot);
                         
                         // Уведомляем владельца
                         ServerPlayer owner = level.getServer().getPlayerList().getPlayer(barrierInfo.ownerUUID);
@@ -206,18 +241,145 @@ public class BarrierWallEventHandler {
                             owner.sendSystemMessage(Component.literal("Barrier Wall in slot " + (barrierInfo.slot + 1) + " has expired!")
                                     .withStyle(ChatFormatting.YELLOW));
                         }
-                    } else {
-                        // Применяем эффект медлительности на всех сущностей кроме владельца
-                        applySlownessEffect(level, barrierInfo);
                     }
                 }
             }
         }
     }
 
+    /**
+     * Пытается превратить pending‑позиции в настоящие блоки barier_block,
+     * если теперь там воздух или заменяемый блок.
+     */
+    private static void tryPlacePendingBlocks(ServerLevel level, ItemStack stack, BarrierWall.ActiveBarrierInfo barrierInfo) {
+        if (!stack.hasTag()) return;
+
+        CompoundTag tag = stack.getTag();
+        ListTag barrierList = tag.getList(BarrierWall.BARRIER_POSITIONS_TAG, net.minecraft.nbt.Tag.TAG_COMPOUND);
+        if (barrierInfo.slot >= barrierList.size()) return;
+
+        CompoundTag barrierTag = barrierList.getCompound(barrierInfo.slot);
+        if (!barrierTag.contains("PendingPositions")) return;
+
+        ListTag pendingTag = barrierTag.getList("PendingPositions", net.minecraft.nbt.Tag.TAG_COMPOUND);
+        if (pendingTag.isEmpty()) return;
+
+        List<Integer> toRemove = new ArrayList<>();
+
+        for (int i = 0; i < pendingTag.size(); i++) {
+            CompoundTag pendingPosTag = pendingTag.getCompound(i);
+            BlockPos pendingPos = new BlockPos(
+                    pendingPosTag.getInt("x"),
+                    pendingPosTag.getInt("y"),
+                    pendingPosTag.getInt("z")
+            );
+
+            if (!level.isLoaded(pendingPos)) continue;
+
+            BlockState currentState = level.getBlockState(pendingPos);
+            if (currentState.isAir() || currentState.canBeReplaced()) {
+                // Ставим блок барьера
+                level.setBlock(pendingPos, ModBlocks.BARRIER_BLOCK.get().defaultBlockState(), 3);
+
+                // НЕ добавляем в NBT - позиции вычисляются динамически
+                // Просто добавляем в runtime‑список wallBlocks для текущей сессии
+                if (!barrierInfo.wallBlocks.contains(pendingPos)) {
+                    barrierInfo.wallBlocks.add(pendingPos);
+                }
+
+                toRemove.add(i);
+            }
+        }
+
+        // Удаляем обработанные pending‑позиции (с конца, чтобы индексы не съехали)
+        for (int i = toRemove.size() - 1; i >= 0; i--) {
+            pendingTag.remove((int) toRemove.get(i));
+        }
+
+        if (pendingTag.isEmpty()) {
+            barrierTag.remove("PendingPositions");
+        } else {
+            barrierTag.put("PendingPositions", pendingTag);
+        }
+
+        barrierList.set(barrierInfo.slot, barrierTag);
+        tag.put(BarrierWall.BARRIER_POSITIONS_TAG, barrierList);
+    }
+
+    /**
+     * Обновляет эффект EffectBaseDomain для сущностей внутри барьера
+     */
+    private static void updateBaseDomainEffect(ServerLevel level, BarrierWall.ActiveBarrierInfo barrierInfo) {
+        double radius = 20.0;
+        BlockPos barrierCenter = barrierInfo.barrierPos;
+        
+        AABB aabb = new AABB(
+                barrierCenter.getX() - radius,
+                barrierCenter.getY() - radius,
+                barrierCenter.getZ() - radius,
+                barrierCenter.getX() + radius,
+                barrierCenter.getY() + radius,
+                barrierCenter.getZ() + radius
+        );
+        
+        // Находим все сущности в области барьера
+        List<LivingEntity> entities = level.getEntitiesOfClass(
+                LivingEntity.class,
+                aabb,
+                entity -> entity.isAlive() && !entity.getUUID().equals(barrierInfo.ownerUUID)
+        );
+        
+        // Обновляем эффект для каждой сущности
+        for (LivingEntity entity : entities) {
+            // Проверяем, что сущность действительно внутри барьера
+            double distanceSq = entity.blockPosition().distSqr(barrierCenter);
+            if (distanceSq <= radius * radius) {
+                // Проверяем, есть ли уже эффект
+                if (entity.hasEffect(net.artur.nacikmod.registry.ModEffects.EFFECT_BASE_DOMAIN.get())) {
+                    // Обновляем эффект (продлеваем на 2 секунды)
+                    entity.addEffect(new MobEffectInstance(
+                            net.artur.nacikmod.registry.ModEffects.EFFECT_BASE_DOMAIN.get(),
+                            40, // 2 секунды
+                            0,
+                            false,
+                            false,
+                            true
+                    ));
+                    
+                    // Обновляем позицию барьера в root capability
+                    entity.getCapability(net.artur.nacikmod.capability.root.RootProvider.ROOT_CAPABILITY).ifPresent(data -> {
+                        data.setPendingData(barrierCenter, level.dimension());
+                        data.commitData();
+                    });
+                } else {
+                    // Накладываем эффект впервые
+                    entity.addEffect(new MobEffectInstance(
+                            net.artur.nacikmod.registry.ModEffects.EFFECT_BASE_DOMAIN.get(),
+                            40, // 2 секунды
+                            0,
+                            false,
+                            false,
+                            true
+                    ));
+                    
+                    // Устанавливаем позицию барьера в root capability
+                    entity.getCapability(net.artur.nacikmod.capability.root.RootProvider.ROOT_CAPABILITY).ifPresent(data -> {
+                        data.setPendingData(barrierCenter, level.dimension());
+                        data.forceCommitData();
+                    });
+                }
+            }
+        }
+    }
+
     private static void removeBarrierWalls(ServerLevel level, BarrierWall.ActiveBarrierInfo barrierInfo) {
-        for (BlockPos wallPos : barrierInfo.wallBlocks) {
-            if (level.getBlockState(wallPos).is(ModBlocks.BARRIER_BLOCK.get())) {
+        // Используем динамическое вычисление позиций для удаления всех блоков барьера
+        // Это гарантирует удаление всех блоков, даже если список wallBlocks неполный
+        List<BlockPos> allWallPositions = BarrierWall.calculateWallBlockPositions(
+            barrierInfo.barrierPos, BarrierWall.BARRIER_RADIUS);
+        
+        for (BlockPos wallPos : allWallPositions) {
+            if (level.isLoaded(wallPos) && level.getBlockState(wallPos).is(ModBlocks.BARRIER_BLOCK.get())) {
                 level.removeBlock(wallPos, false);
             }
             // Удаляем из списка сломанных блоков, если там есть
@@ -225,7 +387,7 @@ public class BarrierWallEventHandler {
         }
     }
 
-    private static void deactivateBarrier(ItemStack stack, int slot) {
+    private static void deactivateBarrier(ServerLevel level, BlockPos center, ItemStack stack, int slot) {
         if (!stack.hasTag()) return;
         
         CompoundTag tag = stack.getTag();
@@ -235,24 +397,15 @@ public class BarrierWallEventHandler {
         
         CompoundTag barrierTag = positions.getCompound(slot);
         barrierTag.putBoolean("BarrierActive", false);
-        barrierTag.remove("BarrierWallBlocks"); // Удаляем список блоков
+        barrierTag.remove("BarrierWallBlocks"); // Удаляем старый список блоков (для обратной совместимости)
+        barrierTag.remove("PendingPositions"); // Удаляем pending позиции при деактивации
         positions.set(slot, barrierTag);
         tag.put("BarrierPositions", positions);
-    }
 
-    private static void applySlownessEffect(ServerLevel level, BarrierWall.ActiveBarrierInfo barrierInfo) {
-        // Создаем AABB вокруг барьера для поиска сущностей
-        AABB effectBox = new AABB(barrierInfo.barrierPos)
-                .inflate(EFFECT_RADIUS);
-        
-        List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, effectBox);
-        
-        for (LivingEntity entity : entities) {
-            // Пропускаем владельца
-            if (entity.getUUID().equals(barrierInfo.ownerUUID)) continue;
-            
-            // Применяем эффект медлительности (уровень 2, длительность 2 секунды)
-            entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 1, false, false, true));
+        // Отключаем эффекты стены на BlockEntity
+        var be = level.getBlockEntity(center);
+        if (be instanceof net.artur.nacikmod.block.entity.BarrierBlockEntity barrierBe) {
+            barrierBe.updateWallState(barrierTag.getUUID("owner"), false, slot);
         }
     }
 }

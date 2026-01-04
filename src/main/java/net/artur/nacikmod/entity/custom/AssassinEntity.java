@@ -47,7 +47,7 @@ public class AssassinEntity extends HeroSouls {
     private static final int STEALTH_COOLDOWN = 200; // 10 секунд
     private boolean isStealthed = false;
     private static final double STEALTH_SPEED_BONUS = 0.25; // Бонус скорости в стелсе
-    private static int BONUS_ARMOR = 5;
+    private static int BONUS_ARMOR = 6;
 
     // Переменные для невидимости
     private boolean isInvisibleAbility = false; // флаг именно способности ассасина
@@ -81,11 +81,11 @@ public class AssassinEntity extends HeroSouls {
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
                 .add(ModAttributes.BONUS_ARMOR.get(), BONUS_ARMOR)
-                .add(Attributes.ARMOR, 10)
+                .add(Attributes.ARMOR, 9)
                 .add(Attributes.ARMOR_TOUGHNESS, 5)
                 .add(Attributes.MAX_HEALTH, 55.0)
-                .add(Attributes.ATTACK_DAMAGE, 10.0) // Высокий урон
-                .add(Attributes.MOVEMENT_SPEED, 0.45) // Быстрая скорость
+                .add(Attributes.ATTACK_DAMAGE, 8.0)
+                .add(Attributes.MOVEMENT_SPEED, 0.445)
                 .add(Attributes.FOLLOW_RANGE, 35.0)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.1)
                 .add(ForgeMod.SWIM_SPEED.get(), 2);
@@ -94,11 +94,12 @@ public class AssassinEntity extends HeroSouls {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new AssassinInvisibilityGoal(this, 1.0D)); // Goal для невидимости
-        this.goalSelector.addGoal(2, new AssassinMeleeAttackGoal(this, 1.2D)); // Обычная атака
-        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 0.8D));
-        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(1, new OpenDoorGoal(this, true)); // Открытие дверей во время боя
+        this.goalSelector.addGoal(2, new AssassinInvisibilityGoal(this, 1.0D)); // Goal для невидимости
+        this.goalSelector.addGoal(3, new AssassinMeleeAttackGoal(this, 1.2D)); // Обычная атака
+        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.8D));
+        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
 
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setAlertOthers(AssassinEntity.class));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
@@ -447,11 +448,15 @@ public class AssassinEntity extends HeroSouls {
                 this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_HOE));
                 break;
             case 4:
+                // Iron Hoe
+                this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ModItems.KATANA.get()));
+                break;
+            case 5:
                 // Два кинжала ассасина (в обеих руках)
                 this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ModItems.ASSASSIN_DAGGER.get()));
                 this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(ModItems.ASSASSIN_DAGGER.get()));
                 break;
-            case 5:
+            case 6:
             default:
                 // Без оружия - ничего не выдаём, слоты остаются пустыми
                 // Ассасин будет атаковать кулаками с базовым уроном
@@ -484,9 +489,15 @@ public class AssassinEntity extends HeroSouls {
     protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
         Random random = new Random(); // Генератор случайных чисел
         double chanceCircuit = 0.15;
+        double chanceIron = 0.15;
 
         if (random.nextDouble() < chanceCircuit) {
-            this.spawnAtLocation(new ItemStack(ModItems.MAGIC_CIRCUIT.get(), 4));
+            int circuitCount = random.nextInt(4, 5);
+            this.spawnAtLocation(new ItemStack(ModItems.MAGIC_CIRCUIT.get(), circuitCount));
+        }
+        if (random.nextDouble() < chanceIron) {
+            int circuitCount = random.nextInt(1, 3);
+            this.spawnAtLocation(new ItemStack(Items.IRON_INGOT, circuitCount));
         }
     }
 

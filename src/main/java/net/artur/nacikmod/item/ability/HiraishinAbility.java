@@ -25,7 +25,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import java.util.UUID;
 
 public class HiraishinAbility {
-    private static final int TELEPORT_MANA_COST = 200;
+    private static final int TELEPORT_MANA_COST = 500;
     private static final int SLOT_COUNT = 3;
     private static final String MARKED_ENTITIES_TAG = "MarkedEntities";
     private static final String SELECTED_SLOT_TAG = "SelectedSlot";

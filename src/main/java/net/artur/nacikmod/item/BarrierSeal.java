@@ -1,6 +1,7 @@
 package net.artur.nacikmod.item;
 
 import net.artur.nacikmod.NacikMod;
+import net.artur.nacikmod.block.entity.BarrierBlockEntity;
 import net.artur.nacikmod.capability.mana.IMana;
 import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.registry.ModBlocks;
@@ -21,6 +22,8 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -96,12 +99,21 @@ public class BarrierSeal extends Item {
         }
 
         BlockState state = level.getBlockState(pos);
+
+        /*
+         * ВАЖНО:
+         * На сервере мы не можем надёжно узнать, зажат ли Ctrl (спринт) во время клика.
+         * Поэтому технически мы используем только Shift как триггер для "добавить барьер",
+         * а Ctrl+Shift визуально / по ощущениям для игрока может использоваться как вы захотите.
+         *
+         * Главное: добавление барьера обрабатывается в useOn(), а use() после этого
+         * игнорируется через JUST_ADDED_TAG, поэтому конфликтов (переключение слотов / активация)
+         * больше не будет.
+         */
+        boolean isAddCombo = player.isShiftKeyDown();
         
-        // Добавление барьера в слот только при Ctrl + Shift + ПКМ
-        boolean isCtrlShift = player.isShiftKeyDown() && player.isCrouching();
-        
-        // Если кликнули на блок барьера с Ctrl + Shift - добавляем в слот
-        if (state.is(ModBlocks.BARRIER.get()) && isCtrlShift) {
+        // Если кликнули на блок барьера с Shift - добавляем в слот
+        if (state.is(ModBlocks.BARRIER.get()) && isAddCombo) {
             InteractionResult result = addBarrierToSlot(stack, player, pos);
             if (result == InteractionResult.SUCCESS) {
                 // Устанавливаем флаг, чтобы предотвратить вызов use()
@@ -112,9 +124,9 @@ public class BarrierSeal extends Item {
             return result;
         }
 
-        // Если кликнули на другой блок или без Ctrl+Shift - ничего не делаем
-        if (state.is(ModBlocks.BARRIER.get()) && !isCtrlShift) {
-            player.sendSystemMessage(Component.literal("Hold Ctrl + Shift and right-click on a barrier block to add it to a slot")
+        // Если кликнули на блок барьера без Shift - подсказка
+        if (state.is(ModBlocks.BARRIER.get()) && !isAddCombo) {
+            player.sendSystemMessage(Component.literal("Hold Shift and right-click on a barrier block to add it to a slot")
                     .withStyle(ChatFormatting.YELLOW));
             return InteractionResult.PASS;
         }
@@ -136,12 +148,27 @@ public class BarrierSeal extends Item {
             return InteractionResultHolder.pass(stack);
         }
 
+        // Если смотрим на блок барьера, не переключаем слоты и не трогаем активацию.
+        // Добавление по самому барьеру обрабатывается в useOn().
+        HitResult hit = player.pick(5.0D, 0.0F, false);
+        if (hit instanceof BlockHitResult blockHit) {
+            BlockPos hitPos = blockHit.getBlockPos();
+            if (level.getBlockState(hitPos).is(ModBlocks.BARRIER.get())) {
+                return InteractionResultHolder.pass(stack);
+            }
+        }
+
         if (!isOwner(stack, player)) {
             player.sendSystemMessage(Component.literal("This Barrier Seal belongs to " + stack.getTag().getString(OWNER_NAME_TAG))
                     .withStyle(ChatFormatting.RED));
             return InteractionResultHolder.fail(stack);
         }
 
+        // Здесь обрабатываем только обычный Shift:
+        // - Shift + ПКМ в воздухе / по не-барьеру = переключить слот
+        // - ПКМ без Shift = включить/выключить барьер
+        // Добавление барьера по самому блоку обрабатывается в useOn() и помечается JUST_ADDED_TAG,
+        // поэтому сюда не попадает.
         if (player.isShiftKeyDown()) {
             // Shift + ПКМ = переключение слотов
             switchSlot(stack, player);
@@ -213,12 +240,21 @@ public class BarrierSeal extends Item {
         }
 
         boolean isActive = barrierTag.getBoolean(BARRIER_ACTIVE_TAG);
-        barrierTag.putBoolean(BARRIER_ACTIVE_TAG, !isActive);
+        boolean newState = !isActive;
+        barrierTag.putBoolean(BARRIER_ACTIVE_TAG, newState);
         positions.set(slot, barrierTag);
         tag.put(BARRIER_POSITIONS_TAG, positions);
 
-        player.sendSystemMessage(Component.literal("Barrier in slot " + (slot + 1) + " " + (!isActive ? "activated" : "deactivated"))
-                .withStyle(!isActive ? ChatFormatting.GREEN : ChatFormatting.RED));
+        // Обновляем BlockEntity барьера
+        BlockPos barrierPos = new BlockPos(
+                barrierTag.getInt("x"),
+                barrierTag.getInt("y"),
+                barrierTag.getInt("z")
+        );
+        updateBarrierBlockEntity(player, barrierPos, newState, slot);
+
+        player.sendSystemMessage(Component.literal("Barrier in slot " + (slot + 1) + " " + (newState ? "activated" : "deactivated"))
+                .withStyle(newState ? ChatFormatting.GREEN : ChatFormatting.RED));
     }
 
     private void saveBarrierPosition(ItemStack stack, int slot, BlockPos pos, Player player) {
@@ -238,6 +274,14 @@ public class BarrierSeal extends Item {
         
         positions.set(slot, barrierTag);
         tag.put(BARRIER_POSITIONS_TAG, positions);
+
+        // Синхронизуем состояние с BlockEntity (по умолчанию неактивен)
+        if (!player.level().isClientSide && player.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+            var be = serverLevel.getBlockEntity(pos);
+            if (be instanceof BarrierBlockEntity barrierBe) {
+                barrierBe.updateSealState(player.getUUID(), false, slot);
+            }
+        }
     }
 
     private int getSelectedSlot(CompoundTag tag) {
@@ -413,9 +457,36 @@ public class BarrierSeal extends Item {
             if (barrierTag.contains("x")) {
                 barrierTag.putBoolean(BARRIER_ACTIVE_TAG, false);
                 positions.set(i, barrierTag);
+                // Обновляем BlockEntity – деактивируем барьер
+                BlockPos pos = new BlockPos(
+                        barrierTag.getInt("x"),
+                        barrierTag.getInt("y"),
+                        barrierTag.getInt("z")
+                );
+                updateBarrierBlockEntityStatic(player, pos, false, i);
             }
         }
         tag.put(BARRIER_POSITIONS_TAG, positions);
+    }
+
+    private void updateBarrierBlockEntity(Player player, BlockPos pos, boolean active, int slot) {
+        if (player.level().isClientSide) return;
+        if (!(player.level() instanceof net.minecraft.server.level.ServerLevel serverLevel)) return;
+
+        var be = serverLevel.getBlockEntity(pos);
+        if (be instanceof BarrierBlockEntity barrierBe) {
+            barrierBe.updateSealState(player.getUUID(), active, slot);
+        }
+    }
+
+    private static void updateBarrierBlockEntityStatic(Player player, BlockPos pos, boolean active, int slot) {
+        if (player.level().isClientSide) return;
+        if (!(player.level() instanceof net.minecraft.server.level.ServerLevel serverLevel)) return;
+
+        var be = serverLevel.getBlockEntity(pos);
+        if (be instanceof BarrierBlockEntity barrierBe) {
+            barrierBe.updateSealState(player.getUUID(), active, slot);
+        }
     }
 
     @Override
@@ -463,8 +534,6 @@ public class BarrierSeal extends Item {
             tooltip.add(Component.literal(prefix + (i + 1) + ". " + status)
                     .withStyle(i == selectedSlot ? ChatFormatting.YELLOW : ChatFormatting.WHITE));
         }
-        tooltip.add(Component.translatable("item.nacikmod.barrier_wall.desc3")
-                .withStyle(ChatFormatting.GRAY));
     }
 }
 

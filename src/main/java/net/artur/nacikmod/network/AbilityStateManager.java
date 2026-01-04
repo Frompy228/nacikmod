@@ -1,10 +1,13 @@
 package net.artur.nacikmod.network;
 
+import net.artur.nacikmod.registry.ModMessages;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.artur.nacikmod.item.ability.ManaRelease;
-import net.artur.nacikmod.item.ability.ManaLastMagic;
 import net.artur.nacikmod.item.ability.HundredSealAbility;
+import net.artur.nacikmod.item.ability.SimpleDomainAbility;
+import net.artur.nacikmod.item.ability.DomainAbility;
+import net.artur.nacikmod.item.ability.VisionBlessingAbility;
 import net.artur.nacikmod.registry.ModEffects;
 
 import java.util.HashMap;
@@ -29,6 +32,18 @@ public class AbilityStateManager {
         registerAbility("hundred_seal", 
             HundredSealAbility::isHundredSealActive,
             player -> 0); // HundredSeal не имеет уровней
+            
+        registerAbility("simple_domain", 
+            SimpleDomainAbility::isSimpleDomainActive,
+            player -> 0); // SimpleDomain не имеет уровней
+            
+        registerAbility("domain", 
+            DomainAbility::isDomainActive,
+            player -> 0); // Domain не имеет уровней
+            
+        registerAbility("kodai", 
+            VisionBlessingAbility::isKodaiActive,
+            player -> 0); // Kodai не имеет уровней
     }
     
     public static class AbilityInfo {

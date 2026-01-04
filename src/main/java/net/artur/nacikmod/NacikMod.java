@@ -8,11 +8,9 @@ import net.artur.nacikmod.capability.reward.RewardSyncOnDeath;
 import net.artur.nacikmod.capability.killcount.KillCountEvents;
 import net.artur.nacikmod.capability.killcount.KillCountHandler;
 import net.artur.nacikmod.capability.killcount.KillCountSyncOnDeath;
-import net.artur.nacikmod.capability.cooldowns.CooldownsProvider;
-import net.artur.nacikmod.capability.cooldowns.ICooldowns;
 import net.artur.nacikmod.datagen.ModWorldGenProvider;
 import net.artur.nacikmod.registry.ModCreativeModTabs;
-import net.artur.nacikmod.network.ModMessages;
+import net.artur.nacikmod.registry.ModMessages;
 import net.artur.nacikmod.registry.*;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
@@ -42,6 +40,7 @@ public class NacikMod
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         ModItems.register(modEventBus);
+        ModEnchantments.register(modEventBus);
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::gatherData);
@@ -50,6 +49,7 @@ public class NacikMod
         ModAttributes.ATTRIBUTES.register(modEventBus);
         ModSounds.register(modEventBus);
         ModBlocks.register(modEventBus);
+        ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         ModMenuTypes.register(modEventBus);
         ModMessages.register();
         MinecraftForge.EVENT_BUS.register(ManaSyncOnDeath.class);

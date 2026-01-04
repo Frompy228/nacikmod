@@ -48,4 +48,8 @@ public class ModEffects {
             EFFECTS.register("effect_simple_domain", EffectSimpleDomain::new);
     public static final RegistryObject<MobEffect> EFFECT_DOMAIN =
             EFFECTS.register("effect_domain", EffectDomain::new);
+    public static final RegistryObject<MobEffect> EFFECT_BASE_DOMAIN =
+            EFFECTS.register("effect_base_domain", EffectBaseDomain::new);
+    public static final RegistryObject<MobEffect> EFFECT_MANA_SEAL =
+            EFFECTS.register("effect_mana_seal", EffectManaSeal::new);
 }

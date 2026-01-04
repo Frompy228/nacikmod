@@ -187,6 +187,11 @@ public class ShamakEntity extends Projectile {
     }
 
     @Override
+    public boolean fireImmune() {
+        return true;
+    }
+
+    @Override
     protected void onHit(HitResult hitResult) {
         // Не вызываем стандартную обработку
     }

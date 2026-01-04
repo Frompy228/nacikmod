@@ -2,7 +2,7 @@ package net.artur.nacikmod.effect;
 
 import net.artur.nacikmod.capability.root.IRootData;
 import net.artur.nacikmod.capability.root.RootProvider;
-import net.artur.nacikmod.network.ModMessages;
+import net.artur.nacikmod.registry.ModMessages;
 import net.artur.nacikmod.network.PacketSyncEffect;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
@@ -16,12 +16,10 @@ import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.client.extensions.common.IClientMobEffectExtensions;
 import net.minecraftforge.common.util.ITeleporter;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.util.UUID;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class EffectRoot extends MobEffect {

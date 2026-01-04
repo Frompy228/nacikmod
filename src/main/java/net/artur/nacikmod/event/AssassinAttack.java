@@ -24,7 +24,7 @@ import java.util.Random;
 public class AssassinAttack {
     
     private static int tickCounter = 0;
-    private static final int CHECK_INTERVAL = 1200; // 50 секунд (20 тиков * 50)
+    private static final int CHECK_INTERVAL = 4500;
     private static final double SPAWN_CHANCE = 0.01;
     private static final int ASSASSIN_COUNT = 20; // Количество ассасинов
     private static final double SPAWN_RADIUS = 20.0; // Радиус спавна в блоках

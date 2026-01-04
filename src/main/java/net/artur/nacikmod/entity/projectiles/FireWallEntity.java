@@ -28,7 +28,7 @@ public class FireWallEntity extends Entity {
     public static final double WALL_THICKNESS = 0.1D; // ~1 пиксель
     public static final double DAMAGE_ZONE_THICKNESS = 0.6D;
     public static final int MAX_LIFETIME = 20 * 20; // 20 seconds
-    public static final float CONTACT_DAMAGE = 5.0f;
+    public static final float CONTACT_DAMAGE = 10.0f;
     private static final int FIRE_DURATION_SECONDS = 4;
     private static final int DAMAGE_COOLDOWN_TICKS = 10;
 

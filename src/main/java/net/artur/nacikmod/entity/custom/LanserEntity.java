@@ -51,7 +51,7 @@ public class LanserEntity extends HeroSouls {
     private static final int JUMP_COOLDOWN_TICKS = 60; // 3 секунды между прыжками
     private static final double VERTICAL_JUMP_THRESHOLD = 2.0; // Минимальная разница высоты для прыжка
     private static final double MAX_JUMP_HEIGHT = 4.0; // Максимальная высота прыжка
-    private static int BONUS_ARMOR = 15;
+    private static int BONUS_ARMOR = 17;
     private int jumpCooldown = 0;
 
     public LanserEntity(EntityType<? extends HeroSouls> entityType, Level level) {
@@ -174,7 +174,7 @@ public class LanserEntity extends HeroSouls {
                 .add(ModAttributes.BONUS_ARMOR.get(),BONUS_ARMOR)
                 .add(Attributes.ARMOR, 15)
                 .add(Attributes.ARMOR_TOUGHNESS, 10)
-                .add(Attributes.MAX_HEALTH, 130.0)
+                .add(Attributes.MAX_HEALTH, 195.0)
                 .add(Attributes.ATTACK_DAMAGE, 20.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.46)
                 .add(ForgeMod.SWIM_SPEED.get(), 2) // Увеличиваем скорость плавания в 1.5 раза
@@ -185,13 +185,14 @@ public class LanserEntity extends HeroSouls {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new RetreatOnLowHealthGoal(this)); // Рывок назад при низком ХП
-        this.goalSelector.addGoal(2, new CustomMeleeAttackGoal(this, 1.0)); // Атака
-        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 0.5)); // Блуждание
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Mob.class, 10, true, false, this::isValidTarget));
-        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0f));
-        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(1, new OpenDoorGoal(this, true)); // Открытие дверей во время боя
+        this.goalSelector.addGoal(2, new RetreatOnLowHealthGoal(this)); // Рывок назад при низком ХП
+        this.goalSelector.addGoal(3, new CustomMeleeAttackGoal(this, 1.0)); // Атака
+        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.5)); // Блуждание
+        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        this.targetSelector.addGoal(6, new NearestAttackableTargetGoal<>(this, Mob.class, 10, true, false, this::isValidTarget));
+        this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0f));
+        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
     }
 
 
@@ -262,6 +263,11 @@ public class LanserEntity extends HeroSouls {
             super.tick();
             LivingEntity target = lanser.getTarget();
             if (target == null || target instanceof Animal || target instanceof WaterAnimal) return;
+            // Защита от самоатаки
+            if (target == lanser) {
+                lanser.setTarget(null);
+                return;
+            }
 
             double squaredDistance = lanser.distanceToSqr(target);
             double minDistance = preferredDistance - 0.5;
@@ -395,7 +401,8 @@ public class LanserEntity extends HeroSouls {
         }
 
         if (random.nextDouble() < chanceCircuit) {
-            this.spawnAtLocation(new ItemStack(ModItems.MAGIC_CIRCUIT.get(), 12));
+            int circuitCount = random.nextInt(12, 15);
+            this.spawnAtLocation(new ItemStack(ModItems.MAGIC_CIRCUIT.get(), circuitCount));
         }
     }
 

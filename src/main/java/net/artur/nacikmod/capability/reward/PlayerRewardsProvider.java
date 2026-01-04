@@ -31,6 +31,8 @@ public class PlayerRewardsProvider implements ICapabilityProvider, ICapabilitySe
         tag.putBoolean("2hReward", rewards.hasReceived2hReward());
         tag.putBoolean("2h15mReward", rewards.hasReceived2h15mReward());
         tag.putBoolean("GrailReward", rewards.hasUsedGrailReward());
+        tag.putBoolean("5kManaReward", rewards.hasReceived5kManaReward());
+        tag.putBoolean("15kManaReward", rewards.hasReceived15kManaReward());
         return tag;
     }
 
@@ -44,6 +46,8 @@ public class PlayerRewardsProvider implements ICapabilityProvider, ICapabilitySe
         rewards.setReceived2hReward(tag.getBoolean("2hReward"));
         rewards.setReceived2h15mReward(tag.getBoolean("2h15mReward"));
         rewards.setUsedGrailReward(tag.getBoolean("GrailReward"));
+        rewards.setReceived5kManaReward(tag.getBoolean("5kManaReward"));
+        rewards.setReceived15kManaReward(tag.getBoolean("15kManaReward"));
     }
 
     // Сохранение наград после смерти
@@ -63,6 +67,8 @@ public class PlayerRewardsProvider implements ICapabilityProvider, ICapabilitySe
             newRewards.setReceived2hReward(oldRewards.hasReceived2hReward());
             newRewards.setReceived2h15mReward(oldRewards.hasReceived2h15mReward());
             newRewards.setUsedGrailReward(oldRewards.hasUsedGrailReward());
+            newRewards.setReceived5kManaReward(oldRewards.hasReceived5kManaReward());
+            newRewards.setReceived15kManaReward(oldRewards.hasReceived15kManaReward());
         }));
     }
 } 

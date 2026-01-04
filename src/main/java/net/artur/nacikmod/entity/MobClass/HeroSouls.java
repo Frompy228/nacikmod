@@ -9,6 +9,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -24,6 +25,12 @@ public class HeroSouls extends Monster {
     // Конструктор
     public HeroSouls(EntityType<? extends Monster> entityType, Level level) {
         super(entityType, level);
+
+        // Разрешаем открывать двери / калитки и немного лучше плавать (как у Villager)
+        if (this.getNavigation() instanceof GroundPathNavigation groundNav) {
+            groundNav.setCanOpenDoors(true);
+        }
+        this.getNavigation().setCanFloat(true);
     }
 
     // Метод для создания атрибутов (настраивается в классе моба)
@@ -40,6 +47,7 @@ public class HeroSouls extends Monster {
     protected void registerGoals() {
         // Базовые цели
         this.goalSelector.addGoal(0, new FloatGoal(this)); // Плавание
+        this.goalSelector.addGoal(1, new OpenDoorGoal(this, true)); // Открытие дверей (высокий приоритет для боя)
         this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 0.8)); // Ходьба (избегание воды)
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f)); // Осмотр игрока
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this)); // Осмотр по сторонам

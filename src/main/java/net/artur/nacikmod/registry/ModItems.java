@@ -70,6 +70,7 @@ public class ModItems {
     public static final RegistryObject<Item> LORD_OF_SOULS = ITEMS.register("lord_of_souls", () -> new LordOfSouls(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> SEAL_OF_RETURN = ITEMS.register("seal_of_return", () -> new SealOfReturn(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MAGE_MARK = ITEMS.register("mage_mark", () -> new MageMark(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> VISION_BLESSING = ITEMS.register("vision_blessing", () -> new VisionBlessing(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> GRAIL = ITEMS.register("grail", () -> new Grail(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> SIMPLE_DOMAIN = ITEMS.register("simple_domain", () -> new SimpleDomain(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> DOMAIN = ITEMS.register("domain", () -> new Domain());
@@ -77,6 +78,11 @@ public class ModItems {
     public static final RegistryObject<Item> BARRIER_SEAL = ITEMS.register("barrier_seal", () -> new BarrierSeal(new Item.Properties()));
     public static final RegistryObject<Item> BARRIER_WALL = ITEMS.register("barrier_wall", () -> new BarrierWall(new Item.Properties()));
     public static final RegistryObject<Item> CROSS = ITEMS.register("cross", () -> new Cross(new Item.Properties()));
+    public static final RegistryObject<Item> HOLY_BAYONETS = ITEMS.register("holy_bayonets", HolyBayonets::new);
+    public static final RegistryObject<Item> FIRE_PILLAR = ITEMS.register("fire_pillar", () -> new FirePillar(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> BURIAL = ITEMS.register("burial", () -> new Burial());
+    public static final RegistryObject<Item> FIRE_ANNIHILATION = ITEMS.register("fire_annihilation", () -> new FireAnnihilation(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> MANA_SEAL = ITEMS.register("mana_seal", () -> new ManaSeal(new Item.Properties().stacksTo(1)));
 
     public static final RegistryObject<Item> LANSER_SPAWN_EGG = ITEMS.register("lanser_spawn_egg",
             ()-> new ForgeSpawnEggItem(ModEntities.LANSER, 0x5b107e, 0xCF6A84,

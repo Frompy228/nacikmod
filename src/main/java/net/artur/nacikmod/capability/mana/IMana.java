@@ -14,4 +14,7 @@ public interface IMana {
     // Статус "Истинный маг"
     boolean isTrueMage();
     void setTrueMage(boolean isTrueMage);
+
+    boolean hasVisionBlessing();
+    void setVisionBlessing(boolean hasVisionBlessing);
 }
