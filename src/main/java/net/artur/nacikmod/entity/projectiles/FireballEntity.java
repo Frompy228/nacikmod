@@ -17,7 +17,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class FireballEntity extends Projectile {
-    private static final float DAMAGE = 50.0f;
+    private static final float DAMAGE = 65.0f;
     private static final int FIRE_DURATION = 5; // 5 секунд огня
     private static final int MAX_LIFETIME = 200; // 10 секунд (20 тиков * 10)
     private int lifetime = 0;

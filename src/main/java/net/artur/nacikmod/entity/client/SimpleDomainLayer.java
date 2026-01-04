@@ -3,7 +3,7 @@ package net.artur.nacikmod.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.artur.nacikmod.NacikMod;
-import net.artur.nacikmod.registry.ModEffects;
+import net.artur.nacikmod.item.ability.SimpleDomainAbility;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -12,12 +12,11 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.effect.MobEffectInstance;
 
 /**
- * Этот слой рендерит кастомную модель SimplePossessionModel поверх игрока,
- * если у него активен эффект EffectSimplePossession.
- * Видно ВСЕМ игрокам, если эффект применяется сервером.
+ * Этот слой рендерит кастомную модель SimpleDomainModel поверх игрока,
+ * если у него активен Simple Domain через Ability систему.
+ * Видно ВСЕМ игрокам благодаря синхронизации через AbilityStateManager.
  */
 public class SimpleDomainLayer extends RenderLayer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> {
     private static final ResourceLocation TEXTURE =
@@ -35,9 +34,8 @@ public class SimpleDomainLayer extends RenderLayer<AbstractClientPlayer, PlayerM
                        AbstractClientPlayer player, float limbSwing, float limbSwingAmount,
                        float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
 
-        // Проверяем: есть ли эффект
-        MobEffectInstance effect = player.getEffect(ModEffects.EFFECT_SIMPLE_DOMAIN.get());
-        if (effect == null) return; // нет эффекта — не рендерим
+        // Проверяем: активен ли Simple Domain через Ability систему
+        if (!SimpleDomainAbility.isSimpleDomainActive(player)) return; // не активен — не рендерим
 
         // Если есть эффект, отрисовываем модель
         poseStack.pushPose();

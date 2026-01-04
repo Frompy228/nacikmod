@@ -41,7 +41,7 @@ public class BerserkerEntity extends HeroSouls {
     private int roarCooldown = 0;
     private static final int REGENERATION_INTERVAL = 20; // 1 секунда
     private static final float REGENERATION_AMOUNT = 2.0f;
-    private static final double BASE_ATTACK_DAMAGE = 22;
+    private static final double BASE_ATTACK_DAMAGE = 24;
     private static final double ENTITY_REACH = 5.0D; // Достигаемость сущностей 5 блоков
     private static final int ROAR_COOLDOWN = 300;
     private static final int ROAR_RADIUS = 2; // Радиус разрушения блоков
@@ -49,7 +49,7 @@ public class BerserkerEntity extends HeroSouls {
     private int resurrectionCount = 0; // Счетчик воскрешений
     private static final int BASE_ATTACK_COOLDOWN = 50; // 2 секунды между атаками
     private int currentAttackCooldown = BASE_ATTACK_COOLDOWN; // Текущая перезарядка атаки
-    private static int BONUS_ARMOR = 10;
+    private static int BONUS_ARMOR = 12;
 
     // Флаг для защиты от повторного входа в performRoar
     private boolean isRoaring = false;
@@ -61,10 +61,11 @@ public class BerserkerEntity extends HeroSouls {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new CustomMeleeAttackGoal(this, 1.0D));
-        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 0.8D));
-        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(1, new OpenDoorGoal(this, true)); // Открытие дверей во время боя
+        this.goalSelector.addGoal(2, new CustomMeleeAttackGoal(this, 1.0D));
+        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 0.8D));
+        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
 
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
@@ -142,7 +143,7 @@ public class BerserkerEntity extends HeroSouls {
                 .add(ModAttributes.BONUS_ARMOR.get(), BONUS_ARMOR)
                 .add(Attributes.ARMOR, 17)
                 .add(Attributes.ARMOR_TOUGHNESS, 15)
-                .add(Attributes.MAX_HEALTH, 125.0)
+                .add(Attributes.MAX_HEALTH, 140.0)
                 .add(Attributes.ATTACK_DAMAGE, BASE_ATTACK_DAMAGE)
                 .add(Attributes.MOVEMENT_SPEED, 0.32)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1)
@@ -275,12 +276,17 @@ public class BerserkerEntity extends HeroSouls {
         Random random = new Random(); // Генератор случайных чисел
         double chanceCircuit = 0.25;
         double chanceGodHand = 0.19;
+        double chanceMagicArmor = 0.1;
 
         if (random.nextDouble() < chanceCircuit) {
-            this.spawnAtLocation(new ItemStack(ModItems.MAGIC_CIRCUIT.get(), 20));
+            int circuitCount = random.nextInt(20, 25);
+            this.spawnAtLocation(new ItemStack(ModItems.MAGIC_CIRCUIT.get(), circuitCount));
         }
         if (random.nextDouble() < chanceGodHand) {
             this.spawnAtLocation(new ItemStack(ModItems.GOD_HAND.get(), 1));
+        }
+        if (random.nextDouble() < chanceMagicArmor) {
+            this.spawnAtLocation(new ItemStack(ModItems.MAGIC_ARMOR.get(), 1));
         }
     }
 

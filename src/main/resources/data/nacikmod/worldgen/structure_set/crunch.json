@@ -1,0 +1,32 @@
+{
+  "structures": [
+    {
+      "structure": "nacikmod:crunch",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "salt": 142857001,
+    "spacing": 50,
+    "separation": 26,
+    "type": "minecraft:random_spread"
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

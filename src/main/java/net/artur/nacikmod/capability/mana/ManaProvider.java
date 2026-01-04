@@ -26,6 +26,7 @@ public class ManaProvider implements ICapabilityProvider, ICapabilitySerializabl
         tag.putInt("Mana", mana.getMana());
         tag.putInt("MaxMana", mana.getMaxMana());
         tag.putBoolean("IsTrueMage", mana.isTrueMage());
+        tag.putBoolean("HasVisionBlessing", mana.hasVisionBlessing());
 
         
         return tag;
@@ -36,6 +37,7 @@ public class ManaProvider implements ICapabilityProvider, ICapabilitySerializabl
         mana.setMana(tag.getInt("Mana"));
         mana.setMaxMana(tag.getInt("MaxMana"));
         mana.setTrueMage(tag.getBoolean("IsTrueMage"));
+        mana.setVisionBlessing(tag.getBoolean("HasVisionBlessing"));
 
     }
 
@@ -51,6 +53,7 @@ public class ManaProvider implements ICapabilityProvider, ICapabilitySerializabl
             newMana.setMana(oldMana.getMana()); // Передаём количество маны
             newMana.setMaxMana(oldMana.getMaxMana()); // Передаём максимальную ману
             newMana.setTrueMage(oldMana.isTrueMage()); // Передаём статус истинного мага
+            newMana.setVisionBlessing(oldMana.hasVisionBlessing()); // Передаём статус Vision Blessing
         }));
     }
 }

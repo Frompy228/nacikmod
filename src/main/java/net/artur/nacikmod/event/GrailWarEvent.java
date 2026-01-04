@@ -25,7 +25,8 @@ import java.util.*;
 @Mod.EventBusSubscriber(modid = NacikMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class GrailWarEvent {
 
-    private static final Map<ServerLevel, WarState> worldsWarState = new HashMap<>();
+    // Глобальное состояние войны для всего сервера (только одна война может быть активна)
+    private static final WarState globalWarState = new WarState();
     private static final int CHECK_INTERVAL = 20; // проверка каждую секунду
     private static final int WAR_DELAY_TICKS = 6000; // 5 минут = 6000 тиков
 
@@ -39,34 +40,31 @@ public class GrailWarEvent {
         int warStartDelay = 0;
     }
 
-    private static WarState getState(ServerLevel level) {
-        return worldsWarState.computeIfAbsent(level, l -> new WarState());
-    }
-
     @SubscribeEvent
-    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        if (event.phase != TickEvent.Phase.END || !(event.player instanceof ServerPlayer)) return;
-        ServerPlayer player = (ServerPlayer) event.player;
-        if (player.level().isClientSide()) return;
+    public static void onServerTick(TickEvent.ServerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
 
-        ServerLevel level = (ServerLevel) player.level();
-        WarState state = getState(level);
+        // Используем глобальное состояние войны
+        if (globalWarState.warCompleted) return;
 
-        if (state.warCompleted) return;
+        // Получаем верхний мир
+        ServerLevel overworld = event.getServer().overworld();
+        if (overworld == null) return;
 
-        state.tickCounter++;
-        if (state.tickCounter < CHECK_INTERVAL) return;
-        state.tickCounter = 0;
+        // Проверяем только один раз в секунду
+        globalWarState.tickCounter++;
+        if (globalWarState.tickCounter < CHECK_INTERVAL) return;
+        globalWarState.tickCounter = 0;
 
-        if (!state.warActive) {
-            checkForWarStart(level, state);
-        } else if (state.warStartDelay > 0) {
-            state.warStartDelay -= CHECK_INTERVAL;
-            if (state.warStartDelay <= 0) {
-                broadcastMessage(level, "§6§lThe Grail War has officially begun!");
+        if (!globalWarState.warActive) {
+            checkForWarStart(overworld);
+        } else if (globalWarState.warStartDelay > 0) {
+            globalWarState.warStartDelay -= CHECK_INTERVAL;
+            if (globalWarState.warStartDelay <= 0) {
+                broadcastMessage(overworld, "§6§lThe Grail War has officially begun!");
             }
         } else {
-            checkWarStatus(level, state);
+            checkWarStatus(overworld);
         }
     }
 
@@ -75,13 +73,13 @@ public class GrailWarEvent {
         if (event.getEntity() instanceof GraalEntity graal) {
             Level level = graal.level();
             if (!(level instanceof ServerLevel serverLevel)) return;
-            WarState state = getState(serverLevel);
 
-            if (!state.warActive || state.warCompleted) return;
+            // Используем глобальное состояние войны
+            if (!globalWarState.warActive || globalWarState.warCompleted) return;
 
             // Грааль убит — война заканчивается без победителя
             broadcastMessage(serverLevel, "§cThe Holy Grail has been destroyed! The war ends without a winner!");
-            endWar(serverLevel, state);
+            endWar(serverLevel);
         }
     }
 
@@ -92,58 +90,80 @@ public class GrailWarEvent {
 
         ServerPlayer player = (ServerPlayer) event.getEntity();
         ServerLevel level = (ServerLevel) player.level();
-        WarState state = getState(level);
 
-        if (state.warCompleted) return;
-        if (!state.warParticipants.contains(player.getUUID())) return;
+        // Используем глобальное состояние войны
+        if (globalWarState.warCompleted) return;
+        if (!globalWarState.warParticipants.contains(player.getUUID())) return;
 
-        state.warParticipants.remove(player.getUUID());
+        globalWarState.warParticipants.remove(player.getUUID());
         broadcastMessage(level, "§c" + player.getName().getString() + " has fallen from the Grail War!");
 
-        if (state.warParticipants.size() == 2 && !state.graalSpawned) {
-            spawnGraal(level, state);
-        } else if (state.warParticipants.size() == 1) {
-            checkWarEndCondition(level, state);
+        // Получаем верхний мир для спавна Graal Entity
+        ServerLevel overworld = level.getServer().overworld();
+        if (overworld == null) return;
+
+        if (globalWarState.warParticipants.size() == 2 && !globalWarState.graalSpawned) {
+            spawnGraal(overworld);
+        } else if (globalWarState.warParticipants.size() == 1) {
+            checkWarEndCondition(overworld);
         }
     }
 
-    private static void checkForWarStart(ServerLevel level, WarState state) {
+    private static void checkForWarStart(ServerLevel level) {
+        // Проверяем, не началась ли уже война
+        if (globalWarState.warActive || globalWarState.warCompleted) return;
+
+        // Получаем верхний мир для проверки игроков
+        ServerLevel overworld = level.getServer().overworld();
+        if (overworld == null) return;
+
+        // Проверяем только игроков, которые находятся в верхнем мире
         List<UUID> trueMages = new ArrayList<>();
         for (ServerPlayer player : level.getServer().getPlayerList().getPlayers()) {
+            // Проверяем только игроков в верхнем мире
+            if (!player.level().dimension().equals(Level.OVERWORLD)) continue;
+            
             player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
                 if (mana.isTrueMage()) trueMages.add(player.getUUID());
             });
         }
 
         if (trueMages.size() >= 3) {
-            state.warActive = true;
-            state.warParticipants = new ArrayList<>(trueMages);
-            state.warStartDelay = WAR_DELAY_TICKS;
-            broadcastMessage(level, "§6§lAt least 3 True Mages detected! War will start in 5 minutes!");
+            globalWarState.warActive = true;
+            globalWarState.warParticipants = new ArrayList<>(trueMages);
+            globalWarState.warStartDelay = WAR_DELAY_TICKS;
+            broadcastMessage(overworld, "§6§lAt least 3 True Mages detected in Overworld! War will start in 5 minutes!");
         }
     }
 
-    private static void checkWarStatus(ServerLevel level, WarState state) {
-        state.warParticipants.removeIf(uuid -> {
-            ServerPlayer p = level.getServer().getPlayerList().getPlayer(uuid);
+    private static void checkWarStatus(ServerLevel level) {
+        // Получаем верхний мир
+        ServerLevel overworld = level.getServer().overworld();
+        if (overworld == null) return;
+
+        globalWarState.warParticipants.removeIf(uuid -> {
+            ServerPlayer p = overworld.getServer().getPlayerList().getPlayer(uuid);
             return p == null || p.isDeadOrDying();
         });
 
-        if (state.warParticipants.size() == 2 && !state.graalSpawned) {
-            spawnGraal(level, state);
-        } else if (state.warParticipants.size() == 1) {
-            checkWarEndCondition(level, state);
-        } else if (state.warParticipants.isEmpty()) {
-            endWar(level, state);
+        if (globalWarState.warParticipants.size() == 2 && !globalWarState.graalSpawned) {
+            spawnGraal(overworld);
+        } else if (globalWarState.warParticipants.size() == 1) {
+            checkWarEndCondition(overworld);
+        } else if (globalWarState.warParticipants.isEmpty()) {
+            endWar(overworld);
         }
     }
 
-    private static void spawnGraal(ServerLevel level, WarState state) {
-        state.graalSpawned = true;
+    private static void spawnGraal(ServerLevel overworld) {
+        // Война может происходить только в верхнем мире
+        if (!overworld.dimension().equals(Level.OVERWORLD)) return;
+
+        globalWarState.graalSpawned = true;
 
         // Опорный блок — центр мира
         BlockPos basePos = new BlockPos(0, 0, 0);
-        BlockPos surfacePos = level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, basePos);
+        BlockPos surfacePos = overworld.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, basePos);
 
         int spawnY;
         if (surfacePos == null || surfacePos.getY() < 0) {
@@ -154,30 +174,30 @@ public class GrailWarEvent {
 
         BlockPos spawnPos = new BlockPos(basePos.getX(), spawnY, basePos.getZ());
 
-        GraalEntity graal = ModEntities.GRAIL.get().create(level);
+        GraalEntity graal = ModEntities.GRAIL.get().create(overworld);
         if (graal != null) {
             graal.setPos(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5);
-            graal.finalizeSpawn(level, level.getCurrentDifficultyAt(spawnPos), MobSpawnType.MOB_SUMMONED, null, null);
-            if (level.addFreshEntity(graal)) {
-                state.graalEntity = graal;
-                broadcastMessage(level, "§5§lThe Holy Grail has appeared at (0," + spawnPos.getY() + ",0)!");
+            graal.finalizeSpawn(overworld, overworld.getCurrentDifficultyAt(spawnPos), MobSpawnType.MOB_SUMMONED, null, null);
+            if (overworld.addFreshEntity(graal)) {
+                globalWarState.graalEntity = graal;
+                broadcastMessage(overworld, "§5§lThe Holy Grail has appeared at (0," + spawnPos.getY() + ",0)!");
             } else {
-                broadcastMessage(level, "§cFailed to spawn Grail entity!");
+                broadcastMessage(overworld, "§cFailed to spawn Grail entity!");
             }
         }
     }
 
 
-    private static void checkWarEndCondition(ServerLevel level, WarState state) {
-        if (state.warParticipants.size() != 1) return;
+    private static void checkWarEndCondition(ServerLevel overworld) {
+        if (globalWarState.warParticipants.size() != 1) return;
 
-        ServerPlayer winner = level.getServer().getPlayerList().getPlayer(state.warParticipants.get(0));
-        if (winner != null && state.graalEntity != null && !state.graalEntity.isDeadOrDying()) {
+        ServerPlayer winner = overworld.getServer().getPlayerList().getPlayer(globalWarState.warParticipants.get(0));
+        if (winner != null && globalWarState.graalEntity != null && !globalWarState.graalEntity.isDeadOrDying()) {
             giveWinnerReward(winner);
-            state.graalEntity.remove(net.minecraft.world.entity.Entity.RemovalReason.DISCARDED);
+            globalWarState.graalEntity.remove(net.minecraft.world.entity.Entity.RemovalReason.DISCARDED);
         }
 
-        endWar(level, state);
+        endWar(overworld);
     }
 
     private static void giveWinnerReward(ServerPlayer winner) {
@@ -199,13 +219,13 @@ public class GrailWarEvent {
         }
     }
 
-    private static void endWar(ServerLevel level, WarState state) {
-        state.warActive = false;
-        state.graalSpawned = false;
-        state.warCompleted = true;
-        state.warParticipants.clear();
-        state.graalEntity = null;
-        broadcastMessage(level, "§c§lThe Holy Grail War has ended!");
+    private static void endWar(ServerLevel overworld) {
+        globalWarState.warActive = false;
+        globalWarState.graalSpawned = false;
+        globalWarState.warCompleted = true;
+        globalWarState.warParticipants.clear();
+        globalWarState.graalEntity = null;
+        broadcastMessage(overworld, "§c§lThe Holy Grail War has ended!");
     }
 
     private static void broadcastMessage(Level level, String msg) {

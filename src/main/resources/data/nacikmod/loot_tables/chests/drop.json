@@ -36,7 +36,7 @@
         {
           "type": "minecraft:item",
           "name": "nacikmod:enchantment_limit_table",
-          "weight": 1
+          "weight": 2
         },
         {
           "type": "minecraft:item",
@@ -132,24 +132,12 @@
         {
           "type": "minecraft:item",
           "name": "nacikmod:domain",
-          "weight": 1
+          "weight": 2
         },
         {
           "type": "minecraft:item",
           "name": "nacikmod:dark_sphere",
           "weight": 4,
-          "functions": []
-        },
-        {
-          "type": "minecraft:item",
-          "name": "nacikmod:barrier_seal",
-          "weight": 3,
-          "functions": []
-        },
-        {
-          "type": "minecraft:item",
-          "name": "nacikmod:barrier_wall",
-          "weight": 2,
           "functions": []
         },
         {

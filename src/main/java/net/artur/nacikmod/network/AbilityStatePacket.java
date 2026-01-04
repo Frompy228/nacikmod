@@ -10,6 +10,9 @@ import net.minecraftforge.network.NetworkEvent;
 import net.artur.nacikmod.item.ability.ManaRelease;
 import net.artur.nacikmod.item.ability.ManaLastMagic;
 import net.artur.nacikmod.item.ability.HundredSealAbility;
+import net.artur.nacikmod.item.ability.SimpleDomainAbility;
+import net.artur.nacikmod.item.ability.DomainAbility;
+import net.artur.nacikmod.item.ability.VisionBlessingAbility;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -90,6 +93,9 @@ public class AbilityStatePacket {
         updateAbilityState(targetPlayer, "release", packet.abilityStates.getOrDefault("release", false));
         updateAbilityState(targetPlayer, "last_magic", packet.abilityStates.getOrDefault("last_magic", false));
         updateAbilityState(targetPlayer, "hundred_seal", packet.abilityStates.getOrDefault("hundred_seal", false));
+        updateAbilityState(targetPlayer, "simple_domain", packet.abilityStates.getOrDefault("simple_domain", false));
+        updateAbilityState(targetPlayer, "domain", packet.abilityStates.getOrDefault("domain", false));
+        updateAbilityState(targetPlayer, "kodai", packet.abilityStates.getOrDefault("kodai", false));
         
         // Обновляем уровни
         updateAbilityLevel(targetPlayer, "release", packet.abilityLevels.getOrDefault("release", 0));
@@ -122,6 +128,33 @@ public class AbilityStatePacket {
                     }
                 } else {
                     HundredSealAbility.activeHundredSealPlayers.remove(player.getUUID());
+                }
+                break;
+            case "simple_domain":
+                if (isActive) {
+                    if (!SimpleDomainAbility.activeSimpleDomainPlayers.contains(player.getUUID())) {
+                        SimpleDomainAbility.activeSimpleDomainPlayers.add(player.getUUID());
+                    }
+                } else {
+                    SimpleDomainAbility.activeSimpleDomainPlayers.remove(player.getUUID());
+                }
+                break;
+            case "domain":
+                if (isActive) {
+                    if (!DomainAbility.activeDomainPlayers.contains(player.getUUID())) {
+                        DomainAbility.activeDomainPlayers.add(player.getUUID());
+                    }
+                } else {
+                    DomainAbility.activeDomainPlayers.remove(player.getUUID());
+                }
+                break;
+            case "kodai":
+                if (isActive) {
+                    if (!VisionBlessingAbility.activeKodaiPlayers.contains(player.getUUID())) {
+                        VisionBlessingAbility.activeKodaiPlayers.add(player.getUUID());
+                    }
+                } else {
+                    VisionBlessingAbility.activeKodaiPlayers.remove(player.getUUID());
                 }
                 break;
         }

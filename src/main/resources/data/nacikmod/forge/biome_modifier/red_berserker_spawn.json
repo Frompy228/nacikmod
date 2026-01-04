@@ -9,7 +9,7 @@
   ],
   "spawners": {
     "type": "nacikmod:red_berserker",
-    "weight": 2,
+    "weight": 1,
     "minCount": 1,
     "maxCount": 1
   }

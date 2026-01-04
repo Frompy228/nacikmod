@@ -19,7 +19,7 @@ import java.util.List;
 
 public class FireHailEntity extends Projectile {
     private static final int LIFETIME = 60; // 3 секунды (20 тиков * 3)
-    private static final float DAMAGE = 25.0f;
+    private static final float DAMAGE = 30.0f;
     private static final int FIRE_DURATION = 5;
     private int age = 0;
 

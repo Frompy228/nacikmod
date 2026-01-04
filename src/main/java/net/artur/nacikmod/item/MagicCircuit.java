@@ -2,7 +2,7 @@ package net.artur.nacikmod.item;
 
 import net.artur.nacikmod.capability.mana.IMana;
 import net.artur.nacikmod.capability.mana.ManaProvider;
-import net.artur.nacikmod.network.ModMessages;
+import net.artur.nacikmod.registry.ModMessages;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -14,7 +14,6 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.network.PacketDistributor;
 
 import java.util.List;
 

@@ -15,7 +15,7 @@ import java.util.List;
 
 public class SuppressingGate extends Entity {
     private static final int FALL_DURATION = 40; // 2 seconds to fall (faster)
-    private static final int MAX_LIFETIME = 200; // 20 seconds total lifetime
+    private static final int MAX_LIFETIME = 220; // 20 seconds total lifetime
     
     private int fallTicks = 0;
     private int lifetime = 0;

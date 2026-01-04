@@ -11,6 +11,8 @@ public class PlayerRewards implements IPlayerRewards {
     private boolean hasReceived2hReward;
     private boolean hasReceived2h15mReward;
     private boolean hasUsedGrailReward;
+    private boolean hasReceived5kManaReward;
+    private boolean hasReceived15kManaReward;
 
     public PlayerRewards() {
         this.hasReceivedSpawnReward = false;
@@ -21,6 +23,8 @@ public class PlayerRewards implements IPlayerRewards {
         this.hasReceived2hReward = false;
         this.hasReceived2h15mReward = false;
         this.hasUsedGrailReward = false;
+        this.hasReceived5kManaReward = false;
+        this.hasReceived15kManaReward = false;
     }
 
     @Override
@@ -103,6 +107,26 @@ public class PlayerRewards implements IPlayerRewards {
         this.hasUsedGrailReward = value;
     }
 
+    @Override
+    public boolean hasReceived5kManaReward() {
+        return hasReceived5kManaReward;
+    }
+
+    @Override
+    public void setReceived5kManaReward(boolean value) {
+        this.hasReceived5kManaReward = value;
+    }
+
+    @Override
+    public boolean hasReceived15kManaReward() {
+        return hasReceived15kManaReward;
+    }
+
+    @Override
+    public void setReceived15kManaReward(boolean value) {
+        this.hasReceived15kManaReward = value;
+    }
+
     public void saveNBTData(CompoundTag nbt) {
         nbt.putBoolean("hasReceivedSpawnReward", hasReceivedSpawnReward);
         nbt.putBoolean("hasReceivedTimeReward", hasReceivedTimeReward);
@@ -112,6 +136,8 @@ public class PlayerRewards implements IPlayerRewards {
         nbt.putBoolean("hasReceived2hReward", hasReceived2hReward);
         nbt.putBoolean("hasReceived2h15mReward", hasReceived2h15mReward);
         nbt.putBoolean("hasUsedGrailReward", hasUsedGrailReward);
+        nbt.putBoolean("hasReceived5kManaReward", hasReceived5kManaReward);
+        nbt.putBoolean("hasReceived15kManaReward", hasReceived15kManaReward);
     }
 
     public void loadNBTData(CompoundTag nbt) {
@@ -123,5 +149,7 @@ public class PlayerRewards implements IPlayerRewards {
         hasReceived2hReward = nbt.getBoolean("hasReceived2hReward");
         hasReceived2h15mReward = nbt.getBoolean("hasReceived2h15mReward");
         hasUsedGrailReward = nbt.getBoolean("hasUsedGrailReward");
+        hasReceived5kManaReward = nbt.getBoolean("hasReceived5kManaReward");
+        hasReceived15kManaReward = nbt.getBoolean("hasReceived15kManaReward");
     }
 } 

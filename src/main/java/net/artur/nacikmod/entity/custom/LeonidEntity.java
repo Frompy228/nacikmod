@@ -52,15 +52,14 @@ public class LeonidEntity extends HeroSouls {
     private static final int SPARTAN_SPAWN_MANA_COST = 5000;
     private static final int SPARTAN_SPAWN_RADIUS = 2;
     private int regenerationTick = 0;
-    private static final int REGENERATION_INTERVAL = 300;
+    private static final int REGENERATION_INTERVAL = 100;
     private boolean hasSpawnedSpartans = false;
-    private static int BONUS_ARMOR = 13;
+    private static int BONUS_ARMOR = 15;
     
     // Константы для прыжков
     private static final int JUMP_COOLDOWN_TICKS = 60; // 3 секунды между прыжками
     private static final double VERTICAL_JUMP_THRESHOLD = 2.0; // Минимальная разница высоты для прыжка
-    private static final double MAX_JUMP_HEIGHT = 4.0; // Максимальная высота прыжка
-    
+
     private int jumpCooldown = 0;
 
     public LeonidEntity(EntityType<? extends HeroSouls> entityType, Level level) {
@@ -82,8 +81,8 @@ public class LeonidEntity extends HeroSouls {
                 .add(ModAttributes.BONUS_ARMOR.get(),BONUS_ARMOR)
                 .add(Attributes.ARMOR,20)
                 .add(Attributes.ARMOR_TOUGHNESS,10)
-                .add(Attributes.MAX_HEALTH, 165.0) // Больше здоровья чем у базового HeroSouls
-                .add(Attributes.ATTACK_DAMAGE, 20.0) // Больше урона
+                .add(Attributes.MAX_HEALTH, 215.0) // Больше здоровья чем у базового HeroSouls
+                .add(Attributes.ATTACK_DAMAGE, 25.0) // Больше урона
                 .add(Attributes.MOVEMENT_SPEED, 0.42) // Быстрее базового HeroSouls
                 .add(Attributes.FOLLOW_RANGE, 40.0) // Больший радиус обнаружения
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.3)
@@ -93,10 +92,11 @@ public class LeonidEntity extends HeroSouls {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new CustomMeleeAttackGoal(this, 1D));
-        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 0.8D));
-        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(1, new OpenDoorGoal(this, true)); // Открытие дверей во время боя
+        this.goalSelector.addGoal(2, new CustomMeleeAttackGoal(this, 1D));
+        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 0.8D));
+        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
 
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this, SpartanEntity.class).setAlertOthers(LeonidEntity.class));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
@@ -131,6 +131,11 @@ public class LeonidEntity extends HeroSouls {
         public void tick() {
             LivingEntity target = leonid.getTarget();
             if (target == null) return;
+            // Защита от самоатаки
+            if (target == leonid) {
+                leonid.setTarget(null);
+                return;
+            }
 
             // Двигаемся к цели всегда, если она есть
             leonid.getNavigation().moveTo(target, speedModifier);
@@ -178,7 +183,7 @@ public class LeonidEntity extends HeroSouls {
         regenerationTick++;
         if (regenerationTick >= REGENERATION_INTERVAL) {
             if (this.getHealth() < this.getMaxHealth()) {
-                this.heal(5.0f);
+                this.heal(5.2f);
             }
             regenerationTick = 0;
         }

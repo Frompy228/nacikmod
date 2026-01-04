@@ -107,6 +107,11 @@ public class FireWallDamageZone extends Entity {
     }
 
     @Override
+    public boolean fireImmune() {
+        return true;
+    }
+
+    @Override
     public boolean canBeCollidedWith() {
         return false;
     }

@@ -35,11 +35,11 @@ import net.minecraft.sounds.SoundSource;
 public class SpartanEntity extends HeroSouls {
     private static final double ATTACK_RANGE = 3.75D;
     private int attackCooldown = 0;
-    private static final int ATTACK_COOLDOWN_TICKS = 20;
+    private static final int ATTACK_COOLDOWN_TICKS = 19;
     private int shieldBlockCooldown = 0;
     private boolean shieldBlockedHit = false;
     private static final int SHIELD_BLOCK_COOLDOWN = 140; // 7 секунд (20 тиков * 7)
-    private static int BONUS_ARMOR = 5;
+    private static int BONUS_ARMOR = 7;
     
     // Константы для прыжков
     private static final int JUMP_COOLDOWN_TICKS = 60; // 3 секунды между прыжками
@@ -59,8 +59,8 @@ public class SpartanEntity extends HeroSouls {
                 .add(ModAttributes.BONUS_ARMOR.get(), BONUS_ARMOR)
                 .add(Attributes.ARMOR, 5)
                 .add(Attributes.ARMOR_TOUGHNESS, 5)
-                .add(Attributes.MAX_HEALTH, 50.0)
-                .add(Attributes.ATTACK_DAMAGE, 12.0)
+                .add(Attributes.MAX_HEALTH, 70.0)
+                .add(Attributes.ATTACK_DAMAGE, 14.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.37)
                 .add(ForgeMod.SWIM_SPEED.get(), 2)
                 .add(Attributes.FOLLOW_RANGE, 35.0);
@@ -69,10 +69,11 @@ public class SpartanEntity extends HeroSouls {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new SpearAttackGoal(this, 1D));
-        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 0.8D));
-        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(1, new OpenDoorGoal(this, true)); // Открытие дверей во время боя
+        this.goalSelector.addGoal(2, new SpearAttackGoal(this, 1D));
+        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 0.8D));
+        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
 
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this, LeonidEntity.class).setAlertOthers(SpartanEntity.class));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));

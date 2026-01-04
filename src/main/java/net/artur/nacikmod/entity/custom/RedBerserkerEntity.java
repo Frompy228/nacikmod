@@ -47,7 +47,7 @@ public class RedBerserkerEntity extends HeroSouls {
     private static final int ROAR_RADIUS = 4; // Радиус разрушения блоков
     private static final int BASE_ATTACK_COOLDOWN = 20; // 2 секунды между атаками
     private int currentAttackCooldown = BASE_ATTACK_COOLDOWN; // Текущая перезарядка атаки
-    private static int BONUS_ARMOR = 11;
+    private static int BONUS_ARMOR = 14;
 
     // Флаг для защиты от повторного входа в performRoar
     private boolean isRoaring = false;
@@ -59,10 +59,11 @@ public class RedBerserkerEntity extends HeroSouls {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new CustomMeleeAttackGoal(this, 1.0D));
-        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 0.8D));
-        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(1, new OpenDoorGoal(this, true)); // Открытие дверей во время боя
+        this.goalSelector.addGoal(2, new CustomMeleeAttackGoal(this, 1.0D));
+        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 0.8D));
+        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
 
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
@@ -140,7 +141,7 @@ public class RedBerserkerEntity extends HeroSouls {
                 .add(ModAttributes.BONUS_ARMOR.get(), BONUS_ARMOR)
                 .add(Attributes.ARMOR, 20)
                 .add(Attributes.ARMOR_TOUGHNESS, 15)
-                .add(Attributes.MAX_HEALTH, 255.0)
+                .add(Attributes.MAX_HEALTH, 340.0)
                 .add(Attributes.ATTACK_DAMAGE, BASE_ATTACK_DAMAGE)
                 .add(Attributes.MOVEMENT_SPEED, 0.65)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1)

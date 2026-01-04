@@ -40,7 +40,7 @@ public class HiraishinWithoutSeal extends SwordItem {
 
         @Override
         public Ingredient getRepairIngredient() {
-            return null;
+            return Ingredient.of(ModItems.SHARD_OF_ARTIFACT.get()); // Ремонт артефактом
         }
     }
 }

@@ -16,7 +16,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.artur.nacikmod.registry.ModAttributes;
-import net.artur.nacikmod.network.ModMessages;
 import net.artur.nacikmod.network.AbilityStateManager;
 
 
@@ -184,7 +183,7 @@ public class HundredSealAbility {
             // Применяем эффект регенерации только если его нет или осталось мало времени
             // Это позволяет эффекту успевать тикать (применять исцеление)
             MobEffectInstance existingEffect = player.getEffect(MobEffects.REGENERATION);
-            if (existingEffect == null || existingEffect.getDuration() < 40) {
+            if (existingEffect == null || existingEffect.getDuration() < 10) {
                 // Применяем эффект только если его нет или осталось меньше 2 секунд
             player.addEffect(new MobEffectInstance(
                     MobEffects.REGENERATION,

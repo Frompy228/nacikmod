@@ -1,6 +1,7 @@
 package net.artur.nacikmod.item;
 
 import net.artur.nacikmod.capability.mana.ManaProvider;
+import net.artur.nacikmod.registry.ModMessages;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -8,7 +9,6 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +34,7 @@ public class MageMark extends Item {
 
                 // Принудительно синхронизируем статус с клиентом
                 if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
-                    net.artur.nacikmod.network.ModMessages.sendTrueMageStatusToClient(serverPlayer, true);
+                    ModMessages.sendTrueMageStatusToClient(serverPlayer, true);
                 }
             });
 

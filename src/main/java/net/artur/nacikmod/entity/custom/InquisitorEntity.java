@@ -6,9 +6,11 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.entity.MobClass.HeroSouls;
 import net.artur.nacikmod.entity.ai.InquisitorGuardGoal;
+import net.artur.nacikmod.entity.projectiles.FireCloudEntity;
 import net.artur.nacikmod.entity.projectiles.FireHailEntity;
 import net.artur.nacikmod.entity.projectiles.FireWallEntity;
 import net.artur.nacikmod.entity.projectiles.FireballEntity;
+import net.artur.nacikmod.item.Gravity;
 import net.artur.nacikmod.registry.ModAttributes;
 import net.artur.nacikmod.registry.ModEffects;
 import net.artur.nacikmod.registry.ModEntities;
@@ -31,11 +33,7 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
@@ -56,9 +54,9 @@ public class InquisitorEntity extends HeroSouls {
     private static final int MAX_MANA = 30_000;
     private static final int MANA_REGEN_PER_TICK = 30;
     private static final double ATTACK_RANGE = 3.0D;
-    private static final int ATTACK_COOLDOWN_TICKS = 11;
-    private static final int GLOBAL_COOLDOWN_TICKS = 8 * 20;
-    private static int BONUS_ARMOR = 27;
+    private static final int ATTACK_COOLDOWN_TICKS = 10;
+    private static final int GLOBAL_COOLDOWN_TICKS = 6 * 20;
+    private static int BONUS_ARMOR = 30;
 
     private static final int SUMMON_CAST_TICKS = 60;
     private static final int SUMMON_COOLDOWN_TICKS = 5 * 60 * 20; // 5 minutes
@@ -79,18 +77,36 @@ public class InquisitorEntity extends HeroSouls {
     private static final double UPWARD_STRENGTH = 0.5;   // сила прыжка вверх
     private static final int JUMP_COOLDOWN_TICKS = 40;   // задержка между прыжками
 
+    // Константы для обычного прыжка вверх
+    private static final int VERTICAL_JUMP_COOLDOWN_TICKS = 60; // 3 секунды между прыжками
+    private static final double VERTICAL_JUMP_THRESHOLD = 2.0; // Минимальная разница высоты для прыжка
+    private static final double VERTICAL_JUMP_MIN_POWER = 0.7; // Минимальная сила прыжка (выше чем у Leonid)
+    private static final double VERTICAL_JUMP_MAX_POWER = 0.9; // Максимальная сила прыжка
+    private static final double VERTICAL_JUMP_RANGE = 5.0; // Максимальная горизонтальная дистанция для прыжка
+
     private static final int BLESSING_COOLDOWN_TICKS = 60 * 20; // 60 секунд
     private static final int BLESSING_MANA_COST = 700;
     private static final int BLESSING_DURATION_TICKS = 30 * 20; // 30 секунд
+
+    private static final int ANTI_FLIGHT_COOLDOWN_TICKS = 10 * 20; // 10 секунд
+    private static final int ANTI_FLIGHT_MANA_COST = 300;
+    private static final int ANTI_FLIGHT_LIGHTNING_COUNT = 5;
+    private static final double ANTI_FLIGHT_LIGHTNING_SPREAD = 0.6D;
+    public static final String ANTI_FLIGHT_LIGHTNING_TAG = "nacikmod_inquisitor_anti_flight";
 
     // Отдельные способности (вне основного списка)
     private static final int DASH_COOLDOWN_TICKS = 25 * 20; // 25 seconds
     private static final float DASH_DAMAGE = 20.0F;
     private static final double DASH_DISTANCE = 8.0D; // Максимальная дистанция для рывка
 
-    private static final int TELEPORT_COOLDOWN_TICKS = 15 * 20; // 15 seconds
+    private static final int TELEPORT_COOLDOWN_TICKS = 18 * 20;
     private static final int TELEPORT_MANA_COST = 300;
-    private static final int TELEPORT_MANA_BURN = 100; // Сжигание маны у цели
+    private static final int TELEPORT_MANA_BURN = 300; // Сжигание маны у цели
+
+    private static final int FIRE_CLOUD_COOLDOWN_TICKS = 11 * 20; // 10 секунд
+    private static final int FIRE_CLOUD_MANA_COST = 200;
+    private static final double FIRE_CLOUD_RADIUS = 10.0D; // Радиус вокруг инквизитора
+    private static final int FIRE_CLOUD_COUNT = 3; // Количество облаков
 
     private enum AbilityType {
         NONE(0, 0, 0),
@@ -117,7 +133,8 @@ public class InquisitorEntity extends HeroSouls {
     private int nextAbilityRollTick = GLOBAL_COOLDOWN_TICKS;
     private int fireballJumpTicks = 0; // Счетчик тиков для задержки выстрела после прыжка
     private LivingEntity fireballJumpTarget = null; // Цель для выстрела после прыжка
-    private int jumpCooldown = 0; // Кулдаун прыжка
+    private int jumpCooldown = 0; // Кулдаун прыжка для Fireball Jump
+    private int verticalJumpCooldown = 0; // Кулдаун для обычного вертикального прыжка
     private final Object2IntMap<AbilityType> abilityCooldowns = new Object2IntOpenHashMap<>();
     private Vec3 pendingSummonPosition;
     private AreaEffectCloud telegraphCloud;
@@ -125,10 +142,17 @@ public class InquisitorEntity extends HeroSouls {
     // Кулдауны для отдельных способностей
     private int dashCooldown = 0;
     private int teleportCooldown = 0;
+    private int antiFlightCooldown = 0;
+    private int fireCloudCooldown = 0;
 
     // Отслеживание рывка для нанесения урона при столкновении
     private boolean isDashing = false;
     private LivingEntity dashTarget = null;
+
+    // Отслеживание здоровья для переключения на Holy_bayonets
+    private float initialHealth = 100.0F;
+    private static final float HP_THRESHOLD_FOR_WEAPON_SWITCH = 50.0F; // Переключаемся после потери 50 HP
+    private boolean hasSwitchedToHolyBayonets = false;
 
     private static final List<HeroSoulOption> HERO_SOUL_POOL = buildHeroSoulPool();
     private static final int HERO_SOUL_TOTAL_WEIGHT = HERO_SOUL_POOL.stream().mapToInt(HeroSoulOption::weight).sum();
@@ -143,13 +167,13 @@ public class InquisitorEntity extends HeroSouls {
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
                 .add(ModAttributes.BONUS_ARMOR.get(), BONUS_ARMOR)
-                .add(Attributes.MAX_HEALTH, 145.0D)
-                .add(Attributes.ARMOR, 12.0D)
+                .add(Attributes.MAX_HEALTH, 185.0D)
+                .add(Attributes.ARMOR, 14.0D)
                 .add(Attributes.ARMOR_TOUGHNESS, 5.0D)
-                .add(Attributes.ATTACK_DAMAGE, 25.0D)
+                .add(Attributes.ATTACK_DAMAGE, 23.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.38D)
-                .add(Attributes.KNOCKBACK_RESISTANCE, 0.25D)
-                .add(ForgeMod.SWIM_SPEED.get(), 2) // Увеличиваем скорость плавания в 1.5 раза
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0.2D)
+                .add(ForgeMod.SWIM_SPEED.get(), 2)
                 .add(Attributes.FOLLOW_RANGE, 32.0D);
     }
 
@@ -162,14 +186,15 @@ public class InquisitorEntity extends HeroSouls {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new InquisitorMeleeAttackGoal(this, 1.2D));
-        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 0.8D));
-        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(1, new OpenDoorGoal(this, true)); // Открытие дверей во время боя
+        this.goalSelector.addGoal(2, new InquisitorMeleeAttackGoal(this, 1.2D));
+        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 0.8D));
+        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
 
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Monster.class, 10, true, false, this::isValidTarget));
+        // Убрали автоматическую атаку на игроков - инквизитор нейтрален до получения урона
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Monster.class, 10, true, false, this::isValidTarget));
     }
 
     private boolean isValidTarget(@Nullable net.minecraft.world.entity.LivingEntity entity) {
@@ -207,10 +232,22 @@ public class InquisitorEntity extends HeroSouls {
             tickSeparateAbilities(); // Отдельные способности (рывок и телепорт)
             checkDashCollision(); // Проверка столкновения во время рывка
             tickFireballJump(); // Обработка задержки выстрела после прыжка
+            checkAndSwitchWeapon(); // Проверка необходимости переключения на Holy_bayonets
             
-            // Обновляем кулдаун прыжка
+            // Обновляем кулдауны прыжков
             if (jumpCooldown > 0) {
                 jumpCooldown--;
+            }
+            if (verticalJumpCooldown > 0) {
+                verticalJumpCooldown--;
+            }
+            
+            // Проверяем необходимость обычного прыжка вверх для достижения цели
+            if (!isCastingAbility() && !isDashing) {
+                LivingEntity target = this.getTarget();
+                if (target != null) {
+                    checkAndPerformVerticalJump(target);
+                }
             }
         } else if (this.isCastingAbility()) {
             this.getNavigation().stop();
@@ -224,8 +261,8 @@ public class InquisitorEntity extends HeroSouls {
     }
 
     private void maintainRegenerationEffect() {
-        if (this.tickCount % 40 == 0) {
-            this.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 100, 3, false, false));
+        if (this.tickCount % 60 == 0) {
+            this.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 100, 4, false, false));
         }
     }
 
@@ -250,9 +287,16 @@ public class InquisitorEntity extends HeroSouls {
         // Обновляем кулдауны
         if (dashCooldown > 0) dashCooldown--;
         if (teleportCooldown > 0) teleportCooldown--;
+        if (antiFlightCooldown > 0) antiFlightCooldown--;
+        if (fireCloudCooldown > 0) fireCloudCooldown--;
 
         // Используем способности только в бою и если не кастуем основную способность
         if (isCastingAbility()) {
+            return;
+        }
+        
+        // Проверяем блокировку способностей под эффектом SUPPRESSING_GATE
+        if (isActionBlocked(HeroSouls.ActionType.ABILITY_CAST)) {
             return;
         }
 
@@ -264,6 +308,21 @@ public class InquisitorEntity extends HeroSouls {
         LivingEntity target = this.getTarget();
         if (target == null || !target.isAlive()) {
             return;
+        }
+
+        // Проверяем анти-полет способность (приоритет над остальными)
+        if (antiFlightCooldown <= 0 && canUseAntiFlightAbility(target)) {
+            if (performAntiFlightLightning(target)) {
+                antiFlightCooldown = ANTI_FLIGHT_COOLDOWN_TICKS;
+                return;
+            }
+        }
+
+        // Проверяем возможность использования облаков огня
+        if (fireCloudCooldown <= 0 && this.getMana() >= FIRE_CLOUD_MANA_COST) {
+            performFireCloudAbility();
+            fireCloudCooldown = FIRE_CLOUD_COOLDOWN_TICKS;
+            return; // После активации не проверяем другие способности в этом тике
         }
 
         // Проверяем возможность использования рывка (приоритет над телепортом)
@@ -397,6 +456,106 @@ public class InquisitorEntity extends HeroSouls {
         this.swing(InteractionHand.OFF_HAND);
     }
 
+    /**
+     * Проверяет возможность применения анти-полет способности
+     */
+    private boolean canUseAntiFlightAbility(LivingEntity target) {
+        if (!(target instanceof Player player)) {
+            return false;
+        }
+        if (!player.isAlive()) {
+            return false;
+        }
+        if (!this.hasLineOfSight(player)) {
+            return false;
+        }
+        if (!isPlayerFlightEnabled(player)) {
+            return false;
+        }
+        double heightDifference = player.getY() - this.getY();
+        if (heightDifference <= 1.0D) {
+            return false; // Цель должна быть как минимум на 1 блок выше
+        }
+        return true;
+    }
+
+    private boolean isPlayerFlightEnabled(Player player) {
+        if (Gravity.isFlyingActive(player)) {
+            return true;
+        }
+        return player.getAbilities().flying;
+    }
+
+    private boolean performAntiFlightLightning(LivingEntity target) {
+        if (!(this.level() instanceof ServerLevel serverLevel)) {
+            return false;
+        }
+        if (!consumeMana(ANTI_FLIGHT_MANA_COST)) {
+            return false;
+        }
+
+        Vec3 basePos = target.position();
+        for (int i = 0; i < ANTI_FLIGHT_LIGHTNING_COUNT; i++) {
+            LightningBolt lightningBolt = EntityType.LIGHTNING_BOLT.create(serverLevel);
+            if (lightningBolt == null) {
+                continue;
+            }
+            double offsetX = (this.random.nextDouble() - 0.5D) * ANTI_FLIGHT_LIGHTNING_SPREAD;
+            double offsetZ = (this.random.nextDouble() - 0.5D) * ANTI_FLIGHT_LIGHTNING_SPREAD;
+            lightningBolt.setPos(basePos.x + offsetX, basePos.y, basePos.z + offsetZ);
+            lightningBolt.getPersistentData().putBoolean(ANTI_FLIGHT_LIGHTNING_TAG, true);
+            lightningBolt.setCause(null);
+            serverLevel.addFreshEntity(lightningBolt);
+        }
+        return true;
+    }
+
+    /**
+     * Создает 3 облака огня в случайных местах в радиусе вокруг инквизитора
+     */
+    private void performFireCloudAbility() {
+        if (this.level().isClientSide) {
+            return;
+        }
+        if (!consumeMana(FIRE_CLOUD_MANA_COST)) {
+            return;
+        }
+
+        double centerX = this.getX();
+        double centerY = this.getY();
+        double centerZ = this.getZ();
+
+        for (int i = 0; i < FIRE_CLOUD_COUNT; i++) {
+            // Генерируем случайную позицию в радиусе
+            double angle = this.random.nextDouble() * 2.0 * Math.PI; // Случайный угол
+            double distance = this.random.nextDouble() * FIRE_CLOUD_RADIUS; // Случайное расстояние от 0 до радиуса
+            double cloudX = centerX + Math.cos(angle) * distance;
+            double cloudZ = centerZ + Math.sin(angle) * distance;
+            
+            // Используем высоту инквизитора как базовую и находим свободное место
+            double cloudY = findSpawnHeight(cloudX, centerY, cloudZ);
+
+            // Создаем облако огня
+            FireCloudEntity fireCloud = new FireCloudEntity(this.level(), this, cloudX, cloudY, cloudZ);
+            this.level().addFreshEntity(fireCloud);
+
+            // Создаем эффект частиц при создании облака
+            if (this.level() instanceof ServerLevel serverLevel) {
+                for (int j = 0; j < 15; j++) {
+                    double particleX = cloudX + (this.random.nextDouble() - 0.5) * 2;
+                    double particleY = cloudY + (this.random.nextDouble() - 0.5) * 2;
+                    double particleZ = cloudZ + (this.random.nextDouble() - 0.5) * 2;
+
+                    serverLevel.sendParticles(
+                        ParticleTypes.FLAME,
+                        particleX, particleY, particleZ,
+                        1, 0.1, 0.1, 0.1, 0.1
+                    );
+                }
+            }
+        }
+    }
+
     private void tickActiveAbility() {
         castTicks++;
         if (activeAbility == AbilityType.SUMMON_HERO_SOUL) {
@@ -424,6 +583,12 @@ public class InquisitorEntity extends HeroSouls {
     }
 
     private void tryStartRandomAbility() {
+        // Проверяем блокировку способностей под эффектом SUPPRESSING_GATE
+        if (isActionBlocked(HeroSouls.ActionType.ABILITY_CAST)) {
+            scheduleNextAbilityRoll();
+            return;
+        }
+        
         // Используем способности только в бою (есть цель)
         if (this.getTarget() == null || !this.getTarget().isAlive()) {
             scheduleNextAbilityRoll();
@@ -460,6 +625,13 @@ public class InquisitorEntity extends HeroSouls {
     }
 
     private void startAbility(AbilityType abilityType) {
+        // Дополнительная проверка блокировки способностей (на случай если метод вызван напрямую)
+        if (isActionBlocked(HeroSouls.ActionType.ABILITY_CAST)) {
+            scheduleNextAbilityRoll();
+            resetAbilityState();
+            return;
+        }
+        
         if (abilityType == AbilityType.SUMMON_HERO_SOUL) {
             if (!consumeManaPreview(abilityType.manaCost)) {
                 scheduleNextAbilityRoll();
@@ -612,7 +784,7 @@ public class InquisitorEntity extends HeroSouls {
         }
 
         this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, BLESSING_DURATION_TICKS, 0, true, true,true));
-        this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, BLESSING_DURATION_TICKS, 1, true, true,true));
+        this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, BLESSING_DURATION_TICKS, 0, true, true,true));
         this.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, BLESSING_DURATION_TICKS, 0, true, true,true));
         spawnBlessingParticles();
 
@@ -727,6 +899,46 @@ public class InquisitorEntity extends HeroSouls {
         serverLevel.addFreshEntity(fireball);
     }
 
+    /**
+     * Проверяет необходимость прыжка вверх и выполняет его
+     */
+    private void checkAndPerformVerticalJump(LivingEntity target) {
+        if (verticalJumpCooldown > 0 || !this.onGround()) return;
+
+        double targetY = target.getY();
+        double thisY = this.getY();
+        double heightDifference = targetY - thisY;
+
+        // Проверяем горизонтальную дистанцию до цели
+        double horizontalDistance = this.distanceTo(target);
+
+        // Если цель выше и разница значительная, и находится на близкой дистанции, пытаемся прыгнуть
+        if (heightDifference > VERTICAL_JUMP_THRESHOLD &&
+                horizontalDistance <= VERTICAL_JUMP_RANGE) {
+            // Проверяем, есть ли видимость между нами и целью
+            if (this.hasLineOfSight(target)) {
+                performVerticalJump();
+            }
+        }
+    }
+
+    /**
+     * Выполняет прыжок вверх (выше чем у Leonid)
+     */
+    private void performVerticalJump() {
+        if (this.onGround() && verticalJumpCooldown <= 0) {
+            // Прыгаем вверх с силой выше чем у Leonid
+            double jumpPower = VERTICAL_JUMP_MIN_POWER + (this.random.nextDouble() * (VERTICAL_JUMP_MAX_POWER - VERTICAL_JUMP_MIN_POWER));
+            this.setDeltaMovement(this.getDeltaMovement().add(0, jumpPower, 0));
+            this.hasImpulse = true;
+            verticalJumpCooldown = VERTICAL_JUMP_COOLDOWN_TICKS;
+
+            // Проигрываем звук прыжка
+            this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
+                net.minecraft.sounds.SoundEvents.PLAYER_ATTACK_STRONG, net.minecraft.sounds.SoundSource.HOSTILE, 0.5F, 1.2F);
+        }
+    }
+
     private void spawnFireWall(LivingEntity target) {
         if (!(this.level() instanceof ServerLevel serverLevel)) {
             return;
@@ -793,10 +1005,8 @@ public class InquisitorEntity extends HeroSouls {
         // Спавним стену в 1 блоке от цели (за спиной)
         Vec3 wallPos = targetPos.add(toInquisitor.scale(1.0D));
 
-        // Находим правильную высоту (на земле)
-        BlockPos blockPos = BlockPos.containing(wallPos.x, target.getY(), wallPos.z);
-        int y = this.level().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, blockPos.getX(), blockPos.getZ());
-        double spawnY = y;
+        // Используем высоту цели как базовую и находим свободное место
+        double spawnY = findSpawnHeight(wallPos.x, target.getY(), wallPos.z);
 
         return new Vec3(wallPos.x, spawnY, wallPos.z);
     }
@@ -929,6 +1139,17 @@ public class InquisitorEntity extends HeroSouls {
                 this.setTarget(null);
             }
             this.setLastHurtByMob(null);
+        } else if (result && !friendlySource) {
+            // Если получили урон от игрока, устанавливаем его как цель
+            Entity attacker = source.getEntity();
+            if (attacker instanceof Player player && player.isAlive()) {
+                this.setTarget(player);
+                this.setLastHurtByMob(player);
+            } else if (attacker instanceof LivingEntity livingAttacker && livingAttacker.isAlive()) {
+                // Также атакуем других мобов, если они нанесли урон
+                this.setTarget(livingAttacker);
+                this.setLastHurtByMob(livingAttacker);
+            }
         }
 
         if (result && isCastingAbility()) {
@@ -966,12 +1187,77 @@ public class InquisitorEntity extends HeroSouls {
         return false;
     }
 
+    /**
+     * Проверяет потерю HP и переключается на Holy_bayonets после потери 50 HP
+     */
+    private void checkAndSwitchWeapon() {
+        if (hasSwitchedToHolyBayonets) {
+            return; // Уже переключились
+        }
+
+        float currentHealth = this.getHealth();
+        float healthLost = initialHealth - currentHealth;
+
+        if (healthLost >= HP_THRESHOLD_FOR_WEAPON_SWITCH) {
+            // Переключаемся на Holy_bayonets в обеих руках
+            this.setItemSlot(EquipmentSlot.MAINHAND, ModItems.HOLY_BAYONETS.get().getDefaultInstance());
+            this.setItemSlot(EquipmentSlot.OFFHAND, ModItems.HOLY_BAYONETS.get().getDefaultInstance());
+            hasSwitchedToHolyBayonets = true;
+        }
+    }
+
+    /**
+     * Находит правильную высоту для спавна сущности относительно базовой высоты
+     * Ищет свободное место рядом с базовой высотой, а не на поверхности
+     */
+    private double findSpawnHeight(double x, double baseY, double z) {
+        BlockPos checkPos = BlockPos.containing(x, baseY, z);
+        
+        // Начинаем с базовой высоты и ищем свободное место
+        // Проверяем вверх и вниз от базовой высоты (до 5 блоков в каждую сторону)
+        int baseBlockY = BlockPos.containing(x, baseY, z).getY();
+        
+        // Сначала проверяем саму базовую высоту
+        if (isValidSpawnHeight(x, baseBlockY, z)) {
+            return baseBlockY + 0.5;
+        }
+        
+        // Ищем вверх от базовой высоты
+        for (int offset = 1; offset <= 5; offset++) {
+            int checkY = baseBlockY + offset;
+            if (isValidSpawnHeight(x, checkY, z)) {
+                return checkY + 0.5;
+            }
+        }
+        
+        // Ищем вниз от базовой высоты
+        for (int offset = 1; offset <= 5; offset++) {
+            int checkY = baseBlockY - offset;
+            if (isValidSpawnHeight(x, checkY, z)) {
+                return checkY + 0.5;
+            }
+        }
+        
+        // Если ничего не нашли, возвращаем базовую высоту
+        return baseY;
+    }
+    
+    /**
+     * Проверяет, является ли позиция валидной для спавна (блок пустой и над ним есть место)
+     */
+    private boolean isValidSpawnHeight(double x, int y, double z) {
+        BlockPos pos = BlockPos.containing(x, y, z);
+        BlockPos abovePos = pos.above();
+        
+        // Проверяем, что текущий блок пустой или проходимый, и блок сверху тоже пустой
+        return this.level().isEmptyBlock(pos) && this.level().isEmptyBlock(abovePos);
+    }
+
     private Vec3 calculateSummonPosition() {
         Vec3 look = this.getLookAngle();
         Vec3 forward = this.position().add(look.normalize().scale(3.0D));
-        BlockPos approximate = BlockPos.containing(forward.x, this.getY(), forward.z);
-        int y = this.level().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, approximate.getX(), approximate.getZ());
-        double spawnY = y + 1;
+        // Используем высоту инквизитора как базовую и находим свободное место
+        double spawnY = findSpawnHeight(forward.x, this.getY(), forward.z);
         return new Vec3(forward.x, spawnY, forward.z);
     }
 
@@ -1036,7 +1322,11 @@ public class InquisitorEntity extends HeroSouls {
         compound.putInt("NextAbilityRoll", this.nextAbilityRollTick);
         compound.putInt("DashCooldown", this.dashCooldown);
         compound.putInt("TeleportCooldown", this.teleportCooldown);
+        compound.putInt("FireCloudCooldown", this.fireCloudCooldown);
         compound.putInt("JumpCooldown", this.jumpCooldown);
+        compound.putInt("VerticalJumpCooldown", this.verticalJumpCooldown);
+        compound.putFloat("InitialHealth", this.initialHealth);
+        compound.putBoolean("HasSwitchedToHolyBayonets", this.hasSwitchedToHolyBayonets);
         CompoundTag cooldowns = new CompoundTag();
         for (AbilityType type : abilityCooldowns.keySet()) {
             cooldowns.putInt(type.name(), abilityCooldowns.getInt(type));
@@ -1051,7 +1341,15 @@ public class InquisitorEntity extends HeroSouls {
         this.nextAbilityRollTick = compound.getInt("NextAbilityRoll");
         this.dashCooldown = compound.getInt("DashCooldown");
         this.teleportCooldown = compound.getInt("TeleportCooldown");
+        this.fireCloudCooldown = compound.getInt("FireCloudCooldown");
         this.jumpCooldown = compound.getInt("JumpCooldown");
+        this.verticalJumpCooldown = compound.getInt("VerticalJumpCooldown");
+        if (compound.contains("InitialHealth")) {
+            this.initialHealth = compound.getFloat("InitialHealth");
+        } else {
+            this.initialHealth = this.getMaxHealth();
+        }
+        this.hasSwitchedToHolyBayonets = compound.getBoolean("HasSwitchedToHolyBayonets");
         this.activeAbility = AbilityType.NONE;
         this.castTicks = 0;
         this.damageTakenThisCast = 0.0F;
@@ -1076,6 +1374,8 @@ public class InquisitorEntity extends HeroSouls {
             mana.setMana(MAX_MANA);
         });
         this.nextAbilityRollTick = this.tickCount + GLOBAL_COOLDOWN_TICKS;
+        this.initialHealth = this.getMaxHealth(); // Инициализируем начальное здоровье
+        this.hasSwitchedToHolyBayonets = false; // Сбрасываем флаг переключения оружия
 
         AttributeInstance attribute = this.getAttribute(ModAttributes.BONUS_ARMOR.get());
         attribute.setBaseValue(BONUS_ARMOR);
@@ -1121,6 +1421,12 @@ public class InquisitorEntity extends HeroSouls {
                 return;
             }
 
+            // Защита от самоатаки
+            if (target == inquisitor) {
+                inquisitor.setTarget(null);
+                return;
+            }
+
             inquisitor.getNavigation().moveTo(target, speedModifier);
             inquisitor.getLookControl().setLookAt(target, 30.0F, 30.0F);
 
@@ -1134,8 +1440,8 @@ public class InquisitorEntity extends HeroSouls {
                     }
 
                     inquisitor.swing(hand);
-                    float damage = (float) inquisitor.getAttributeValue(Attributes.ATTACK_DAMAGE);
-                    target.hurt(inquisitor.damageSources().mobAttack(inquisitor), damage);
+                    // Используем doHurtTarget() для правильной атаки с учетом оружия и зачарований
+                    inquisitor.doHurtTarget(target);
                     attackCooldown = ATTACK_COOLDOWN_TICKS;
                 } else {
                     attackCooldown--;
@@ -1154,17 +1460,22 @@ public class InquisitorEntity extends HeroSouls {
     protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
         Random random = new Random(); // Генератор случайных чисел
         double chanceCircuit = 0.25;
-        double chanceCross = 0.25;
+        double chanceCross = 0.23;
         double chanceGrail = 0.01;
+        double chanceAnni = 0.15;
 
         if (random.nextDouble() < chanceCircuit) {
-            this.spawnAtLocation(new ItemStack(ModItems.MAGIC_CIRCUIT.get(), 40));
+            int circuitCount = random.nextInt(30, 51);
+            this.spawnAtLocation(new ItemStack(ModItems.MAGIC_CIRCUIT.get(), circuitCount));
         }
         if (random.nextDouble() < chanceCross) {
             this.spawnAtLocation(new ItemStack(ModItems.CROSS.get(), 1));
         }
         if (random.nextDouble() < chanceGrail) {
-            this.spawnAtLocation(new ItemStack(ModItems.GRAIL.get(), 1));
+            this.spawnAtLocation(new ItemStack(ModItems.FIRE_ANNIHILATION.get(), 1));
+        }
+        if (random.nextDouble() < chanceAnni) {
+            this.spawnAtLocation(new ItemStack(ModItems.HOLY_BAYONETS.get(), 1));
         }
     }
 

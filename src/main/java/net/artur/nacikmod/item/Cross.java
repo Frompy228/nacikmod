@@ -57,7 +57,7 @@ public class Cross extends Item implements ICurioItem {
             // Применяем эффект регенерации только если его нет или осталось мало времени
             // Это позволяет эффекту успевать тикать (применять исцеление)
             MobEffectInstance existingEffect = entity.getEffect(MobEffects.REGENERATION);
-            if (existingEffect == null || existingEffect.getDuration() < 40) {
+            if (existingEffect == null || existingEffect.getDuration() < 10) {
                 // Применяем эффект только если его нет или осталось меньше 2 секунд
             entity.addEffect(new MobEffectInstance(
                     MobEffects.REGENERATION,

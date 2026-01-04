@@ -12,17 +12,20 @@ public class ModItemProperties {
     }
 
     private static void makeBow(Item item) {
-        ItemProperties.register(item, new ResourceLocation("pull"), (p_174635_, p_174636_, p_174637_, p_174638_) -> {
-            if (p_174637_ == null) {
+        // Свойство "pull" отвечает за фазу натяжения (0.0, 0.65, 0.9, 1.0)
+        ItemProperties.register(item, new ResourceLocation("pull"), (stack, level, living, seed) -> {
+            if (living == null) {
                 return 0.0F;
             } else {
-                return p_174637_.getUseItem() != p_174635_ ? 0.0F : (float)(p_174635_.getUseDuration() -
-                        p_174637_.getUseItemRemainingTicks()) / MagicBow.MAX_DRAW_DURATION;
+                return living.getUseItem() != stack ? 0.0F :
+                        // Мы ограничиваем (clamp) значение между 0 и 1, чтобы анимация не "ломалась"
+                        Math.min(1.0F, (float)(stack.getUseDuration() - living.getUseItemRemainingTicks()) / (float)MagicBow.MAX_DRAW_DURATION);
             }
         });
 
-        ItemProperties.register(item, new ResourceLocation("pulling"), (p_174630_, p_174631_, p_174632_, p_174633_) -> {
-            return p_174632_ != null && p_174632_.isUsingItem() && p_174632_.getUseItem() == p_174630_ ? 1.0F : 0.0F;
+        // Свойство "pulling" определяет, натянут ли лук в принципе (для смены иконки на активную)
+        ItemProperties.register(item, new ResourceLocation("pulling"), (stack, level, living, seed) -> {
+            return living != null && living.isUsingItem() && living.getUseItem() == stack ? 1.0F : 0.0F;
         });
     }
-} 
+}

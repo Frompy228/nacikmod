@@ -1,137 +1,90 @@
 package net.artur.nacikmod.item;
 
+import net.artur.nacikmod.entity.projectiles.ManaArrowProjectile;
+import net.artur.nacikmod.capability.mana.ManaProvider;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.UseAnim;
-import net.minecraft.world.level.Level;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
-import net.artur.nacikmod.entity.projectiles.ManaArrowProjectile;
-import net.artur.nacikmod.registry.ModEntities;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.TooltipFlag;
-import net.artur.nacikmod.capability.mana.ManaProvider;
-import org.jetbrains.annotations.Nullable;
-import java.util.List;
-import java.util.function.Predicate;
+import net.minecraft.world.level.Level;
 
 public class MagicBow extends BowItem {
-    public static final int MAX_DRAW_DURATION = 14;
+    // Очень быстрое натяжение: 12 тиков (0.6 сек)
+    public static final int MAX_DRAW_DURATION = 12;
     private static final int MANA_COST = 5;
 
     public MagicBow() {
-        super(new Item.Properties().stacksTo(1));
+        super(new Item.Properties().stacksTo(1).durability(500));
     }
 
-    @Override
-    public int getUseDuration(ItemStack stack) {
-        return 72000;
-    }
+    public static float getPowerForTime(int charge) {
+        float f = (float)charge / (float)MAX_DRAW_DURATION;
 
-    @Override
-    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        return enchantment != Enchantments.INFINITY_ARROWS && 
-               (enchantment == Enchantments.MULTISHOT || super.canApplyAtEnchantingTable(stack, enchantment));
-    }
+        // КУБИЧЕСКАЯ ЗАВИСИМОСТЬ: делает короткие проклики неэффективными.
+        // При 0.5 натяжения (6 тиков) сила будет 0.125.
+        // При 1.0 натяжения (12 тиков) сила будет 1.0.
+        f = f * f * f;
 
-    @Override
-    public Predicate<ItemStack> getAllSupportedProjectiles() {
-        return (stack) -> true;
-    }
-
-    @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
-        super.appendHoverText(stack, level, tooltipComponents, isAdvanced);
-        
-        tooltipComponents.add(Component.translatable("item.nacikmod.magic_bow.desc1"));
-        tooltipComponents.add(Component.translatable("item.nacikmod.magic_bow.desc2", MANA_COST)
-                .withStyle(style -> style.withColor(0x00FFFF)));
+        if (f > 1.0F) f = 1.0F;
+        return f;
     }
 
     @Override
     public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeLeft) {
-        if (entity instanceof Player player) {
-            int charge = this.getUseDuration(stack) - timeLeft;
-            charge = Mth.clamp(charge, 0, MAX_DRAW_DURATION);
-            float power = getPowerForTime(charge);
+        if (!(entity instanceof Player player)) return;
 
-            if (power >= 0.1F) {
-                if (!level.isClientSide) {
-                    if (player.getCapability(ManaProvider.MANA_CAPABILITY).map(mana -> mana.getMana() >= MANA_COST).orElse(false)) {
-                        // Проверяем наличие зачарования Multishot
-                        boolean hasMultishot = stack.getEnchantmentLevel(Enchantments.MULTISHOT) > 0;
-                        int arrowsToShoot = hasMultishot ? 3 : 1;
-                        
-                        // Создаем стрелы
-                        for (int i = 0; i < arrowsToShoot; i++) {
-                            ManaArrowProjectile manaArrow = new ManaArrowProjectile(level, player);
-                            
-                            // Рассчитываем скорость с учетом силы натяжения
-                            float velocity = power * 2.8F;
-                            
-                            // Применяем зачарования
-                            int powerLevel = stack.getEnchantmentLevel(Enchantments.POWER_ARROWS);
-                            int punchLevel = stack.getEnchantmentLevel(Enchantments.PUNCH_ARROWS);
-                            int flameLevel = stack.getEnchantmentLevel(Enchantments.FLAMING_ARROWS);
-                            if (powerLevel > 0) {
-                                manaArrow.setPowerLevel(powerLevel);
-                            }
-                            if (punchLevel > 0) {
-                                manaArrow.setPunchLevel(punchLevel);
-                            }
-                            if (flameLevel > 0) {
-                                manaArrow.setFlame(true);
-                            }
-                            
-                            // Для Multishot корректируем угол выстрела
-                            float yRot = player.getYRot();
-                            float xRot = player.getXRot();
-                            
-                            if (hasMultishot && i > 0) {
-                                // Смещаем угол для дополнительных стрел
-                                float spread = 10.0F; // Угол разброса в градусах
-                                if (i == 1) {
-                                    yRot += spread;
-                                } else {
-                                    yRot -= spread;
-                                }
-                            }
-                            
-                            // Стреляем
-                            manaArrow.shootFromRotation(player, xRot, yRot, 0.0F, velocity, 1.0F);
-                            level.addFreshEntity(manaArrow);
+        int i = this.getUseDuration(stack) - timeLeft;
+        float power = getPowerForTime(i);
+
+        // Стрела вылетает, только если есть хоть какой-то заряд
+        if (power >= 0.05F) {
+            if (!level.isClientSide) {
+                boolean hasEnoughMana = player.getCapability(ManaProvider.MANA_CAPABILITY)
+                        .map(mana -> mana.getMana() >= MANA_COST).orElse(false);
+
+                if (hasEnoughMana || player.getAbilities().instabuild) {
+                    boolean hasMultishot = stack.getEnchantmentLevel(Enchantments.MULTISHOT) > 0;
+                    int arrowsToShoot = hasMultishot ? 3 : 1;
+
+                    for (int j = 0; j < arrowsToShoot; j++) {
+                        ManaArrowProjectile manaArrow = new ManaArrowProjectile(level, player);
+
+                        // СКОРОСТЬ: При полном заряде 5.0F (очень быстро).
+                        // При спаме скорость будет крайне низкой (~0.5F), стрела упадет под ноги.
+                        float velocity = power * 5.0F;
+
+                        // Передаем значение power для расчета динамического урона
+                        manaArrow.applyEnchantments(stack, power);
+
+                        float yRot = player.getYRot();
+                        if (hasMultishot && j > 0) {
+                            yRot += (j == 1 ? 10.0F : -10.0F);
                         }
 
-                        // Тратим ману
-                        player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> mana.removeMana(MANA_COST));
-
-                        stack.hurtAndBreak(1, player, (p) -> p.broadcastBreakEvent(player.getUsedItemHand()));
-                        
-                        level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                                SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 1.0F, 1.0F / (level.getRandom().nextFloat() * 0.4F + 1.2F) + power * 0.5F);
-                    } else {
-                        player.sendSystemMessage(Component.literal("Not enough mana!")
-                                .withStyle(ChatFormatting.RED));
+                        // Уменьшили разброс (divergence) до 0.5F для точности
+                        manaArrow.shootFromRotation(player, player.getXRot(), yRot, 0.0F, velocity, 0.5F);
+                        level.addFreshEntity(manaArrow);
                     }
+
+                    if (!player.getAbilities().instabuild) {
+                        player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> mana.removeMana(MANA_COST));
+                    }
+
+                    stack.hurtAndBreak(1, player, (p) -> p.broadcastBreakEvent(player.getUsedItemHand()));
+
+                    // Звук выстрела становится выше при слабом заряде и ниже/мощнее при полном
+                    level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                            SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 1.0F, 1.0F / (level.getRandom().nextFloat() * 0.4F + 1.2F) + power * 0.5F);
+                } else {
+                    player.displayClientMessage(Component.literal("Not enough mana!").withStyle(ChatFormatting.RED), true);
                 }
             }
         }
-    }
-
-    public static float getPowerForTime(int charge) {
-        float f = (float) charge / MAX_DRAW_DURATION;
-        f = (f * f + f * 2.4F) / 3.4F; // Подобранные коэффициенты
-        if (f > 1.1F) {
-            f = 1.1F;
-        }
-        return f;
     }
 }

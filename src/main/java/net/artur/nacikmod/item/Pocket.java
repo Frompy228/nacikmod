@@ -1,6 +1,8 @@
 package net.artur.nacikmod.item;
 
 import net.artur.nacikmod.capability.mana.ManaProvider;
+import net.artur.nacikmod.entity.custom.GraalEntity;
+import net.artur.nacikmod.registry.ModEntities;
 import net.artur.nacikmod.registry.ModItems;
 import net.artur.nacikmod.worldgen.dimension.ModDimensions;
 import net.minecraft.ChatFormatting;
@@ -59,12 +61,15 @@ public class Pocket extends Item {
         }
     }
 
-    private void teleportEntity(Entity entity, Level level, ItemStack itemStack) {
+    private void teleportEntity(Entity entity, Level level, ItemStack itemStack, Player teleporter) {
         // Запрещаем телепортировать эндер дракона и его части
         if (entity instanceof EnderDragon || entity instanceof EnderDragonPart) {
-            if (entity instanceof Player player) {
-                player.sendSystemMessage(Component.literal("You cannot teleport the Ender Dragon!").withStyle(ChatFormatting.RED));
-            }
+            teleporter.sendSystemMessage(Component.literal("You cannot teleport the Ender Dragon!").withStyle(ChatFormatting.RED));
+            return;
+        }
+        // Запрещаем телепортировать Graal Entity
+        if (entity instanceof GraalEntity || entity.getType() == ModEntities.GRAIL.get()) {
+            teleporter.sendSystemMessage(Component.literal("You cannot teleport the Grail!").withStyle(ChatFormatting.RED));
             return;
         }
         if (!level.isClientSide && level instanceof ServerLevel serverLevel) {
@@ -114,6 +119,8 @@ public class Pocket extends Item {
             entity != player && entity.isAlive() && entity.isPickable())) {
             // Пропускаем эндер дракона и его части
             if (entity instanceof EnderDragon || entity instanceof EnderDragonPart) continue;
+            // Пропускаем Graal Entity
+            if (entity instanceof GraalEntity || entity.getType() == ModEntities.GRAIL.get()) continue;
             AABB entityBox = entity.getBoundingBox().inflate(0.3D);
             Optional<Vec3> hitVec = entityBox.clip(eyePos, endPos);
             
@@ -167,7 +174,7 @@ public class Pocket extends Item {
                 player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> mana.removeMana(MANA_COST));
                 
                 // Телепортируем игрока
-                teleportEntity(player, level, itemStack);
+                teleportEntity(player, level, itemStack, player);
                 
                 player.sendSystemMessage(Component.literal(level.dimension().equals(ModDimensions.SPARTA_LEVEL_KEY) 
                     ? "Returned to previous dimension!" 
@@ -191,7 +198,7 @@ public class Pocket extends Item {
                     player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> mana.removeMana(MANA_COST));
                     
                     // Телепортируем сущность
-                    teleportEntity(targetEntity, level, itemStack);
+                    teleportEntity(targetEntity, level, itemStack, player);
                     
                     player.sendSystemMessage(Component.literal("Teleported " + targetEntity.getName().getString() + "!")
                             .withStyle(ChatFormatting.GREEN));

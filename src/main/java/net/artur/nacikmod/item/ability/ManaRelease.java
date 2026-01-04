@@ -17,7 +17,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.ChatFormatting;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
-import net.artur.nacikmod.network.ModMessages;
 import net.artur.nacikmod.network.AbilityStateManager;
 
 

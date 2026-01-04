@@ -2,6 +2,7 @@ package net.artur.nacikmod.item;
 
 import net.artur.nacikmod.NacikMod;
 import net.artur.nacikmod.capability.mana.ManaProvider;
+import net.artur.nacikmod.item.ability.SimpleDomainAbility;
 import net.artur.nacikmod.registry.ModEffects;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -26,7 +27,6 @@ public class SimpleDomain extends Item {
 
     private static final int MANA_COST_PER_SECOND = 5;
     private static final String ACTIVE_TAG = "active";
-    private static final Set<UUID> activePlayers = new HashSet<>();
 
     public SimpleDomain(Properties properties) {
         super(properties.fireResistant());
@@ -40,7 +40,7 @@ public class SimpleDomain extends Item {
             boolean isActive = item.hasTag() && item.getTag().getBoolean(ACTIVE_TAG);
 
             if (isActive) {
-                deactivate(player);
+                SimpleDomainAbility.stopSimpleDomain(player);
                 player.sendSystemMessage(Component.literal("Simple Domain deactivated!").withStyle(ChatFormatting.RED));
             } else {
                 // Проверка маны
@@ -51,7 +51,7 @@ public class SimpleDomain extends Item {
                     return InteractionResultHolder.fail(item);
                 }
 
-                activate(player);
+                SimpleDomainAbility.startSimpleDomain(player);
                 player.sendSystemMessage(Component.literal("Simple Domain activated!").withStyle(ChatFormatting.GREEN));
             }
 
@@ -61,24 +61,6 @@ public class SimpleDomain extends Item {
         return InteractionResultHolder.success(item);
     }
 
-    private static void activate(Player player) {
-        activePlayers.add(player.getUUID());
-        for (ItemStack stack : player.getInventory().items) {
-            if (stack.getItem() instanceof SimpleDomain) {
-                stack.getOrCreateTag().putBoolean(ACTIVE_TAG, true);
-                break;
-            }
-        }
-    }
-
-    private static void deactivate(Player player) {
-        activePlayers.remove(player.getUUID());
-        for (ItemStack stack : player.getInventory().items) {
-            if (stack.getItem() instanceof SimpleDomain) {
-                stack.getOrCreateTag().putBoolean(ACTIVE_TAG, false);
-            }
-        }
-    }
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
@@ -88,7 +70,7 @@ public class SimpleDomain extends Item {
         UUID uuid = player.getUUID();
 
         // Если игрок не активен, ничего не делаем
-        if (!activePlayers.contains(uuid)) return;
+        if (!SimpleDomainAbility.activeSimpleDomainPlayers.contains(uuid)) return;
 
         // Проверяем наличие активного предмета в инвентаре
         ItemStack activeItem = null;
@@ -100,7 +82,7 @@ public class SimpleDomain extends Item {
         }
 
         if (activeItem == null) {
-            deactivate(player);
+            SimpleDomainAbility.stopSimpleDomain(player);
             return;
         }
 
@@ -108,11 +90,11 @@ public class SimpleDomain extends Item {
         if (player.tickCount % 20 == 0) {
             player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
                 if (mana.getMana() < MANA_COST_PER_SECOND) {
-                    deactivate(player);
+                    SimpleDomainAbility.stopSimpleDomain(player);
                     player.sendSystemMessage(Component.literal("Not enough mana! Simple Domain deactivated.").withStyle(ChatFormatting.RED));
                 } else {
                     mana.removeMana(MANA_COST_PER_SECOND);
-                    // Накладываем эффект, видимый всем
+                    // Накладываем эффект для игровой механики (не для визуализации - визуализация через Ability)
                     player.addEffect(new MobEffectInstance(ModEffects.EFFECT_SIMPLE_DOMAIN.get(), 40, 0, false, false, true));
                 }
             });
@@ -121,7 +103,7 @@ public class SimpleDomain extends Item {
 
     @SubscribeEvent
     public static void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-        activePlayers.remove(event.getEntity().getUUID());
+        SimpleDomainAbility.activeSimpleDomainPlayers.remove(event.getEntity().getUUID());
     }
 
     @Override

@@ -2,7 +2,7 @@ package net.artur.nacikmod.gui;
 
 import net.artur.nacikmod.NacikMod;
 import net.artur.nacikmod.network.EnchantmentSelectionPacket;
-import net.artur.nacikmod.network.ModMessages;
+import net.artur.nacikmod.registry.ModMessages;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -10,7 +10,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.ChatFormatting;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +19,15 @@ import java.util.HashMap;
 public class EnchantmentLimitTableScreen extends AbstractContainerScreen<EnchantmentLimitTableMenu> {
     private static final ResourceLocation TEXTURE =
             new ResourceLocation(NacikMod.MOD_ID, "textures/gui/enchant_limit_table.png");
+    private static final ResourceLocation MANA_CRYSTAL_ICON =
+            new ResourceLocation(NacikMod.MOD_ID, "textures/gui/mana_crystal_empty_gui.png");
+    private static final ResourceLocation SHARD_ARTIFACT_ICON =
+            new ResourceLocation(NacikMod.MOD_ID, "textures/gui/shard_artifact_gui.png");
+
+    // Параметры анимации для shard artifact
+    private static final int SHARD_ANIMATION_FRAMETIME = 20; // Тиков на кадр (из .mcmeta)
+    private static final int SHARD_ANIMATION_FRAME_COUNT = 4; // Количество кадров в текстуре
+    private static final int SHARD_ANIMATION_FRAME_HEIGHT = 16; // Высота одного кадра
 
     private List<EnchantmentButton> enchantmentButtons = new ArrayList<>();
     private int scrollOffset = 0;
@@ -204,14 +212,13 @@ public class EnchantmentLimitTableScreen extends AbstractContainerScreen<Enchant
 
         // Обновляем кнопки зачарований только при необходимости
         updateEnchantmentButtonsIfNeeded();
-        
 
+        // Рендерим иконки для пустых слотов
+        renderSlotIcons(guiGraphics, partialTick);
 
         renderTooltip(guiGraphics, mouseX, mouseY);
 
         // Рендерим стоимость XP
-        // ✅ Показываем стоимость всегда, даже если результата нет
-        // ✅ Показываем стоимость всегда, даже если результата нет
         int required = menu.getRequiredXpLevels();
         if (required > 0) {
             int playerLv = this.minecraft.player != null ? this.minecraft.player.experienceLevel : 0;
@@ -223,6 +230,7 @@ public class EnchantmentLimitTableScreen extends AbstractContainerScreen<Enchant
         }
 
     }
+
 
     private void updateEnchantmentButtonsIfNeeded() {
         // Проверяем, нужно ли обновить кнопки
@@ -252,6 +260,45 @@ public class EnchantmentLimitTableScreen extends AbstractContainerScreen<Enchant
 
             if (serverState != localState) {
                 localSelectionState.put(enchantment, serverState);
+            }
+        }
+    }
+
+    /**
+     * Рендерит иконки для пустых слотов (mana crystal и shard artifact)
+     * Для shard artifact используется анимированная текстура с ручным выбором кадра
+     */
+    private void renderSlotIcons(GuiGraphics guiGraphics, float partialTick) {
+        // Иконка для слота кристалла маны (позиция: 8, 32)
+        if (menu.getCrystalSlot().getItem().isEmpty()) {
+            int crystalSlotX = leftPos + 8;
+            int crystalSlotY = topPos + 32;
+            guiGraphics.blit(MANA_CRYSTAL_ICON, crystalSlotX, crystalSlotY, 0, 0, 16, 16, 16, 16);
+        }
+
+        // Иконка для слота shard artifact (позиция: 8, 55) с анимацией
+        if (menu.getShardSlot().getItem().isEmpty()) {
+            int shardSlotX = leftPos + 8;
+            int shardSlotY = topPos + 55;
+
+            if (this.minecraft != null && this.minecraft.level != null) {
+                long gameTime = this.minecraft.level.getGameTime();
+
+
+                float animationTime = (gameTime % (SHARD_ANIMATION_FRAMETIME * SHARD_ANIMATION_FRAME_COUNT)) + partialTick;
+                int currentFrame = (int) (animationTime / SHARD_ANIMATION_FRAMETIME) % SHARD_ANIMATION_FRAME_COUNT;
+
+
+                int textureV = currentFrame * SHARD_ANIMATION_FRAME_HEIGHT;
+
+                int totalTextureHeight = SHARD_ANIMATION_FRAME_COUNT * SHARD_ANIMATION_FRAME_HEIGHT;
+
+
+                guiGraphics.blit(SHARD_ARTIFACT_ICON, shardSlotX, shardSlotY,
+                        0, textureV, 16, 16, 16, totalTextureHeight);
+            } else {
+                // Fallback: показываем первый кадр
+                guiGraphics.blit(SHARD_ARTIFACT_ICON, shardSlotX, shardSlotY, 0, 0, 16, 16, 16, 16);
             }
         }
     }
