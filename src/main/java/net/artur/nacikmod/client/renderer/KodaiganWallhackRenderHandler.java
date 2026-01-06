@@ -84,22 +84,18 @@ public class KodaiganWallhackRenderHandler {
         if (entity == localPlayer) return false;
         if (!entity.isAlive() || entity.isRemoved()) return false;
         if (entity instanceof ArmorStand) return false;
-
         String entityName = entity.getType().getDescriptionId().toLowerCase();
         if (entityName.contains("cloud") || entityName.contains("effect") || entityName.contains("projectile")) return false;
-
         return (entity instanceof Player) || (entity instanceof net.minecraft.world.entity.Mob);
     }
 
     private static void renderEntityModel(EntityRenderDispatcher dispatcher, LivingEntity entity, PoseStack poseStack, MultiBufferSource buffer, float partialTick) {
         EntityRenderer<? super LivingEntity> renderer = dispatcher.getRenderer(entity);
         if (renderer == null) return;
-
         double x = entity.xo + (entity.getX() - entity.xo) * partialTick;
         double y = entity.yo + (entity.getY() - entity.yo) * partialTick;
         double z = entity.zo + (entity.getZ() - entity.zo) * partialTick;
         float yRot = entity.yRotO + (entity.getYRot() - entity.yRotO) * partialTick;
-
         poseStack.pushPose();
         poseStack.translate(x, y, z);
         renderer.render(entity, yRot, partialTick, poseStack, buffer, LightTexture.FULL_BRIGHT);
@@ -112,6 +108,7 @@ public class KodaiganWallhackRenderHandler {
         double z = entity.zo + (entity.getZ() - entity.zo) * partialTick;
 
         poseStack.pushPose();
+        // Позиция над головой
         poseStack.translate(x, y + entity.getBbHeight() + 0.6, z);
         poseStack.mulPose(Axis.YP.rotationDegrees(-viewY));
         poseStack.mulPose(Axis.XP.rotationDegrees(viewX));
@@ -123,27 +120,31 @@ public class KodaiganWallhackRenderHandler {
         MultiBufferSource.BufferSource buffer = mc.renderBuffers().bufferSource();
         Font font = mc.font;
 
-        // --- HP ---
+        // --- БЛОК HP ---
         float health = entity.getHealth();
         float maxHealth = entity.getMaxHealth();
         float hpPercent = Math.max(0, Math.min(health / maxHealth, 1.0f));
+
+        // 1. Текст HP (СВЕРХУ полоски)
+        String hpText = String.format("%.0f / %.0f", health, maxHealth);
+        font.drawInBatch(hpText, -font.width(hpText) / 2f, -10, 0xFFFFFFFF, false, matrix, buffer, Font.DisplayMode.NORMAL, 0, 15728880);
+
+        // 2. Полоска HP (Центральная)
         drawRect(buffer, matrix, -20, 0, 20, 2, 0xAA000000);
         int hpColor = hpPercent > 0.5 ? 0xFF00FF00 : (hpPercent > 0.2 ? 0xFFFFFF00 : 0xFFFF0000);
         drawRect(buffer, matrix, -20, 0, -20 + (40 * hpPercent), 2, hpColor);
 
-        // --- MANA (ИСПРАВЛЕНО) ---
+        // --- БЛОК МАНЫ ---
         int currentMana = 0;
         int maxMana = 0;
 
         if (entity == mc.player) {
-            // Только для себя используем Capability напрямую
             var cap = entity.getCapability(ManaProvider.MANA_CAPABILITY).orElse(null);
             if (cap != null) {
                 currentMana = cap.getMana();
                 maxMana = cap.getMaxMana();
             }
         } else {
-            // ДЛЯ ВСЕХ ОСТАЛЬНЫХ (Мобы, Леонид, Другие игроки) используем КЭШ
             PlayerManaCache.ManaData manaData = PlayerManaCache.getPlayerMana(entity.getUUID());
             if (manaData != null) {
                 currentMana = manaData.mana;
@@ -153,11 +154,16 @@ public class KodaiganWallhackRenderHandler {
 
         if (maxMana > 0) {
             float manaPercent = (float) currentMana / maxMana;
-            drawRect(buffer, matrix, -20, 4, 20, 6, 0xAA000000);
-            drawRect(buffer, matrix, -20, 4, -20 + (40 * manaPercent), 6, 0xFF00AAFF);
 
+            // 3. Полоска маны (СНИЗУ под HP, с отступом)
+            // Координаты 6 и 8 создают зазор в 4 пикселя от полоски HP
+            drawRect(buffer, matrix, -20, 6, 20, 8, 0xAA000000);
+            drawRect(buffer, matrix, -20, 6, -20 + (40 * manaPercent), 8, 0xFF00AAFF);
+
+            // 4. Текст маны (СНИЗУ под полоской маны)
+            // Координата 11 опускает текст прямо под синюю линию
             String manaText = currentMana + " / " + maxMana;
-            font.drawInBatch(manaText, -font.width(manaText) / 2f, 8, 0xFF00E5FF, false, matrix, buffer, Font.DisplayMode.NORMAL, 0, 15728880);
+            font.drawInBatch(manaText, -font.width(manaText) / 2f, 11, 0xFF00E5FF, false, matrix, buffer, Font.DisplayMode.NORMAL, 0, 15728880);
         }
 
         buffer.endBatch();

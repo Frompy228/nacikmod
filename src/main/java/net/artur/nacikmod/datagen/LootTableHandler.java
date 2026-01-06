@@ -24,7 +24,7 @@ public class LootTableHandler {
         if (tableName.getPath().startsWith("chests/")) {
 
             LootItem.Builder<?> magicCircuit = LootItem.lootTableItem(ModItems.MAGIC_CIRCUIT.get())
-                    .setWeight(150)
+                    .setWeight(170)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2)));
 
             LootItem.Builder<?> magicArmor = LootItem.lootTableItem(ModItems.MAGIC_ARMOR.get())
@@ -107,9 +107,6 @@ public class LootTableHandler {
                     .setWeight(2)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
-            LootItem.Builder<?> simpleDomain = LootItem.lootTableItem(ModItems.SIMPLE_DOMAIN.get())
-                    .setWeight(2)
-                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
             LootItem.Builder<?> barrierSeal = LootItem.lootTableItem(ModItems.BARRIER_SEAL.get())
                     .setWeight(2)
@@ -131,14 +128,6 @@ public class LootTableHandler {
                     .setWeight(2)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
-            LootItem.Builder<?> firePillar = LootItem.lootTableItem(ModItems.FIRE_PILLAR.get())
-                    .setWeight(2)
-                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
-
-
-            LootItem.Builder<?> manaSeal = LootItem.lootTableItem(ModItems.MANA_SEAL.get())
-                    .setWeight(2)
-                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
 
             // Создаём пул лута
@@ -154,7 +143,6 @@ public class LootTableHandler {
                     .add(manaCrystal)
                     .add(lastMagic)
                     .add(bloodShoot)
-                    .add(hiraishinWithoutSeal)
                     .add(gravity)
                     .add(darkSphere)
                     .add(sensoryRain)
@@ -167,14 +155,12 @@ public class LootTableHandler {
                     .add(fireTrap)
                     .add(magicHealing)
                     .add(release)
-                    .add(simpleDomain)
                     .add(barrierSeal)
                     .add(barrierWall)
                     .add(fireFlower)
                     .add(earthStep)
                     .add(icePrison)
-                    .add(firePillar)
-                    .add(manaSeal)
+                    .add(hiraishinWithoutSeal)
                     .build();
 
 

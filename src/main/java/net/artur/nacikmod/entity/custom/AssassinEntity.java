@@ -1,6 +1,7 @@
 package net.artur.nacikmod.entity.custom;
 
 import net.artur.nacikmod.entity.MobClass.HeroSouls;
+import net.artur.nacikmod.entity.ai.BreakBlockGoal;
 import net.artur.nacikmod.registry.ModAttributes;
 import net.artur.nacikmod.registry.ModItems;
 import net.artur.nacikmod.registry.ModEntities;
@@ -94,12 +95,13 @@ public class AssassinEntity extends HeroSouls {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new OpenDoorGoal(this, true)); // Открытие дверей во время боя
-        this.goalSelector.addGoal(2, new AssassinInvisibilityGoal(this, 1.0D)); // Goal для невидимости
-        this.goalSelector.addGoal(3, new AssassinMeleeAttackGoal(this, 1.2D)); // Обычная атака
-        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.8D));
-        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(1, new BreakBlockGoal(this));
+        this.goalSelector.addGoal(2, new OpenDoorGoal(this, true)); // Открытие дверей во время боя
+        this.goalSelector.addGoal(3, new AssassinInvisibilityGoal(this, 1.0D)); // Goal для невидимости
+        this.goalSelector.addGoal(4, new AssassinMeleeAttackGoal(this, 1.2D)); // Обычная атака
+        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.8D));
+        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
 
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setAlertOthers(AssassinEntity.class));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
@@ -264,7 +266,12 @@ public class AssassinEntity extends HeroSouls {
     }
 
     private void performTeleportAttack() {
-        if (invisibilityTarget == null || !invisibilityTarget.isAlive()) return;
+        // 1. ПЕРВАЯ ПРОВЕРКА: Если цель исчезла до начала выполнения метода
+        if (invisibilityTarget == null || !invisibilityTarget.isAlive()) {
+            this.shouldTeleportAttack = false;
+            this.invisibilityTarget = null;
+            return;
+        }
 
         // Телепортируемся к врагу
         Vec3 targetPos = invisibilityTarget.position();
@@ -277,11 +284,14 @@ public class AssassinEntity extends HeroSouls {
         float baseDamage = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE);
         float totalDamage = baseDamage + 20.0f;
 
-        invisibilityTarget.hurt(this.damageSources().mobAttack(this), totalDamage);
+        // 2. ВТОРАЯ ПРОВЕРКА: Перед наложением эффектов
+        // Это то самое место, где случился твой NPE в логах (invisibilityTarget.addEffect)
+        if (invisibilityTarget != null && invisibilityTarget.isAlive()) {
+            invisibilityTarget.hurt(this.damageSources().mobAttack(this), totalDamage);
 
-        // Накладываем эффекты
-        invisibilityTarget.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 80, 0, false, false)); // 4 секунды слепоты
-        invisibilityTarget.addEffect(new MobEffectInstance(MobEffects.POISON, 80, 0, false, false)); // 4 секунды отравления
+            invisibilityTarget.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 80, 0, false, false));
+            invisibilityTarget.addEffect(new MobEffectInstance(MobEffects.POISON, 80, 0, false, false));
+        }
 
         // Анимация атаки
         this.swing(InteractionHand.MAIN_HAND);
@@ -290,8 +300,8 @@ public class AssassinEntity extends HeroSouls {
         }
 
         // Сбрасываем флаги
-        shouldTeleportAttack = false;
-        invisibilityTarget = null;
+        this.shouldTeleportAttack = false;
+        this.invisibilityTarget = null;
     }
 
     private void spawnShamak() {

@@ -1,0 +1,8 @@
+{
+	"variants": {
+		"facing=north": { "model": "nacikmod:block/blood_circle" },
+		"facing=south": { "model": "nacikmod:block/blood_circle", "y": 180 },
+		"facing=east": { "model": "nacikmod:block/blood_circle", "y": 90 },
+		"facing=west": { "model": "nacikmod:block/blood_circle", "y": 270 }
+	}
+}

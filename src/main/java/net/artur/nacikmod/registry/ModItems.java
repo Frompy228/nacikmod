@@ -1,6 +1,7 @@
 package net.artur.nacikmod.registry;
 
 import net.artur.nacikmod.armor.LeonidArmorMaterial;
+import net.artur.nacikmod.block.custom.BloodCircle;
 import net.artur.nacikmod.item.LeonidHelmet;
 import net.artur.nacikmod.item.*;
 import net.minecraft.world.item.Item;
@@ -73,7 +74,7 @@ public class ModItems {
     public static final RegistryObject<Item> VISION_BLESSING = ITEMS.register("vision_blessing", () -> new VisionBlessing(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> GRAIL = ITEMS.register("grail", () -> new Grail(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> SIMPLE_DOMAIN = ITEMS.register("simple_domain", () -> new SimpleDomain(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> DOMAIN = ITEMS.register("domain", () -> new Domain());
+    public static final RegistryObject<Item> DOMAIN = ITEMS.register("domain", () -> new Domain(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> KATANA = ITEMS.register("katana", () -> new Katana());
     public static final RegistryObject<Item> BARRIER_SEAL = ITEMS.register("barrier_seal", () -> new BarrierSeal(new Item.Properties()));
     public static final RegistryObject<Item> BARRIER_WALL = ITEMS.register("barrier_wall", () -> new BarrierWall(new Item.Properties()));
@@ -83,6 +84,12 @@ public class ModItems {
     public static final RegistryObject<Item> BURIAL = ITEMS.register("burial", () -> new Burial());
     public static final RegistryObject<Item> FIRE_ANNIHILATION = ITEMS.register("fire_annihilation", () -> new FireAnnihilation(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MANA_SEAL = ITEMS.register("mana_seal", () -> new ManaSeal(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> BLOOD_SPEAR = ITEMS.register("blood_spear", BloodSpear::new);
+    public static final RegistryObject<Item> TRIPLE_SLASH = ITEMS.register("triple_slash", () -> new TripleSlash(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> BLOOD_CIRCLE_ITEM = ITEMS.register("blood_circle_item", () -> new BloodCircleItem(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> BLOOD_CONTRACT = ITEMS.register("blood_contract", () -> new BloodContract(new Item.Properties().stacksTo(1)));
+
+
 
     public static final RegistryObject<Item> LANSER_SPAWN_EGG = ITEMS.register("lanser_spawn_egg",
             ()-> new ForgeSpawnEggItem(ModEntities.LANSER, 0x5b107e, 0xCF6A84,

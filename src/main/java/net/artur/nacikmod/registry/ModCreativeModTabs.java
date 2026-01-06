@@ -67,6 +67,7 @@ public class ModCreativeModTabs {
                         pOutput.accept(ModItems.EARTH_STEP.get());
                         pOutput.accept(ModItems.SLASH.get());
                         pOutput.accept(ModItems.DOUBLE_SLASH.get());
+                        pOutput.accept(ModItems.TRIPLE_SLASH.get());
                         pOutput.accept(ModItems.WORLD_SLASH.get());
                         pOutput.accept(ModItems.SIMPLE_DOMAIN.get());
                         pOutput.accept(ModItems.DOMAIN.get());

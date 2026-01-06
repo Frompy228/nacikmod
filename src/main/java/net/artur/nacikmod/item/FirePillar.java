@@ -31,7 +31,7 @@ public class FirePillar extends Item {
     private static final int COOLDOWN_TICKS = 300; // 20 секунд = 20 * 20 тиков
     
     public FirePillar(Properties properties) {
-        super(properties);
+        super(properties.fireResistant());
     }
 
     @Override

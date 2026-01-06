@@ -1,6 +1,8 @@
 package net.artur.nacikmod.entity.custom;
 
+import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.entity.MobClass.HeroSouls;
+import net.artur.nacikmod.entity.ai.BreakBlockGoal;
 import net.artur.nacikmod.registry.ModAttributes;
 import net.artur.nacikmod.registry.ModEntities;
 import net.artur.nacikmod.registry.ModItems;
@@ -39,6 +41,7 @@ import java.util.Random;
 public class BerserkerEntity extends HeroSouls {
     private int regenerationTick = 0;
     private int roarCooldown = 0;
+    private static final int MAX_MANA = 5000;
     private static final int REGENERATION_INTERVAL = 20; // 1 секунда
     private static final float REGENERATION_AMOUNT = 2.0f;
     private static final double BASE_ATTACK_DAMAGE = 24;
@@ -61,11 +64,12 @@ public class BerserkerEntity extends HeroSouls {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new OpenDoorGoal(this, true)); // Открытие дверей во время боя
-        this.goalSelector.addGoal(2, new CustomMeleeAttackGoal(this, 1.0D));
-        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 0.8D));
-        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(1, new BreakBlockGoal(this));
+        this.goalSelector.addGoal(2, new OpenDoorGoal(this, true)); // Открытие дверей во время боя
+        this.goalSelector.addGoal(3, new CustomMeleeAttackGoal(this, 1.0D));
+        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.8D));
+        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
 
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
@@ -266,6 +270,11 @@ public class BerserkerEntity extends HeroSouls {
                                         @Nullable CompoundTag dataTag) {
         SpawnGroupData data = super.finalizeSpawn(world, difficulty, reason, spawnData, dataTag);
         this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ModItems.DUBINKA.get()));
+        this.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
+            mana.setMaxMana(MAX_MANA);
+            mana.setMana(MAX_MANA);
+        });
+
 
         AttributeInstance attribute = this.getAttribute(ModAttributes.BONUS_ARMOR.get());
         attribute.setBaseValue(BONUS_ARMOR);

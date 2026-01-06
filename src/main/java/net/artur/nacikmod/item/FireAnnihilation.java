@@ -23,7 +23,7 @@ public class FireAnnihilation extends Item {
     private static final double SPAWN_DISTANCE = 2.5D;
 
     public FireAnnihilation(Properties properties) {
-        super(properties.stacksTo(1));
+        super(properties.stacksTo(1).fireResistant());
     }
 
     @Override

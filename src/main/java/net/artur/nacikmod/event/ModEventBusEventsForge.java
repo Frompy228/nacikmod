@@ -1,13 +1,17 @@
 package net.artur.nacikmod.event;
 
 import net.artur.nacikmod.NacikMod;
+import net.artur.nacikmod.capability.active_abilities.ActiveAbilitiesProvider;
 import net.artur.nacikmod.entity.custom.InquisitorEntity;
 import net.artur.nacikmod.item.Gravity;
+import net.artur.nacikmod.item.ability.BloodCircleManager;
 import net.artur.nacikmod.item.ability.IntangibilityAbility;
 import net.artur.nacikmod.registry.ModAttributes;
 import net.artur.nacikmod.registry.ModItems;
 import net.artur.nacikmod.registry.ModMessages;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
@@ -32,6 +36,9 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import java.util.List;
 import net.artur.nacikmod.effect.EffectManablessing;
+
+
+
 
 
 @Mod.EventBusSubscriber(modid = NacikMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -89,7 +96,7 @@ public class ModEventBusEventsForge {
 
         if (attribute != null) {
             double bonusArmor = attribute.getValue();
-            double reductionPercentage = Math.min(bonusArmor * 0.022, 0.8);
+            double reductionPercentage = Math.min(bonusArmor * 0.02, 0.8);
             float reducedDamage = (float) (event.getAmount() * (1 - reductionPercentage));
             event.setAmount(reducedDamage);
         }
@@ -237,6 +244,88 @@ public class ModEventBusEventsForge {
             Vec3 motion = livingEntity.getDeltaMovement();
             livingEntity.setDeltaMovement(motion.x, Math.min(motion.y, 0.0D) - 0.2D, motion.z);
         }
+    }
+
+    private static final double MAX_DISTANCE = 100.0;
+    private static final double CIRCLE_AOE_RANGE = 15.0;
+
+    // Тэг для пометки урона, чтобы избежать рекурсии
+    private static boolean isProcessingContract = false;
+
+    /**
+     * Улучшенная логика передачи урона
+     */
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public static void onBloodContractDamage(LivingHurtEvent event) {
+        if (isProcessingContract) return;
+
+        LivingEntity victim = event.getEntity();
+        if (victim.level().isClientSide) return;
+
+        DamageSource originalSource = event.getSource();
+
+        // СЛУЧАЙ 1: Игрок получает урон -> Передаем МОБАМ (Виноват Игрок)
+        if (victim instanceof Player player) {
+            player.getCapability(ActiveAbilitiesProvider.ACTIVE_ABILITIES_CAPABILITY).ifPresent(cap -> {
+                if (cap.isBloodContractActive()) {
+                    isProcessingContract = true;
+                    try {
+                        float amount = event.getAmount();
+                        // Здесь 'player' выступает как источник (cause), так как это его контракт бьет мобов
+                        DamageSource contractSource = copySourceWithNewCause(originalSource, player);
+
+                        if (BloodCircleManager.isActive(player)) {
+                            AABB area = player.getBoundingBox().inflate(CIRCLE_AOE_RANGE);
+                            List<LivingEntity> nearby = player.level().getEntitiesOfClass(LivingEntity.class, area,
+                                    e -> e != player && e.isAlive());
+
+                            for (LivingEntity linked : nearby) {
+                                linked.hurt(contractSource, amount);
+                            }
+                        } else if (cap.getContractTargetUUID() != null) {
+                            Entity target = ((ServerLevel)player.level()).getEntity(cap.getContractTargetUUID());
+                            if (target instanceof LivingEntity livingTarget && livingTarget.isAlive()) {
+                                livingTarget.hurt(contractSource, amount);
+                            }
+                        }
+                    } finally {
+                        isProcessingContract = false;
+                    }
+                }
+            });
+        }
+
+        // СЛУЧАЙ 2: Моба ударили -> Передаем Игроку (Виноват Моб)
+        for (Player p : victim.level().players()) {
+            if (p.distanceTo(victim) > MAX_DISTANCE) continue;
+
+            p.getCapability(ActiveAbilitiesProvider.ACTIVE_ABILITIES_CAPABILITY).ifPresent(cap -> {
+                if (cap.isBloodContractActive() && victim.getUUID().equals(cap.getContractTargetUUID())) {
+                    // Если игрок сам ударил моба, не возвращаем урон игроку (анти-суицид)
+                    if (originalSource.getEntity() != p) {
+                        isProcessingContract = true;
+                        try {
+                            // Здесь 'victim' (моб) выступает как источник урона для игрока
+                            p.hurt(copySourceWithNewCause(originalSource, victim), event.getAmount());
+                        } finally {
+                            isProcessingContract = false;
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * Создает копию источника урона, но заменяет того, кто нанес урон, на указанную сущность.
+     * Это делает передачу урона "легальной" для ИИ других модов.
+     */
+    private static DamageSource copySourceWithNewCause(DamageSource original, Entity newCause) {
+        // Используем конструктор, где:
+        // 1. Holder<DamageType> оставляем оригинальный (стрела, огонь, падение)
+        // 2. DirectEntity (снаряд) ставим null, так как это "эхо" урона, а не сама стрела
+        // 3. CausingEntity (виновник) ставим нашего игрока или моба-посредника
+        return new DamageSource(original.typeHolder(), null, newCause);
     }
 
 }
