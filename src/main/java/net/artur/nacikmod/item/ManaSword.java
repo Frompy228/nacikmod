@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class ManaSword extends SwordItem {
-    private static final int MAX_DURABILITY = 2;
+    private static final int MAX_DURABILITY = 3;
     private static final float BASE_DAMAGE = 1f;
     private static final float ATTACK_SPEED = -2.4f;
     private static final String DAMAGE_TAG = "ManaSwordDamage";

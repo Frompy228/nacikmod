@@ -31,7 +31,7 @@ public class EffectManaLastMagic extends MobEffect {
         
         // Добавляем модификаторы атрибутов в конструкторе
         this.addAttributeModifier(Attributes.ATTACK_DAMAGE, DAMAGE_MODIFIER_UUID.toString(),
-                15.0, AttributeModifier.Operation.ADDITION);
+                25.0, AttributeModifier.Operation.ADDITION);
         this.addAttributeModifier(ModAttributes.BONUS_ARMOR.get(), ARMOR_MODIFIER_UUID.toString(),
                 10.0, AttributeModifier.Operation.ADDITION);
         this.addAttributeModifier(Attributes.MOVEMENT_SPEED, SPEED_MODIFIER_UUID.toString(),

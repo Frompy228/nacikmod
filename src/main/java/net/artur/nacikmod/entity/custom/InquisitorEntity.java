@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.entity.MobClass.HeroSouls;
+import net.artur.nacikmod.entity.ai.BreakBlockGoal;
 import net.artur.nacikmod.entity.ai.InquisitorGuardGoal;
 import net.artur.nacikmod.entity.projectiles.FireCloudEntity;
 import net.artur.nacikmod.entity.projectiles.FireHailEntity;
@@ -55,23 +56,23 @@ public class InquisitorEntity extends HeroSouls {
     private static final int MANA_REGEN_PER_TICK = 30;
     private static final double ATTACK_RANGE = 3.0D;
     private static final int ATTACK_COOLDOWN_TICKS = 10;
-    private static final int GLOBAL_COOLDOWN_TICKS = 6 * 20;
+    private static final int GLOBAL_COOLDOWN_TICKS = 120;
     private static int BONUS_ARMOR = 30;
 
     private static final int SUMMON_CAST_TICKS = 60;
-    private static final int SUMMON_COOLDOWN_TICKS = 5 * 60 * 20; // 5 minutes
+    private static final int SUMMON_COOLDOWN_TICKS = 4700; // 5 minutes
     private static final int SUMMON_MANA_COST = 10_000;
     private static final float SUMMON_INTERRUPT_DAMAGE = 30.0F;
 
-    private static final int FIRE_WALL_COOLDOWN_TICKS = 20 * 20; // 20 seconds
+    private static final int FIRE_WALL_COOLDOWN_TICKS = 400; // 20 seconds
     private static final int FIRE_WALL_MANA_COST = 500;
 
-    private static final int FIRE_HAIL_COOLDOWN_TICKS = 15 * 20; // 20 seconds
+    private static final int FIRE_HAIL_COOLDOWN_TICKS = 280; // 20 seconds
     private static final int FIRE_HAIL_MANA_COST = 500;
     private static final double FIRE_HAIL_RADIUS = 2.0D; // Радиус круга
     private static final int FIRE_HAIL_COUNT = 6; // Количество снарядов в круге
 
-    private static final int FIREBALL_JUMP_COOLDOWN_TICKS = 15 * 20; // 20 seconds
+    private static final int FIREBALL_JUMP_COOLDOWN_TICKS = 280; // 20 seconds
     private static final int FIREBALL_JUMP_MANA_COST = 600;
     private static final double BACKWARD_STRENGTH = 0.9; // сила отскока назад
     private static final double UPWARD_STRENGTH = 0.5;   // сила прыжка вверх
@@ -84,26 +85,26 @@ public class InquisitorEntity extends HeroSouls {
     private static final double VERTICAL_JUMP_MAX_POWER = 0.9; // Максимальная сила прыжка
     private static final double VERTICAL_JUMP_RANGE = 5.0; // Максимальная горизонтальная дистанция для прыжка
 
-    private static final int BLESSING_COOLDOWN_TICKS = 60 * 20; // 60 секунд
+    private static final int BLESSING_COOLDOWN_TICKS = 1200; // 60 секунд
     private static final int BLESSING_MANA_COST = 700;
-    private static final int BLESSING_DURATION_TICKS = 30 * 20; // 30 секунд
+    private static final int BLESSING_DURATION_TICKS = 600; // 30 секунд
 
-    private static final int ANTI_FLIGHT_COOLDOWN_TICKS = 10 * 20; // 10 секунд
+    private static final int ANTI_FLIGHT_COOLDOWN_TICKS = 200; // 10 секунд
     private static final int ANTI_FLIGHT_MANA_COST = 300;
     private static final int ANTI_FLIGHT_LIGHTNING_COUNT = 5;
     private static final double ANTI_FLIGHT_LIGHTNING_SPREAD = 0.6D;
     public static final String ANTI_FLIGHT_LIGHTNING_TAG = "nacikmod_inquisitor_anti_flight";
 
     // Отдельные способности (вне основного списка)
-    private static final int DASH_COOLDOWN_TICKS = 25 * 20; // 25 seconds
+    private static final int DASH_COOLDOWN_TICKS = 500; // 25 seconds
     private static final float DASH_DAMAGE = 20.0F;
     private static final double DASH_DISTANCE = 8.0D; // Максимальная дистанция для рывка
 
-    private static final int TELEPORT_COOLDOWN_TICKS = 18 * 20;
+    private static final int TELEPORT_COOLDOWN_TICKS = 360;
     private static final int TELEPORT_MANA_COST = 300;
     private static final int TELEPORT_MANA_BURN = 300; // Сжигание маны у цели
 
-    private static final int FIRE_CLOUD_COOLDOWN_TICKS = 11 * 20; // 10 секунд
+    private static final int FIRE_CLOUD_COOLDOWN_TICKS = 260;
     private static final int FIRE_CLOUD_MANA_COST = 200;
     private static final double FIRE_CLOUD_RADIUS = 10.0D; // Радиус вокруг инквизитора
     private static final int FIRE_CLOUD_COUNT = 3; // Количество облаков
@@ -170,7 +171,7 @@ public class InquisitorEntity extends HeroSouls {
                 .add(Attributes.MAX_HEALTH, 185.0D)
                 .add(Attributes.ARMOR, 14.0D)
                 .add(Attributes.ARMOR_TOUGHNESS, 5.0D)
-                .add(Attributes.ATTACK_DAMAGE, 23.0D)
+                .add(Attributes.ATTACK_DAMAGE, 24.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.38D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.2D)
                 .add(ForgeMod.SWIM_SPEED.get(), 2)
@@ -186,11 +187,12 @@ public class InquisitorEntity extends HeroSouls {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new OpenDoorGoal(this, true)); // Открытие дверей во время боя
-        this.goalSelector.addGoal(2, new InquisitorMeleeAttackGoal(this, 1.2D));
-        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 0.8D));
-        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(1, new BreakBlockGoal(this));
+        this.goalSelector.addGoal(2, new OpenDoorGoal(this, true)); // Открытие дверей во время боя
+        this.goalSelector.addGoal(3, new InquisitorMeleeAttackGoal(this, 1.2D));
+        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.8D));
+        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
 
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         // Убрали автоматическую атаку на игроков - инквизитор нейтрален до получения урона
@@ -262,7 +264,7 @@ public class InquisitorEntity extends HeroSouls {
 
     private void maintainRegenerationEffect() {
         if (this.tickCount % 60 == 0) {
-            this.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 100, 4, false, false));
+            this.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 100, 3, false, false));
         }
     }
 
@@ -1461,8 +1463,8 @@ public class InquisitorEntity extends HeroSouls {
         Random random = new Random(); // Генератор случайных чисел
         double chanceCircuit = 0.25;
         double chanceCross = 0.23;
-        double chanceGrail = 0.01;
-        double chanceAnni = 0.15;
+        double chanceAnni = 0.7;
+        double chanceAncient = 0.5;
 
         if (random.nextDouble() < chanceCircuit) {
             int circuitCount = random.nextInt(30, 51);
@@ -1471,11 +1473,11 @@ public class InquisitorEntity extends HeroSouls {
         if (random.nextDouble() < chanceCross) {
             this.spawnAtLocation(new ItemStack(ModItems.CROSS.get(), 1));
         }
-        if (random.nextDouble() < chanceGrail) {
+        if (random.nextDouble() < chanceAnni) {
             this.spawnAtLocation(new ItemStack(ModItems.FIRE_ANNIHILATION.get(), 1));
         }
-        if (random.nextDouble() < chanceAnni) {
-            this.spawnAtLocation(new ItemStack(ModItems.HOLY_BAYONETS.get(), 1));
+        if (random.nextDouble() < chanceAncient) {
+            this.spawnAtLocation(new ItemStack(ModItems.ANCIENT_SCROLL.get(), 1));
         }
     }
 

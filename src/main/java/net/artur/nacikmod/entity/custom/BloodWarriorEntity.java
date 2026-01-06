@@ -1,53 +1,53 @@
 package net.artur.nacikmod.entity.custom;
 
+import net.artur.nacikmod.registry.ModEffects;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
-import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.TargetGoal;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.ForgeMod;
 import org.jetbrains.annotations.Nullable;
+
 import java.util.EnumSet;
-import java.util.List;
 import java.util.UUID;
-import net.artur.nacikmod.registry.ModEffects;
 
 public class BloodWarriorEntity extends Monster {
     private UUID ownerUUID;
     private Player owner;
-    private static final double PROTECTION_RANGE = 8.0D;
-    private static final int DESPAWN_TIME = 300;
-    private int despawnTimer = 0;
-    private boolean hasTarget = false;
-    private static final double ATTACK_RANGE = 3.0D;
+
+    private static final double FOLLOW_DISTANCE = 8.0D;
+    private static final int IDLE_DESPAWN_TICKS = 300; // 15 секунд без цели
+    private int idleTimer = 0;
+
+    private static final double ATTACK_REACH = 3.0D;
     private int attackCooldown = 0;
-    private static final int ATTACK_COOLDOWN_TICKS = 20;
+    private static final int ATTACK_INTERVAL = 20;
+
+    private boolean effectApplied = false;
 
     public BloodWarriorEntity(EntityType<? extends Monster> entityType, Level level) {
         super(entityType, level);
-        
-        // Разрешаем открывать двери / калитки и лучше плавать
         if (this.getNavigation() instanceof GroundPathNavigation groundNav) {
             groundNav.setCanOpenDoors(true);
         }
         this.getNavigation().setCanFloat(true);
     }
-    
-    private boolean effectApplied = false;
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
@@ -64,26 +64,28 @@ public class BloodWarriorEntity extends Monster {
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new OpenDoorGoal(this, true));
-        this.goalSelector.addGoal(2, new BloodWarriorAttackGoal(this, 1.0D));
-        this.goalSelector.addGoal(3, new FollowOwnerGoal(this));
+        this.goalSelector.addGoal(2, new BloodWarriorMeleeAttackGoal(this, 1.0D));
+        this.goalSelector.addGoal(3, new BloodWarriorFollowOwnerGoal(this, 1.0D));
         this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.8D));
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
 
+        // ТАРГЕТЫ
+        // 1. Защита самого себя
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this, BloodWarriorEntity.class).setAlertOthers(BloodWarriorEntity.class));
-        this.targetSelector.addGoal(2, new ProtectOwnerGoal(this));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, entity -> 
-            this.isValidTarget(entity) && this.hasLineOfSight(entity)));
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Monster.class, 10, true, false, entity -> 
-            this.isValidTarget(entity) && this.hasLineOfSight(entity)));
+        // 2. ЗАЩИТА ХОЗЯИНА: атаковать того, кто ударил хозяина
+        this.targetSelector.addGoal(2, new BloodWarriorProtectOwnerGoal(this));
+        // 3. МЕСТЬ ХОЗЯИНА: атаковать того, кого ударил хозяин
+        this.targetSelector.addGoal(3, new BloodWarriorAttackOwnerTargetGoal(this));
+        // 4. Общая агрессия к монстрам
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Monster.class, 10, true, false,
+                this::isValidTarget));
     }
-    
-    private boolean isValidTarget(LivingEntity entity) {
-        // Атакуем всех враждебных существ, кроме животных, водных животных и других BloodWarrior
-        return !(entity instanceof Animal) &&
-                !(entity instanceof WaterAnimal) &&
-                !(entity instanceof BloodWarriorEntity) &&
-                entity != owner; // Не атакуем владельца
+
+    public boolean isValidTarget(LivingEntity entity) {
+        if (entity == null || entity == owner) return false;
+        if (entity instanceof BloodWarriorEntity) return false;
+        return !(entity instanceof Animal) && !(entity instanceof WaterAnimal);
     }
 
     public void setOwner(Player owner) {
@@ -94,23 +96,19 @@ public class BloodWarriorEntity extends Monster {
     public Player getOwner() {
         return owner;
     }
-    
-    public UUID getOwnerUUID() {
-        return ownerUUID;
-    }
 
     @Override
     public void tick() {
         super.tick();
 
         if (!this.level().isClientSide) {
-            // Эффект накладываем только один раз
+            // Эффект при спавне
             if (!effectApplied) {
-                this.addEffect(new net.minecraft.world.effect.MobEffectInstance(ModEffects.BLOOD_EXPLOSION.get(), 2400, 13, false, false));
+                this.addEffect(new MobEffectInstance(ModEffects.BLOOD_EXPLOSION.get(), 2400, 13, false, false));
                 effectApplied = true;
             }
 
-            // Ищем владельца
+            // Восстановление ссылки на владельца после перезагрузки мира
             if (owner == null && ownerUUID != null && this.level() instanceof ServerLevel serverLevel) {
                 Entity entity = serverLevel.getEntity(ownerUUID);
                 if (entity instanceof Player player) {
@@ -118,70 +116,27 @@ public class BloodWarriorEntity extends Monster {
                 }
             }
 
-            // Проверяем цель
-            hasTarget = this.getTarget() != null && this.getTarget().isAlive();
-
-            // Если нет цели — деспаун
-            if (!hasTarget) {
-                despawnTimer++;
-                if (despawnTimer >= DESPAWN_TIME) {
-                    this.remove(RemovalReason.DISCARDED); // Работает только на сервере
-                    return;
+            // Логика деспауна при отсутствии задач
+            if (this.getTarget() == null || !this.getTarget().isAlive()) {
+                idleTimer++;
+                if (idleTimer >= IDLE_DESPAWN_TICKS) {
+                    this.discard();
                 }
             } else {
-                despawnTimer = 0;
-            }
-
-            // Навигация к владельцу, если он есть и жив
-            if (owner != null && owner.isAlive()) {
-                double distance = this.distanceToSqr(owner);
-                if (distance > PROTECTION_RANGE * PROTECTION_RANGE && !hasTarget) {
-                    this.getNavigation().moveTo(owner, 1.0D);
-                }
+                idleTimer = 0;
             }
         }
     }
-
-
-
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        // Воины не получают урон от владельца
-        if (source.getEntity() == owner) {
-            return false;
-        }
-        
-        boolean hurt = super.hurt(source, amount);
-        
-        if (hurt && source.getEntity() instanceof LivingEntity attacker) {
-            // Если нас атаковали, атакуем в ответ
-            this.setTarget(attacker);
-        }
-        
-        return hurt;
+        if (source.getEntity() == owner) return false; // Иммунитет к урону от хозяина
+        return super.hurt(source, amount);
     }
 
-    @Override
-    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
-        // Не дропаем предметы при смерти
-    }
-
-    @Override
-    protected void dropEquipment() {
-        // Не дропаем снаряжение при смерти
-    }
-
-    @Override
-    protected void dropExperience() {
-        // Воины не дропают опыт при смерти
-    }
-    
     @Override
     public void die(DamageSource source) {
         super.die(source);
-        
-        // Исцеляем владельца на 4.5 HP при смерти воина
         if (owner != null && owner.isAlive()) {
             owner.heal(4.5f);
         }
@@ -189,49 +144,33 @@ public class BloodWarriorEntity extends Monster {
 
     @Override
     public boolean isAlliedTo(Entity entity) {
-        if (entity == owner || entity instanceof BloodWarriorEntity) {
-            return true;
-        }
+        if (entity == owner || entity instanceof BloodWarriorEntity) return true;
         return super.isAlliedTo(entity);
-    }
-
-    @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty,
-                                        MobSpawnType reason, @Nullable SpawnGroupData spawnData,
-                                        @Nullable CompoundTag dataTag) {
-        SpawnGroupData data = super.finalizeSpawn(world, difficulty, reason, spawnData, dataTag);
-
-
-        
-        return data;
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        if (ownerUUID != null) {
-            compound.putUUID("OwnerUUID", ownerUUID);
-        }
+        if (ownerUUID != null) compound.putUUID("OwnerUUID", ownerUUID);
         compound.putBoolean("EffectApplied", effectApplied);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        if (compound.hasUUID("OwnerUUID")) {
-            this.ownerUUID = compound.getUUID("OwnerUUID");
-        }
+        if (compound.hasUUID("OwnerUUID")) this.ownerUUID = compound.getUUID("OwnerUUID");
         this.effectApplied = compound.getBoolean("EffectApplied");
     }
 
-    // Цель для атаки
-    static class BloodWarriorAttackGoal extends Goal {
-        private final BloodWarriorEntity warrior;
-        private final double speedModifier;
+    // --- GOALS ---
 
-        public BloodWarriorAttackGoal(BloodWarriorEntity warrior, double speedModifier) {
+    static class BloodWarriorMeleeAttackGoal extends Goal {
+        private final BloodWarriorEntity warrior;
+        private final double speed;
+
+        public BloodWarriorMeleeAttackGoal(BloodWarriorEntity warrior, double speed) {
             this.warrior = warrior;
-            this.speedModifier = speedModifier;
+            this.speed = speed;
             this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
         }
 
@@ -246,110 +185,114 @@ public class BloodWarriorEntity extends Monster {
             LivingEntity target = warrior.getTarget();
             if (target == null) return;
 
-            warrior.getNavigation().moveTo(target, speedModifier);
+            warrior.getNavigation().moveTo(target, speed);
             warrior.getLookControl().setLookAt(target, 30.0F, 30.0F);
 
-            double distanceSqr = warrior.distanceToSqr(target);
-            if (distanceSqr <= ATTACK_RANGE * ATTACK_RANGE && warrior.hasLineOfSight(target)) {
+            if (warrior.distanceToSqr(target) <= ATTACK_REACH * ATTACK_REACH && warrior.hasLineOfSight(target)) {
                 if (warrior.attackCooldown <= 0) {
                     warrior.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
-                    target.hurt(warrior.damageSources().mobAttack(warrior), 
-                            (float) warrior.getAttributeValue(Attributes.ATTACK_DAMAGE));
-                    warrior.attackCooldown = ATTACK_COOLDOWN_TICKS;
-                } else {
-                    warrior.attackCooldown--;
+                    warrior.doHurtTarget(target);
+                    warrior.attackCooldown = ATTACK_INTERVAL;
                 }
             }
+            warrior.attackCooldown = Math.max(0, warrior.attackCooldown - 1);
         }
     }
 
-    // Цель для защиты владельца - атакуем тех, кто атаковал владельца
-    static class ProtectOwnerGoal extends Goal {
+    static class BloodWarriorFollowOwnerGoal extends Goal {
         private final BloodWarriorEntity warrior;
-        private int cooldown = 0;
+        private final double speed;
 
-        public ProtectOwnerGoal(BloodWarriorEntity warrior) {
+        public BloodWarriorFollowOwnerGoal(BloodWarriorEntity warrior, double speed) {
+            this.warrior = warrior;
+            this.speed = speed;
+            this.setFlags(EnumSet.of(Flag.MOVE));
+        }
+
+        @Override
+        public boolean canUse() {
+            return warrior.owner != null && warrior.owner.isAlive() &&
+                    warrior.getTarget() == null && warrior.distanceToSqr(warrior.owner) > FOLLOW_DISTANCE * FOLLOW_DISTANCE;
+        }
+
+        @Override
+        public void tick() {
+            warrior.getNavigation().moveTo(warrior.owner, speed);
+        }
+    }
+
+    // Цель: Атаковать того, кто ударил хозяина
+    static class BloodWarriorProtectOwnerGoal extends TargetGoal {
+        private final BloodWarriorEntity warrior;
+        private LivingEntity attacker;
+        private int lastHurtTimestamp;
+
+        public BloodWarriorProtectOwnerGoal(BloodWarriorEntity warrior) {
+            super(warrior, false);
             this.warrior = warrior;
             this.setFlags(EnumSet.of(Flag.TARGET));
         }
 
         @Override
         public boolean canUse() {
-            return warrior.owner != null && 
-                   warrior.owner.isAlive() && 
-                   cooldown <= 0;
+            Player owner = warrior.getOwner();
+            if (owner == null) return false;
+            this.attacker = owner.getLastHurtByMob();
+            int i = owner.getLastHurtByMobTimestamp();
+            return i != this.lastHurtTimestamp && this.canAttack(this.attacker, TargetingConditions.DEFAULT) && warrior.isValidTarget(this.attacker);
         }
 
         @Override
-        public void tick() {
-            if (warrior.owner == null || !warrior.owner.isAlive()) {
-                return;
-            }
-
-            // Ищем всех врагов рядом с владельцем
-            AABB protectionArea = warrior.owner.getBoundingBox().inflate(12.0D);
-            List<LivingEntity> enemies = warrior.level().getEntitiesOfClass(LivingEntity.class, protectionArea, 
-                entity -> {
-                    // Атакуем всех враждебных существ рядом с владельцем
-                    if (entity instanceof Monster || (entity instanceof Player && entity != warrior.owner)) {
-                        return entity != warrior.owner && 
-                               warrior.isValidTarget(entity) && 
-                               warrior.hasLineOfSight(entity); // Проверяем видимость
-                    }
-                    return false;
-                });
-
-            if (!enemies.isEmpty()) {
-                // Атакуем ближайшего врага
-                LivingEntity nearestEnemy = null;
-                double minDistance = Double.MAX_VALUE;
-                
-                for (LivingEntity enemy : enemies) {
-                    double distance = warrior.distanceToSqr(enemy);
-                    if (distance < minDistance) {
-                        minDistance = distance;
-                        nearestEnemy = enemy;
-                    }
-                }
-                
-                if (nearestEnemy != null) {
-                    warrior.setTarget(nearestEnemy);
-                }
-            }
-            
-            cooldown = 10; // Обновляем каждые 0.5 секунды для более быстрой реакции
-        }
-
-        @Override
-        public void stop() {
-            cooldown = 0;
+        public void start() {
+            this.mob.setTarget(this.attacker);
+            Player owner = warrior.getOwner();
+            if (owner != null) this.lastHurtTimestamp = owner.getLastHurtByMobTimestamp();
+            super.start();
         }
     }
 
-    // Цель для следования за владельцем
-    static class FollowOwnerGoal extends Goal {
+    // Цель: Атаковать того, кого ударил хозяин
+    static class BloodWarriorAttackOwnerTargetGoal extends TargetGoal {
         private final BloodWarriorEntity warrior;
+        private LivingEntity target;
+        private int lastAttackTimestamp;
 
-        public FollowOwnerGoal(BloodWarriorEntity warrior) {
+        public BloodWarriorAttackOwnerTargetGoal(BloodWarriorEntity warrior) {
+            super(warrior, false);
             this.warrior = warrior;
-            this.setFlags(EnumSet.of(Flag.MOVE));
+            this.setFlags(EnumSet.of(Flag.TARGET));
         }
 
         @Override
         public boolean canUse() {
-            return warrior.owner != null && 
-                   warrior.owner.isAlive() && 
-                   warrior.getTarget() == null; // Только если нет цели
+            Player owner = warrior.getOwner();
+            if (owner == null) return false;
+            this.target = owner.getLastHurtMob();
+            int i = owner.getLastHurtMobTimestamp();
+            return i != this.lastAttackTimestamp && this.canAttack(this.target, TargetingConditions.DEFAULT) && warrior.isValidTarget(this.target);
         }
 
         @Override
-        public void tick() {
-            if (warrior.owner != null && warrior.owner.isAlive()) {
-                double distance = warrior.distanceToSqr(warrior.owner);
-                if (distance > PROTECTION_RANGE * PROTECTION_RANGE) {
-                    warrior.getNavigation().moveTo(warrior.owner, 0.8D);
-                }
-            }
+        public void start() {
+            this.mob.setTarget(this.target);
+            Player owner = warrior.getOwner();
+            if (owner != null) this.lastAttackTimestamp = owner.getLastHurtMobTimestamp();
+            super.start();
         }
     }
-} 
+
+    @Override
+    protected void dropEquipment() {
+        // Не дропаем экипировку при смерти
+    }
+
+    @Override
+    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
+        // Не дропаем никаких предметов при смерти
+    }
+
+    @Override
+    protected void dropExperience() {
+        // Не дропаем опыт при смерти
+    }
+}

@@ -24,16 +24,16 @@ public class ManaSeal extends Item {
     private static final int COOLDOWN_TICKS = 600;
 
     public ManaSeal(Properties properties) {
-        super(properties.stacksTo(1));
+        super(properties.stacksTo(1).fireResistant());
     }
 
     @Override
     public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         if (!target.level().isClientSide && attacker instanceof Player player) {
-            // Проверяем кулдаун (кастомная система)
+            // Проверяем кулдаун
             if (PlayerCooldowns.isOnCooldown(player, this)) {
                 int left = PlayerCooldowns.getCooldownLeft(player, this);
-                player.sendSystemMessage(Component.literal("Item is on cooldown! (" + left / 20 + "s left)")
+                player.sendSystemMessage(Component.literal("Item is on cooldown! (" + (left / 20) + "s left)")
                         .withStyle(ChatFormatting.RED));
                 return super.hurtEnemy(stack, target, attacker);
             }
@@ -47,15 +47,20 @@ public class ManaSeal extends Item {
 
             // Накладываем эффект на цель
             target.addEffect(new MobEffectInstance(
-                ModEffects.EFFECT_MANA_SEAL.get(),
-                EFFECT_DURATION,
-                0,
-                false,
-                true,
-                true
+                    ModEffects.EFFECT_MANA_SEAL.get(),
+                    EFFECT_DURATION,
+                    0,
+                    false,
+                    true,
+                    true
             ));
 
-            // Тратим ману и синхронизируем с клиентом
+            // === НОВОЕ: Сообщение об успешном наложении ===
+            player.sendSystemMessage(Component.literal("Mana Seal successfully applied to ")
+                    .append(target.getDisplayName()) // Берем имя моба/игрока
+                    .withStyle(ChatFormatting.DARK_AQUA));
+
+            // Тратим ману и синхронизируем
             if (player instanceof ServerPlayer serverPlayer) {
                 serverPlayer.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
                     mana.removeMana(MANA_COST);
@@ -63,9 +68,8 @@ public class ManaSeal extends Item {
                 });
             }
 
-            // Устанавливаем кулдаун (кастомная система)
+            // Устанавливаем кулдаун
             PlayerCooldowns.setCooldown(player, this, COOLDOWN_TICKS);
-
         }
 
         return super.hurtEnemy(stack, target, attacker);

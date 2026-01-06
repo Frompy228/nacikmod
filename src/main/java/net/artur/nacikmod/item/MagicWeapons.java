@@ -23,7 +23,7 @@ public class MagicWeapons extends Item {
     private static final int MANA_COST = 100;
     private static final int MANA_PER_DAMAGE = 350;
     private static final int PROJECTILE_MANA_COST = 100;
-    private static final int MAX_DAMAGE = 40;
+    private static final int MAX_DAMAGE = 60;
 
     public MagicWeapons(Properties properties) {
         super(properties.fireResistant());

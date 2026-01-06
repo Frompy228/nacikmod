@@ -1,9 +1,6 @@
 package net.artur.nacikmod.item;
 
-import net.artur.nacikmod.capability.mana.IMana;
-import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.entity.projectiles.FirePillarEntity;
-import net.artur.nacikmod.util.PlayerCooldowns;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -19,19 +16,16 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
 
-public class FirePillar extends Item {
+public class FirePillarItem extends Item {
     private static final int RANGE = 150;
-    private static final int MANA_COST = 400;
-    private static final int COOLDOWN_TICKS = 300; // 20 секунд = 20 * 20 тиков
     
-    public FirePillar(Properties properties) {
-        super(properties.fireResistant());
+    public FirePillarItem(Properties properties) {
+        super(properties);
     }
 
     @Override
@@ -39,29 +33,6 @@ public class FirePillar extends Item {
         ItemStack itemStack = player.getItemInHand(hand);
 
         if (!level.isClientSide) {
-            // Проверяем КД (кастомная система)
-            if (PlayerCooldowns.isOnCooldown(player, this)) {
-                int left = PlayerCooldowns.getCooldownLeft(player, this);
-                player.sendSystemMessage(Component.literal("Fire Pillar is on cooldown! (" + left / 20 + "s left)")
-                        .withStyle(ChatFormatting.RED));
-                return InteractionResultHolder.fail(itemStack);
-            }
-
-            // Проверяем ману
-            LazyOptional<IMana> manaCap = player.getCapability(ManaProvider.MANA_CAPABILITY);
-            if (!manaCap.isPresent()) {
-                player.sendSystemMessage(Component.literal("Mana capability not found!")
-                        .withStyle(ChatFormatting.RED));
-                return InteractionResultHolder.fail(itemStack);
-            }
-
-            IMana mana = manaCap.orElseThrow(IllegalStateException::new);
-            if (mana.getMana() < MANA_COST) {
-                player.sendSystemMessage(Component.literal("Not enough mana! Need " + MANA_COST)
-                        .withStyle(ChatFormatting.RED));
-                return InteractionResultHolder.fail(itemStack);
-            }
-
             double targetX, targetY, targetZ;
             
             // Сначала проверяем, есть ли цель (сущность)
@@ -101,12 +72,6 @@ public class FirePillar extends Item {
                 groundLevel = pos.getY() + 1.0; // Верхняя поверхность блока
             }
             
-            // Тратим ману
-            mana.removeMana(MANA_COST);
-            
-            // Устанавливаем КД (кастомная система)
-            PlayerCooldowns.setCooldown(player, this, COOLDOWN_TICKS);
-            
             // Спавним столб по центру на уровне земли (getY() будет центром, столб наполовину под землей)
             FirePillarEntity pillar = new FirePillarEntity(level, targetX, groundLevel, targetZ, player);
             level.addFreshEntity(pillar);
@@ -142,9 +107,10 @@ public class FirePillar extends Item {
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
         super.appendHoverText(stack, level, tooltipComponents, isAdvanced);
 
-        tooltipComponents.add(Component.translatable("item.nacikmod.fire_pillar.desc1"));
-        tooltipComponents.add(Component.translatable("item.nacikmod.fire_pillar.desc2", MANA_COST)
-                .withStyle(style -> style.withColor(0x00FFFF)));
+        tooltipComponents.add(Component.translatable("item.nacikmod.fire_pillar.desc1")
+                .withStyle(ChatFormatting.GRAY));
+        tooltipComponents.add(Component.translatable("item.nacikmod.fire_pillar.desc2")
+                .withStyle(ChatFormatting.RED));
     }
 }
 

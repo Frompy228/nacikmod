@@ -2,6 +2,7 @@ package net.artur.nacikmod.entity.custom;
 
 import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.entity.MobClass.HeroSouls;
+import net.artur.nacikmod.entity.ai.BreakBlockGoal;
 import net.artur.nacikmod.registry.ModAttributes;
 import net.artur.nacikmod.registry.ModEffects;
 import net.artur.nacikmod.registry.ModItems;
@@ -38,6 +39,7 @@ import net.artur.nacikmod.item.Intangibility;
 import net.artur.nacikmod.capability.mana.IMana;
 
 public class ArcherEntity extends HeroSouls implements RangedAttackMob {
+    private static final int MAX_MANA = 12500;
     private static final double OPTIMAL_DISTANCE = 20.0;
     private static final double SWITCH_TO_MELEE_DISTANCE = 6;
     private static final double SWITCH_TO_RANGED_DISTANCE = 7.0;
@@ -80,12 +82,13 @@ public class ArcherEntity extends HeroSouls implements RangedAttackMob {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new OpenDoorGoal(this, true)); // Открытие дверей во время боя
-        this.goalSelector.addGoal(2, new ArcherRangedGoal(this, 1.0));
-        this.goalSelector.addGoal(3, new ArcherMeleeGoal(this, 1.0));
-        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.8D));
-        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(1, new BreakBlockGoal(this));
+        this.goalSelector.addGoal(2, new OpenDoorGoal(this, true)); // Открытие дверей во время боя
+        this.goalSelector.addGoal(3, new ArcherRangedGoal(this, 1.0));
+        this.goalSelector.addGoal(4, new ArcherMeleeGoal(this, 1.0));
+        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.8D));
+        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Mob.class, 40, true, false, this::isValidTarget));
     }
@@ -221,8 +224,8 @@ public class ArcherEntity extends HeroSouls implements RangedAttackMob {
         attribute.setBaseValue(BONUS_ARMOR);
         // Устанавливаем максимальную ману 10000
         this.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
-            mana.setMaxMana(10000);
-            mana.setMana(10000);
+            mana.setMaxMana(MAX_MANA);
+            mana.setMana(MAX_MANA);
         });
         return data;
     }

@@ -5,7 +5,9 @@ import com.min01.tickrateapi.capabilities.TickrateCapabilities;
 import com.min01.tickrateapi.util.CustomTimer;
 import com.min01.tickrateapi.util.TickrateUtil;
 import com.min01.tickrateapi.world.TickrateSavedData;
+import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.entity.MobClass.HeroSouls;
+import net.artur.nacikmod.entity.ai.BreakBlockGoal;
 import net.artur.nacikmod.registry.ModAttributes;
 import net.artur.nacikmod.registry.ModEffects;
 import net.artur.nacikmod.registry.ModItems;
@@ -45,6 +47,8 @@ import java.util.Random;
 
 public class LanserEntity extends HeroSouls {
 
+
+    private static final int MAX_MANA = 10000;
     private boolean attackWithMainHand = true; // Флаг для чередования атак
     
     // Константы для прыжков
@@ -157,7 +161,10 @@ public class LanserEntity extends HeroSouls {
                                         MobSpawnType reason, @Nullable SpawnGroupData spawnData,
                                         @Nullable CompoundTag dataTag) {
         SpawnGroupData data = super.finalizeSpawn(world, difficulty, reason, spawnData, dataTag);
-
+        this.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
+            mana.setMaxMana(MAX_MANA);
+            mana.setMana(MAX_MANA);
+        });
         // Выдаём копья мобу
         this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ModItems.LANS_OF_NACII.get()));
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(ModItems.LANS_OF_PROTECTION.get()));
@@ -185,14 +192,15 @@ public class LanserEntity extends HeroSouls {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new OpenDoorGoal(this, true)); // Открытие дверей во время боя
-        this.goalSelector.addGoal(2, new RetreatOnLowHealthGoal(this)); // Рывок назад при низком ХП
-        this.goalSelector.addGoal(3, new CustomMeleeAttackGoal(this, 1.0)); // Атака
-        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.5)); // Блуждание
-        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        this.targetSelector.addGoal(6, new NearestAttackableTargetGoal<>(this, Mob.class, 10, true, false, this::isValidTarget));
-        this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0f));
-        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(1, new BreakBlockGoal(this));
+        this.goalSelector.addGoal(2, new OpenDoorGoal(this, true)); // Открытие дверей во время боя
+        this.goalSelector.addGoal(3, new RetreatOnLowHealthGoal(this)); // Рывок назад при низком ХП
+        this.goalSelector.addGoal(4, new CustomMeleeAttackGoal(this, 1.0)); // Атака
+        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.5)); // Блуждание
+        this.targetSelector.addGoal(6, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        this.targetSelector.addGoal(7, new NearestAttackableTargetGoal<>(this, Mob.class, 10, true, false, this::isValidTarget));
+        this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0f));
+        this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
     }
 
 
@@ -432,7 +440,7 @@ public class LanserEntity extends HeroSouls {
                     this.getX(),
                     this.getY(),
                     this.getZ(),
-                    70 // Количество опыта
+                    170// Количество опыта
             ));
         }
     }

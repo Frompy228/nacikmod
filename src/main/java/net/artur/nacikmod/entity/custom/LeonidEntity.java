@@ -1,6 +1,7 @@
 package net.artur.nacikmod.entity.custom;
 
 import net.artur.nacikmod.entity.MobClass.HeroSouls;
+import net.artur.nacikmod.entity.ai.BreakBlockGoal;
 import net.artur.nacikmod.registry.*;
 import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.capability.mana.IMana;
@@ -82,7 +83,7 @@ public class LeonidEntity extends HeroSouls {
                 .add(Attributes.ARMOR,20)
                 .add(Attributes.ARMOR_TOUGHNESS,10)
                 .add(Attributes.MAX_HEALTH, 215.0) // Больше здоровья чем у базового HeroSouls
-                .add(Attributes.ATTACK_DAMAGE, 25.0) // Больше урона
+                .add(Attributes.ATTACK_DAMAGE, 32.0) // Больше урона
                 .add(Attributes.MOVEMENT_SPEED, 0.42) // Быстрее базового HeroSouls
                 .add(Attributes.FOLLOW_RANGE, 40.0) // Больший радиус обнаружения
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.3)
@@ -92,11 +93,12 @@ public class LeonidEntity extends HeroSouls {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new OpenDoorGoal(this, true)); // Открытие дверей во время боя
-        this.goalSelector.addGoal(2, new CustomMeleeAttackGoal(this, 1D));
-        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 0.8D));
-        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(1, new BreakBlockGoal(this));
+        this.goalSelector.addGoal(2, new OpenDoorGoal(this, true)); // Открытие дверей во время боя
+        this.goalSelector.addGoal(3, new CustomMeleeAttackGoal(this, 1D));
+        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.8D));
+        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
 
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this, SpartanEntity.class).setAlertOthers(LeonidEntity.class));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
@@ -183,7 +185,7 @@ public class LeonidEntity extends HeroSouls {
         regenerationTick++;
         if (regenerationTick >= REGENERATION_INTERVAL) {
             if (this.getHealth() < this.getMaxHealth()) {
-                this.heal(5.2f);
+                this.heal(2.5f);
             }
             regenerationTick = 0;
         }

@@ -66,6 +66,7 @@ public class ModEventBusClientEvents {
         event.registerLayerDefinition(IceSpikeModel.LAYER_LOCATION, IceSpikeModel::createBodyLayer);
         event.registerLayerDefinition(SlashProjectileModel.LAYER_LOCATION, SlashProjectileModel::createBodyLayer);
         event.registerLayerDefinition(DoubleSlashProjectileModel.LAYER_LOCATION, DoubleSlashProjectileModel::createBodyLayer);
+        event.registerLayerDefinition(TripleSlashProjectileModel.LAYER_LOCATION, TripleSlashProjectileModel::createBodyLayer);
         event.registerLayerDefinition(SuppressingGateModel.LAYER_LOCATION, SuppressingGateModel::createBodyLayer);
         event.registerLayerDefinition(FireWallModel.LAYER_LOCATION, FireWallModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.GRAAL_LAYER, GraalModel::createBodyLayer);
@@ -120,6 +121,7 @@ public class ModEventBusClientEvents {
             EntityRenderers.register(ModEntities.ICE_SPIKE_PROJECTILE.get(), IceSpikeProjectileRenderer::new);
             EntityRenderers.register(ModEntities.SLASH_PROJECTILE.get(), SlashProjectileRenderer::new);
             EntityRenderers.register(ModEntities.DOUBLE_SLASH_PROJECTILE.get(), DoubleSlashProjectileRenderer::new);
+            EntityRenderers.register(ModEntities.TRIPLE_SLASH_PROJECTILE.get(), TripleSlashProjectileRenderer::new);
             EntityRenderers.register(ModEntities.SUPPRESSING_GATE.get(), SuppressingGateRenderer::new);
             EntityRenderers.register(ModEntities.SHAMAK.get(), ShamakRenderer::new);
             EntityRenderers.register(ModEntities.GRAIL.get(), GraalRenderer::new);
@@ -134,6 +136,15 @@ public class ModEventBusClientEvents {
             net.minecraft.client.renderer.ItemBlockRenderTypes.setRenderLayer(
                 net.artur.nacikmod.registry.ModBlocks.FIRE_TRAP.get(),
                 net.minecraft.client.renderer.RenderType.cutout()
+            );
+
+            net.minecraft.client.renderer.ItemBlockRenderTypes.setRenderLayer(
+                    net.artur.nacikmod.registry.ModBlocks.BLOOD_CIRCLE.get(),
+                    net.minecraft.client.renderer.RenderType.cutout() // Или .translucent(), если есть мягкие края
+            );
+            net.minecraft.client.renderer.ItemBlockRenderTypes.setRenderLayer(
+                    net.artur.nacikmod.registry.ModBlocks.BLOOD_CIRCLE_CORNER.get(),
+                    net.minecraft.client.renderer.RenderType.cutout()
             );
             
             // Регистрация GUI экранов

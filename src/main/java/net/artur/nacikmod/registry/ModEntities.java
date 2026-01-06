@@ -136,6 +136,14 @@ public class ModEntities {
                             .updateInterval(20)
                             .build("double_slash_projectile"));
 
+    public static final RegistryObject<EntityType<TripleSlashProjectile>> TRIPLE_SLASH_PROJECTILE =
+            ENTITY_TYPES.register("triple_slash_projectile",
+                    () -> EntityType.Builder.<TripleSlashProjectile>of((type, level) -> new TripleSlashProjectile(type, level), MobCategory.MISC)
+                            .sized(4.0F, 5F)
+                            .clientTrackingRange(8)
+                            .updateInterval(20)
+                            .build("triple_slash_projectile"));
+
     public static final RegistryObject<EntityType<SuppressingGate>> SUPPRESSING_GATE =
             ENTITY_TYPES.register("suppressing_gate",
                     () -> EntityType.Builder.<SuppressingGate>of((type, level) -> new SuppressingGate(type, level), MobCategory.MISC)
