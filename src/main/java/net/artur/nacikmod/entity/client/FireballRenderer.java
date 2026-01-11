@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.artur.nacikmod.NacikMod;
-import net.artur.nacikmod.entity.projectiles.FireballEntity;
+import net.artur.nacikmod.entity.projectiles.FireBallEntity;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -15,7 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
-public class FireballRenderer extends EntityRenderer<FireballEntity> {
+public class FireballRenderer extends EntityRenderer<FireBallEntity> {
     private static final ResourceLocation BASE_TEXTURE = new ResourceLocation(NacikMod.MOD_ID, "textures/entity/fireball/magma.png");
     private static final ResourceLocation[] FIRE_TEXTURES = {
             new ResourceLocation(NacikMod.MOD_ID, "textures/entity/fireball/fire_0.png"),
@@ -28,7 +28,7 @@ public class FireballRenderer extends EntityRenderer<FireballEntity> {
             new ResourceLocation(NacikMod.MOD_ID, "textures/entity/fireball/fire_7.png")
     };
     
-    private final FireballModel<FireballEntity> model;
+    private final FireballModel<FireBallEntity> model;
 
     public FireballRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -36,7 +36,7 @@ public class FireballRenderer extends EntityRenderer<FireballEntity> {
     }
 
     @Override
-    public void render(FireballEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+    public void render(FireBallEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
         poseStack.pushPose();
 
         // Центрируем модель
@@ -73,11 +73,11 @@ public class FireballRenderer extends EntityRenderer<FireballEntity> {
     }
 
     @Override
-    public ResourceLocation getTextureLocation(FireballEntity entity) {
+    public ResourceLocation getTextureLocation(FireBallEntity entity) {
         return BASE_TEXTURE;
     }
 
-    public ResourceLocation getFireTextureLocation(FireballEntity entity) {
+    public ResourceLocation getFireTextureLocation(FireBallEntity entity) {
         int frame = (entity.tickCount) % FIRE_TEXTURES.length;
         return FIRE_TEXTURES[frame];
     }

@@ -51,7 +51,7 @@ public class BloodWarriorEntity extends Monster {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 30.0)
+                .add(Attributes.MAX_HEALTH, 35.0)
                 .add(Attributes.ARMOR, 5.0)
                 .add(Attributes.ATTACK_DAMAGE, 10.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.4)

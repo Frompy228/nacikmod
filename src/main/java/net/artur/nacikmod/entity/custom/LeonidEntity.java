@@ -83,7 +83,7 @@ public class LeonidEntity extends HeroSouls {
                 .add(Attributes.ARMOR,20)
                 .add(Attributes.ARMOR_TOUGHNESS,10)
                 .add(Attributes.MAX_HEALTH, 215.0) // Больше здоровья чем у базового HeroSouls
-                .add(Attributes.ATTACK_DAMAGE, 32.0) // Больше урона
+                .add(Attributes.ATTACK_DAMAGE, 30.0) // Больше урона
                 .add(Attributes.MOVEMENT_SPEED, 0.42) // Быстрее базового HeroSouls
                 .add(Attributes.FOLLOW_RANGE, 40.0) // Больший радиус обнаружения
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.3)

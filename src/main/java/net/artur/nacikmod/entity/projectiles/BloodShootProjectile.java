@@ -21,6 +21,7 @@ public class BloodShootProjectile extends ThrowableItemProjectile {
     public BloodShootProjectile(Level level, LivingEntity shooter, float damage) {
         super(ModEntities.BLOOD_SHOOT_PROJECTILE.get(), shooter, level);
         this.damage = damage;
+        this.setNoGravity(true);
     }
 
     public BloodShootProjectile(EntityType<? extends ThrowableItemProjectile> entityType, Level level) {
@@ -69,8 +70,7 @@ public class BloodShootProjectile extends ThrowableItemProjectile {
     @Override
     public void tick() {
         super.tick();
-        // Remove gravity effect
-        this.setNoGravity(true);
+
 
         // Increment lifetime and check if projectile should be removed
         if (!this.level().isClientSide) {

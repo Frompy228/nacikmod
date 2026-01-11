@@ -5,16 +5,12 @@ import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.network.AbilityStateManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.ChatFormatting;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -33,62 +29,29 @@ public class VisionBlessingAbility {
 
     public static void startKodai(Player player) {
         if (!(player instanceof ServerPlayer)) return;
-        
-        // Проверяем, есть ли у игрока Vision Blessing статус
+
         if (!player.getCapability(ManaProvider.MANA_CAPABILITY).map(mana -> mana.hasVisionBlessing()).orElse(false)) {
             return;
         }
-        
-        // Проверяем, не активен ли уже Кодайган
-        if (activeKodaiPlayers.contains(player.getUUID())) {
-            return; // Уже активен, не делаем ничего
-        }
-        
-        // Добавляем игрока в список активных
+
+        if (activeKodaiPlayers.contains(player.getUUID())) return;
+
         activeKodaiPlayers.add(player.getUUID());
-        
-        // Добавляем модификаторы атрибутов
-        // +2 к здоровью
-        AttributeModifier healthModifier = new AttributeModifier(
-            HEALTH_MODIFIER_UUID,
-            "kodai_health_bonus",
-            2.0,
-            AttributeModifier.Operation.ADDITION
-        );
-        player.getAttribute(Attributes.MAX_HEALTH).addTransientModifier(healthModifier);
-        
-        // +0.05 к скорости атаки
-        AttributeModifier attackSpeedModifier = new AttributeModifier(
-            ATTACK_SPEED_MODIFIER_UUID,
-            "kodai_attack_speed_bonus",
-            0.05,
-            AttributeModifier.Operation.ADDITION
-        );
-        player.getAttribute(Attributes.ATTACK_SPEED).addTransientModifier(attackSpeedModifier);
-        
-        // +0.2 к скорости передвижения
-        AttributeModifier movementSpeedModifier = new AttributeModifier(
-            MOVEMENT_SPEED_MODIFIER_UUID,
-            "kodai_movement_speed_bonus",
-            0.02,
-            AttributeModifier.Operation.ADDITION
-        );
-        player.getAttribute(Attributes.MOVEMENT_SPEED).addTransientModifier(movementSpeedModifier);
-        
-        // +1 к урону
-        AttributeModifier damageModifier = new AttributeModifier(
-            DAMAGE_MODIFIER_UUID,
-            "kodai_damage_bonus",
-            1.0,
-            AttributeModifier.Operation.ADDITION
-        );
-        player.getAttribute(Attributes.ATTACK_DAMAGE).addTransientModifier(damageModifier);
-        
-        // Отправляем сообщение в чат
+
+        // Атрибуты
+        player.getAttribute(Attributes.MAX_HEALTH).addTransientModifier(
+                new AttributeModifier(HEALTH_MODIFIER_UUID, "kodai_health_bonus", 2.0, AttributeModifier.Operation.ADDITION));
+        player.getAttribute(Attributes.ATTACK_SPEED).addTransientModifier(
+                new AttributeModifier(ATTACK_SPEED_MODIFIER_UUID, "kodai_attack_speed_bonus", 0.05, AttributeModifier.Operation.ADDITION));
+        player.getAttribute(Attributes.MOVEMENT_SPEED).addTransientModifier(
+                new AttributeModifier(MOVEMENT_SPEED_MODIFIER_UUID, "kodai_movement_speed_bonus", 0.02, AttributeModifier.Operation.ADDITION));
+        player.getAttribute(Attributes.ATTACK_DAMAGE).addTransientModifier(
+                new AttributeModifier(DAMAGE_MODIFIER_UUID, "kodai_damage_bonus", 1.0, AttributeModifier.Operation.ADDITION));
+
+        // Сообщение
         player.sendSystemMessage(Component.literal("Kodaigan activated")
                 .withStyle(style -> style.withColor(0x280800)));
-        
-        // Отправляем пакет всем игрокам поблизости
+
         if (player instanceof ServerPlayer serverPlayer) {
             AbilityStateManager.syncAbilityState(serverPlayer, "kodai", true);
         }
@@ -96,23 +59,18 @@ public class VisionBlessingAbility {
 
     public static void stopKodai(Player player) {
         if (!(player instanceof ServerPlayer)) return;
+        if (!activeKodaiPlayers.contains(player.getUUID())) return;
 
-        // Проверяем, активен ли Кодайган
-        if (!activeKodaiPlayers.contains(player.getUUID())) {
-            return; // Не активен, не делаем ничего
-        }
-
-        // Удаляем игрока из списка активных
         activeKodaiPlayers.remove(player.getUUID());
 
-        // Удаляем модификаторы
         removeModifiers(player);
-        
-        // Отправляем сообщение в чат
+
+        // Снимаем ночное зрение
+        player.removeEffect(MobEffects.NIGHT_VISION);
+
         player.sendSystemMessage(Component.literal("Kodaigan deactivated")
                 .withStyle(ChatFormatting.GRAY));
-        
-        // Отправляем пакет всем игрокам поблизости
+
         if (player instanceof ServerPlayer serverPlayer) {
             AbilityStateManager.syncAbilityState(serverPlayer, "kodai", false);
         }
@@ -123,8 +81,7 @@ public class VisionBlessingAbility {
         player.getAttribute(Attributes.ATTACK_SPEED).removeModifier(ATTACK_SPEED_MODIFIER_UUID);
         player.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(MOVEMENT_SPEED_MODIFIER_UUID);
         player.getAttribute(Attributes.ATTACK_DAMAGE).removeModifier(DAMAGE_MODIFIER_UUID);
-        
-        // Корректируем текущее здоровье, если оно превышает новый максимум
+
         if (player.getHealth() > player.getMaxHealth()) {
             player.setHealth(player.getMaxHealth());
         }
@@ -139,22 +96,29 @@ public class VisionBlessingAbility {
         if (!(event.player instanceof ServerPlayer player)) return;
         if (event.phase != TickEvent.Phase.START) return;
 
-        // Проверяем, активен ли Кодайган
         if (activeKodaiPlayers.contains(player.getUUID())) {
-            // Проверяем, есть ли у игрока Vision Blessing статус
             boolean hasVisionBlessing = player.getCapability(ManaProvider.MANA_CAPABILITY)
-                .map(mana -> mana.hasVisionBlessing())
-                .orElse(false);
-            
+                    .map(mana -> mana.hasVisionBlessing())
+                    .orElse(false);
+
             if (!hasVisionBlessing) {
-                // Если статус потерян, деактивируем Кодайган
                 stopKodai(player);
                 return;
             }
-            
+
+            // Обновляем ночное зрение каждые 20 тиков (1 сек)
+            if (player.tickCount % 55 == 0) {
+                player.addEffect(new MobEffectInstance(
+                        MobEffects.NIGHT_VISION,
+                        500, // 25 секунд
+                        0,
+                        false, // без частиц (ambient)
+                        false, // без иконки
+                        false  // невидимый эффект в GUI
+                ));
+            }
+
             // Частицы генерируются на клиенте через KodaiganParticleHandler
-            // Серверная часть только отслеживает активность
         }
     }
 }
-

@@ -1,5 +1,5 @@
 {
-  "type": "nacikmod:sparta_type",
+  "type": "nacikmod:pocket_type",
   "generator": {
     "type": "minecraft:noise",
     "biome_source": {

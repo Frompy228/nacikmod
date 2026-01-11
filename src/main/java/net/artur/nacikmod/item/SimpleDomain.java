@@ -4,6 +4,7 @@ import net.artur.nacikmod.NacikMod;
 import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.item.ability.SimpleDomainAbility;
 import net.artur.nacikmod.registry.ModEffects;
+import net.artur.nacikmod.util.ItemUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -23,13 +24,23 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 @Mod.EventBusSubscriber(modid = NacikMod.MOD_ID)
-public class SimpleDomain extends Item {
+public class SimpleDomain extends Item implements ItemUtils.ITogglableMagicItem {
 
     private static final int MANA_COST_PER_SECOND = 5;
     private static final String ACTIVE_TAG = "active";
 
     public SimpleDomain(Properties properties) {
         super(properties.fireResistant());
+    }
+
+    // --- Реализация интерфейса ITogglableMagicItem ---
+    @Override
+    public String getActiveTag() { return ACTIVE_TAG; }
+
+    @Override
+    public void deactivate(Player player, ItemStack stack) {
+        SimpleDomainAbility.stopSimpleDomain(player);
+        stack.getOrCreateTag().putBoolean(getActiveTag(), false);
     }
 
     @Override
@@ -72,14 +83,8 @@ public class SimpleDomain extends Item {
         // Если игрок не активен, ничего не делаем
         if (!SimpleDomainAbility.activeSimpleDomainPlayers.contains(uuid)) return;
 
-        // Проверяем наличие активного предмета в инвентаре
-        ItemStack activeItem = null;
-        for (ItemStack stack : player.getInventory().items) {
-            if (stack.getItem() instanceof SimpleDomain && stack.hasTag() && stack.getTag().getBoolean(ACTIVE_TAG)) {
-                activeItem = stack;
-                break;
-            }
-        }
+        // ИСПОЛЬЗУЕМ УТИЛИТУ: Поиск предмета по всему инвентарю и курсору
+        ItemStack activeItem = ItemUtils.findActiveItem(player, SimpleDomain.class);
 
         if (activeItem == null) {
             SimpleDomainAbility.stopSimpleDomain(player);

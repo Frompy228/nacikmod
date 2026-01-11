@@ -11,6 +11,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.artur.nacikmod.NacikMod;
 import net.artur.nacikmod.item.BreakingBodyLimit;
+import net.artur.nacikmod.item.ability.BloodCircleManager;
+import net.artur.nacikmod.util.ItemUtils;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.network.chat.Component;
@@ -142,28 +144,24 @@ public class BreakingBodyLimitAbility {
         if (event.phase != TickEvent.Phase.END) return;
         if (player.tickCount % HP_CHECK_INTERVAL != 0) return;
 
-        boolean hasActiveItem = false;
-        ItemStack activeItem = null;
-        for (ItemStack stack : player.getInventory().items) {
-            if (stack.getItem() instanceof BreakingBodyLimit) {
-                if (stack.hasTag() && stack.getTag().getBoolean(ACTIVE_TAG)) {
-                    hasActiveItem = true;
-                    activeItem = stack;
-                } else if (activePlayers.contains(player.getUUID())) {
-                    stack.getOrCreateTag().putBoolean(ACTIVE_TAG, false);
-                }
-            }
-        }
-        if (!hasActiveItem && activePlayers.contains(player.getUUID())) {
+        // ИСПОЛЬЗУЕМ УТИЛИТУ: Поиск предмета по всему инвентарю и курсору
+        ItemStack activeItem = ItemUtils.findActiveItem(player, BreakingBodyLimit.class);
+
+        if (activeItem == null && activePlayers.contains(player.getUUID())) {
             stop(player);
             return;
         }
         if (activePlayers.contains(player.getUUID()) && activeItem != null) {
             Level currentLevel = getCurrentLevel(activeItem);
+            float damage = currentLevel.hpCost;
+            
+            boolean bloodCircleActive = BloodCircleManager.isActive(player);
+            if (bloodCircleActive) damage *= 0.75f;
+            
             if (player.level() instanceof ServerLevel serverLevel) {
-                player.hurt(ModDamageTypes.breakingBodyLimit(serverLevel), currentLevel.hpCost);
+                player.hurt(ModDamageTypes.breakingBodyLimit(serverLevel), damage);
             } else {
-                player.hurt(player.level().damageSources().generic(), currentLevel.hpCost);
+                player.hurt(player.level().damageSources().generic(), damage);
             }
             // Эффекты силы, скорости, прыгучести
             if (currentLevel.strengthAmplifier > 0)

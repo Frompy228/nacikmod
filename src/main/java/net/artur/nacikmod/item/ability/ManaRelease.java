@@ -10,6 +10,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.artur.nacikmod.NacikMod;
 import net.artur.nacikmod.item.Release;
+import net.artur.nacikmod.util.ItemUtils;
 import net.artur.nacikmod.registry.ModAttributes;
 import net.artur.nacikmod.registry.ModEffects;
 import net.artur.nacikmod.capability.mana.ManaProvider;
@@ -227,23 +228,11 @@ public class ManaRelease {
             return;
         }
 
-        // Проверяем все предметы Release в инвентаре
-        boolean hasActiveItem = false;
-        ItemStack releaseItem = null;
-        for (ItemStack stack : player.getInventory().items) {
-            if (stack.getItem() instanceof Release) {
-                if (stack.hasTag() && stack.getTag().getBoolean(ACTIVE_TAG)) {
-                    hasActiveItem = true;
-                    releaseItem = stack;
-                } else if (activeReleasePlayers.contains(player.getUUID())) {
-                    // Если предмет помечен как неактивный, но игрок в списке активных
-                    stack.getOrCreateTag().putBoolean(ACTIVE_TAG, false);
-                }
-            }
-        }
+        // ИСПОЛЬЗУЕМ УТИЛИТУ: Поиск предмета по всему инвентарю и курсору
+        ItemStack releaseItem = ItemUtils.findActiveItem(player, Release.class);
 
         // Если нет активного предмета, но игрок в списке активных
-        if (!hasActiveItem && activeReleasePlayers.contains(player.getUUID())) {
+        if (releaseItem == null && activeReleasePlayers.contains(player.getUUID())) {
             stopRelease(player);
             return;
         }

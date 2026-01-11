@@ -4,6 +4,7 @@ import net.artur.nacikmod.NacikMod;
 import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.item.ability.DomainAbility;
 import net.artur.nacikmod.registry.ModEffects;
+import net.artur.nacikmod.util.ItemUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -23,13 +24,23 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 @Mod.EventBusSubscriber(modid = NacikMod.MOD_ID)
-public class Domain extends Item {
+public class Domain extends Item implements ItemUtils.ITogglableMagicItem {
 
     private static final int MANA_COST_PER_SECOND = 10;
     private static final String ACTIVE_TAG = "active";
 
-    public Domain() {
+    public Domain(Properties properties) {
         super(new Item.Properties().stacksTo(1).fireResistant());
+    }
+
+    // --- Реализация интерфейса ITogglableMagicItem ---
+    @Override
+    public String getActiveTag() { return ACTIVE_TAG; }
+
+    @Override
+    public void deactivate(Player player, ItemStack stack) {
+        DomainAbility.stopDomain(player);
+        stack.getOrCreateTag().putBoolean(getActiveTag(), false);
     }
 
     @Override
@@ -70,13 +81,8 @@ public class Domain extends Item {
 
         if (!DomainAbility.activeDomainPlayers.contains(uuid)) return;
 
-        ItemStack activeItem = null;
-        for (ItemStack stack : player.getInventory().items) {
-            if (stack.getItem() instanceof Domain && stack.hasTag() && stack.getTag().getBoolean(ACTIVE_TAG)) {
-                activeItem = stack;
-                break;
-            }
-        }
+        // ИСПОЛЬЗУЕМ УТИЛИТУ: Поиск предмета по всему инвентарю и курсору
+        ItemStack activeItem = ItemUtils.findActiveItem(player, Domain.class);
 
         if (activeItem == null) {
             DomainAbility.stopDomain(player);

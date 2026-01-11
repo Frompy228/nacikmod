@@ -16,8 +16,9 @@ import java.util.UUID;
 public class FireAnnihilationEntity extends Entity {
 
     private static final double RADIUS = 10.0D;
-    private static final float DAMAGE = 15.0F;
+    public static final float DAMAGE = 20.0F;
     private static final int FIRE_SECONDS = 6;
+    private double life = 2.5;
 
     private UUID ownerUUID;
 
@@ -59,8 +60,9 @@ public class FireAnnihilationEntity extends Entity {
             spawnParticlesClient();
         }
 
-        // 💀 1 тик — исчезает
-        discard();
+        if (--life <= 0) {
+            discard();
+        }
     }
 
     private void damageEntities() {

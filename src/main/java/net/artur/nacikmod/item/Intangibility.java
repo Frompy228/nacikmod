@@ -2,6 +2,7 @@ package net.artur.nacikmod.item;
 
 import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.registry.ModItems;
+import net.artur.nacikmod.util.ItemUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -17,12 +18,21 @@ import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
 
 import java.util.List;
 
-public class Intangibility extends Item {
+public class Intangibility extends Item implements ItemUtils.ITogglableMagicItem {
     private static final String ACTIVE_TAG = "active";
-    private static final int MANA_COST_PER_SECOND = 50;
+    private static final int MANA_COST_PER_SECOND = 75;
 
     public Intangibility(Properties properties) {
         super(properties.stacksTo(1).fireResistant());
+    }
+
+    // --- Реализация интерфейса ITogglableMagicItem ---
+    @Override
+    public String getActiveTag() { return ACTIVE_TAG; }
+
+    @Override
+    public void deactivate(Player player, ItemStack stack) {
+        stack.getOrCreateTag().putBoolean(getActiveTag(), false);
     }
 
     @Override
@@ -70,14 +80,14 @@ public class Intangibility extends Item {
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
         super.appendHoverText(stack, level, tooltipComponents, isAdvanced);
         tooltipComponents.add(Component.translatable("item.nacikmod.intangibility.desc1"));
-        tooltipComponents.add(Component.translatable("item.nacikmod.intangibility.desc2")
+        tooltipComponents.add(Component.translatable("item.nacikmod.intangibility.desc2", MANA_COST_PER_SECOND)
                 .withStyle(style -> style.withColor(0x00FFFF)));
         boolean isActive = isActive(stack);
         if (isActive) {
-            tooltipComponents.add(Component.translatable("item.nacikmod.release.active")
+            tooltipComponents.add(Component.translatable("item.active")
                     .withStyle(ChatFormatting.GREEN));
         } else {
-            tooltipComponents.add(Component.translatable("item.nacikmod.release.inactive")
+            tooltipComponents.add(Component.translatable("item.inactive")
                     .withStyle(ChatFormatting.RED));
         }
     }

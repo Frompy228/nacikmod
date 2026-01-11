@@ -11,15 +11,27 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.artur.nacikmod.item.ability.BreakingBodyLimitAbility;
+import net.artur.nacikmod.item.ability.BloodCircleManager;
+import net.artur.nacikmod.util.ItemUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class BreakingBodyLimit extends Item {
+public class BreakingBodyLimit extends Item implements ItemUtils.ITogglableMagicItem {
     private static final String ACTIVE_TAG = "active";
 
     public BreakingBodyLimit(Properties properties) {
         super(properties.stacksTo(1).rarity(Rarity.EPIC).fireResistant());
+    }
+
+    // --- Реализация интерфейса ITogglableMagicItem ---
+    @Override
+    public String getActiveTag() { return ACTIVE_TAG; }
+
+    @Override
+    public void deactivate(Player player, ItemStack stack) {
+        BreakingBodyLimitAbility.stop(player);
+        stack.getOrCreateTag().putBoolean(getActiveTag(), false);
     }
 
     @Override
@@ -49,15 +61,34 @@ public class BreakingBodyLimit extends Item {
         // Получаем номер уровня (0-4) и добавляем 1 для отображения (1-5)
         int levelNumber = stack.hasTag() ? stack.getTag().getInt("level") : 0;
         tooltipComponents.add(Component.translatable("item.nacikmod.breaking_body_limit.desc1"));
-        tooltipComponents.add(Component.translatable("item.nacikmod.breaking_body_limit.desc2", 
-                String.format("%.1f", (float) currentLevel.hpCost), levelNumber + 1)
-                .withStyle(ChatFormatting.DARK_RED));
+        
+        if (level != null && level.isClientSide) {
+            Player player = net.artur.nacikmod.util.ItemUtils.getClientPlayer(level);
+            if (player != null) {
+                boolean blood = BloodCircleManager.isActive(player);
+                float dmg = currentLevel.hpCost * (blood ? 0.75f : 1f);
+                
+                tooltipComponents.add(Component.translatable("item.nacikmod.breaking_body_limit.desc2", 
+                        String.format("%.1f", dmg), levelNumber + 1)
+                        .withStyle(ChatFormatting.DARK_RED));
+                
+                if (blood) {
+                    tooltipComponents.add(Component.literal("BLOOD CIRCLE ACTIVE: -25% Damage Taken")
+                            .withStyle(ChatFormatting.LIGHT_PURPLE));
+                }
+            }
+        } else {
+            tooltipComponents.add(Component.translatable("item.nacikmod.breaking_body_limit.desc2", 
+                    String.format("%.1f", (float) currentLevel.hpCost), levelNumber + 1)
+                    .withStyle(ChatFormatting.DARK_RED));
+        }
+        
         boolean isActive = stack.hasTag() && stack.getTag().getBoolean(ACTIVE_TAG);
         if (isActive) {
-            tooltipComponents.add(Component.translatable("item.nacikmod.breaking_body_limit.active")
+            tooltipComponents.add(Component.translatable("item.active")
                     .withStyle(ChatFormatting.GREEN));
         } else {
-            tooltipComponents.add(Component.translatable("item.nacikmod.breaking_body_limit.inactive")
+            tooltipComponents.add(Component.translatable("item.inactive")
                     .withStyle(ChatFormatting.RED));
         }
     }

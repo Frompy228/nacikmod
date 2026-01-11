@@ -212,9 +212,9 @@ public class ModEntities {
                             .build("inquisitor")
             );
 
-    public static final RegistryObject<EntityType<FireballEntity>> FIREBALL =
+    public static final RegistryObject<EntityType<FireBallEntity>> FIREBALL =
             ENTITY_TYPES.register("fireball",
-                    () -> EntityType.Builder.<FireballEntity>of((type, level) -> new FireballEntity(type, level), MobCategory.MISC)
+                    () -> EntityType.Builder.<FireBallEntity>of((type, level) -> new FireBallEntity(type, level), MobCategory.MISC)
                             .sized(2.4F, 2.4F) // Увеличен в 3 раза (было 0.8F)
                             .clientTrackingRange(16)
                             .updateInterval(2)

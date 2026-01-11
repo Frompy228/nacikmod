@@ -32,14 +32,16 @@ public class AncientScroll extends Item {
             ModItems.DOUBLE_SLASH,
             ModItems.FIRE_PILLAR,
             ModItems.MANA_SEAL,
-            ModItems.MANA_BLESSING
+            ModItems.MANA_BLESSING,
+            ModItems.BLOOD_CONTRACT
     );
     private static final List<RegistryObject<Item>> EPIC_POOL = List.of(
             ModItems.FIRE_ANNIHILATION,
             ModItems.TRIPLE_SLASH,
             ModItems.HUNDRED_SEAL,
             ModItems.VISION_BLESSING,
-            ModItems.BREAKING_BODY_LIMIT
+            ModItems.BREAKING_BODY_LIMIT,
+            ModItems.BLOOD_CIRCLE_ITEM
     );
 
     public AncientScroll(Properties properties) {
@@ -116,7 +118,7 @@ public class AncientScroll extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
-        tooltipComponents.add(Component.translatable("item.nacikmod.ancient_scroll.desc1").withStyle(ChatFormatting.GRAY));
+        tooltipComponents.add(Component.translatable("item.nacikmod.ancient_scroll.desc1"));
         tooltipComponents.add(Component.translatable("item.disappears").withStyle(ChatFormatting.GRAY));
     }
 }
