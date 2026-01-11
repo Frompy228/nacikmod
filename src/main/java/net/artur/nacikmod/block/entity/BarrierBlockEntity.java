@@ -1,8 +1,10 @@
 package net.artur.nacikmod.block.entity;
 
 import net.artur.nacikmod.capability.root.RootProvider;
+import net.artur.nacikmod.item.BarrierSeal;
 import net.artur.nacikmod.registry.ModBlocks;
 import net.artur.nacikmod.registry.ModEffects;
+import net.artur.nacikmod.util.ItemUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -79,6 +81,10 @@ public class BarrierBlockEntity extends BlockEntity {
         return owner;
     }
 
+    public boolean isSealActive() {
+        return sealActive;
+    }
+
     public static <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level) {
         if (level.isClientSide) return null;
         return (lvl, pos, state, be) -> {
@@ -100,6 +106,26 @@ public class BarrierBlockEntity extends BlockEntity {
         }
 
         tickCounter++;
+        
+        // Проверяем наличие активного предмета у владельца (раз в секунду)
+        // Это предотвращает работу барьера, если предмет выброшен
+        if (tickCounter % 20 == 0 && sealActive && owner != null) {
+            ServerPlayer ownerPlayer = serverLevel.getServer().getPlayerList().getPlayer(owner);
+            if (ownerPlayer != null) {
+                // Проверяем, есть ли у владельца активный BarrierSeal
+                net.minecraft.world.item.ItemStack activeItem = ItemUtils.findActiveItem(ownerPlayer, BarrierSeal.class);
+                if (activeItem == null) {
+                    // Предмета нет - деактивируем барьер
+                    updateSealState(owner, false, -1);
+                    return;
+                }
+            } else {
+                // Владелец не в игре - деактивируем барьер
+                updateSealState(owner, false, -1);
+                return;
+            }
+        }
+        
         // Тяжелую логику выполняем раз в 20 тиков (~раз в секунду)
         if (tickCounter % 20 != 0) return;
 

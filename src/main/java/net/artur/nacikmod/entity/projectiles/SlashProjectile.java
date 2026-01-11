@@ -27,7 +27,6 @@ public class SlashProjectile extends ThrowableItemProjectile {
 
     public SlashProjectile(EntityType<? extends ThrowableItemProjectile> type, Level level) {
         super(type, level);
-        this.setNoGravity(true);
     }
 
     @Override
@@ -49,7 +48,6 @@ public class SlashProjectile extends ThrowableItemProjectile {
     @Override
     public void tick() {
         super.tick();
-        this.setNoGravity(true);
 
         if (!this.level().isClientSide) {
             checkEntityCollisions();

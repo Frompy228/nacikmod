@@ -2,9 +2,7 @@ package net.artur.nacikmod.entity.custom;
 
 import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.entity.MobClass.HeroSouls;
-import net.artur.nacikmod.entity.ai.BreakBlockGoal;
 import net.artur.nacikmod.registry.ModAttributes;
-import net.artur.nacikmod.registry.ModEntities;
 import net.artur.nacikmod.registry.ModItems;
 import net.artur.nacikmod.registry.ModSounds;
 import net.minecraft.util.RandomSource;
@@ -27,13 +25,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.sounds.SoundSource;
 import org.jetbrains.annotations.Nullable;
 import java.util.EnumSet;
-import net.minecraft.network.chat.Component;
+
 import net.minecraft.world.phys.AABB;
 import java.util.List;
 import java.util.Random;
@@ -46,7 +43,7 @@ public class BerserkerEntity extends HeroSouls {
     private static final float REGENERATION_AMOUNT = 2.0f;
     private static final double BASE_ATTACK_DAMAGE = 24;
     private static final double ENTITY_REACH = 5.0D; // Достигаемость сущностей 5 блоков
-    private static final int ROAR_COOLDOWN = 300;
+    private static final int ROAR_COOLDOWN = 280;
     private static final int ROAR_RADIUS = 2; // Радиус разрушения блоков
     private static final int MAX_RESURRECTIONS = 7; // Максимальное количество воскрешений
     private int resurrectionCount = 0; // Счетчик воскрешений
@@ -64,12 +61,11 @@ public class BerserkerEntity extends HeroSouls {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new BreakBlockGoal(this));
-        this.goalSelector.addGoal(2, new OpenDoorGoal(this, true)); // Открытие дверей во время боя
-        this.goalSelector.addGoal(3, new CustomMeleeAttackGoal(this, 1.0D));
-        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.8D));
-        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(1, new OpenDoorGoal(this, true)); // Открытие дверей во время боя
+        this.goalSelector.addGoal(2, new CustomMeleeAttackGoal(this, 1.0D));
+        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 0.8D));
+        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
 
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
@@ -147,10 +143,10 @@ public class BerserkerEntity extends HeroSouls {
                 .add(ModAttributes.BONUS_ARMOR.get(), BONUS_ARMOR)
                 .add(Attributes.ARMOR, 17)
                 .add(Attributes.ARMOR_TOUGHNESS, 15)
-                .add(Attributes.MAX_HEALTH, 140.0)
+                .add(Attributes.MAX_HEALTH, 110.0)
                 .add(Attributes.ATTACK_DAMAGE, BASE_ATTACK_DAMAGE)
                 .add(Attributes.MOVEMENT_SPEED, 0.32)
-                .add(Attributes.KNOCKBACK_RESISTANCE, 1)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 5)
                 .add(ForgeMod.SWIM_SPEED.get(), 2)
                 .add(Attributes.FOLLOW_RANGE, 40.0)
                 .add(ForgeMod.ENTITY_REACH.get(), ENTITY_REACH);
@@ -188,14 +184,14 @@ public class BerserkerEntity extends HeroSouls {
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, area);
         for (LivingEntity target : entities) {
             if (target != this) { // Не наносим урон самому себе
-                target.hurt(this.damageSources().mobAttack(this), 7.0f);
+                target.hurt(this.damageSources().mobAttack(this), 17.0f);
             }
         }
 
         // Разрушаем блоки в радиусе, исключая блоки под ногами
         BlockPos centerPos = this.blockPosition();
         for (int x = -ROAR_RADIUS; x <= ROAR_RADIUS; x++) {
-            for (int y = -ROAR_RADIUS; y <= ROAR_RADIUS; y++) {
+            for (int y = -ROAR_RADIUS; y <= ROAR_RADIUS + 1; y++) {
                 for (int z = -ROAR_RADIUS; z <= ROAR_RADIUS; z++) {
                     // Пропускаем блоки под ногами (y < 0)
                     if (y < 0) continue;
@@ -284,7 +280,7 @@ public class BerserkerEntity extends HeroSouls {
     protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
         Random random = new Random(); // Генератор случайных чисел
         double chanceCircuit = 0.25;
-        double chanceGodHand = 0.19;
+        double chanceGodHand = 0.2;
         double chanceMagicArmor = 0.1;
 
         if (random.nextDouble() < chanceCircuit) {

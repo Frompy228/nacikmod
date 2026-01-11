@@ -37,7 +37,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 public class Pocket extends Item {
-    private static final BlockPos SPARTA_POS = new BlockPos(4, 108, 4);
+    private static final BlockPos POCKET_POS = new BlockPos(4, 108, 4);
     private static final int MANA_COST = 750;
     private static final double RANGE = 5.0;
 
@@ -73,7 +73,7 @@ public class Pocket extends Item {
             return;
         }
         if (!level.isClientSide && level instanceof ServerLevel serverLevel) {
-            if (level.dimension().equals(ModDimensions.SPARTA_LEVEL_KEY)) {
+            if (level.dimension().equals(ModDimensions.POCKET_LEVEL_KEY)) {
                 // Если в Спарте, возвращаем в предыдущее измерение
                 String sourceDim = itemStack.getOrCreateTag().getString("SourceDimension");
                 if (!sourceDim.isEmpty()) {
@@ -90,7 +90,7 @@ public class Pocket extends Item {
                 }
             } else {
                 // Телепортируем в Спарту
-                ServerLevel spartaLevel = serverLevel.getServer().getLevel(ModDimensions.SPARTA_LEVEL_KEY);
+                ServerLevel spartaLevel = serverLevel.getServer().getLevel(ModDimensions.POCKET_LEVEL_KEY);
                 if (spartaLevel != null) {
                     // Сохраняем текущее измерение и позицию
                     itemStack.getOrCreateTag().putString("SourceDimension", level.dimension().location().toString());
@@ -98,7 +98,7 @@ public class Pocket extends Item {
                     itemStack.getOrCreateTag().putInt("ReturnY", entity.blockPosition().getY());
                     itemStack.getOrCreateTag().putInt("ReturnZ", entity.blockPosition().getZ());
                     
-                    entity.changeDimension(spartaLevel, new SimpleTeleporter(SPARTA_POS));
+                    entity.changeDimension(spartaLevel, new SimpleTeleporter(POCKET_POS));
                 }
             }
         }
@@ -176,7 +176,7 @@ public class Pocket extends Item {
                 // Телепортируем игрока
                 teleportEntity(player, level, itemStack, player);
                 
-                player.sendSystemMessage(Component.literal(level.dimension().equals(ModDimensions.SPARTA_LEVEL_KEY) 
+                player.sendSystemMessage(Component.literal(level.dimension().equals(ModDimensions.POCKET_LEVEL_KEY) 
                     ? "Returned to previous dimension!" 
                     : "Teleported to Pocket!")
                         .withStyle(ChatFormatting.GREEN));

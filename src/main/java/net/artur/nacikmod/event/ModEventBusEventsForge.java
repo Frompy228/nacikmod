@@ -1,10 +1,11 @@
 package net.artur.nacikmod.event;
 
 import net.artur.nacikmod.NacikMod;
-import net.artur.nacikmod.capability.active_abilities.ActiveAbilitiesProvider;
 import net.artur.nacikmod.entity.custom.InquisitorEntity;
-import net.artur.nacikmod.item.Gravity;
+import net.artur.nacikmod.item.BloodContract;
 import net.artur.nacikmod.item.ability.BloodCircleManager;
+import net.artur.nacikmod.item.ability.BloodContractManager;
+import net.artur.nacikmod.item.Gravity;
 import net.artur.nacikmod.item.ability.IntangibilityAbility;
 import net.artur.nacikmod.registry.ModAttributes;
 import net.artur.nacikmod.registry.ModItems;
@@ -35,6 +36,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import java.util.List;
+import java.util.UUID;
+
 import net.artur.nacikmod.effect.EffectManablessing;
 
 
@@ -249,12 +252,9 @@ public class ModEventBusEventsForge {
     private static final double MAX_DISTANCE = 100.0;
     private static final double CIRCLE_AOE_RANGE = 15.0;
 
-    // Тэг для пометки урона, чтобы избежать рекурсии
+    // защита от рекурсии
     private static boolean isProcessingContract = false;
 
-    /**
-     * Улучшенная логика передачи урона
-     */
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onBloodContractDamage(LivingHurtEvent event) {
         if (isProcessingContract) return;
@@ -264,57 +264,75 @@ public class ModEventBusEventsForge {
 
         DamageSource originalSource = event.getSource();
 
-        // СЛУЧАЙ 1: Игрок получает урон -> Передаем МОБАМ (Виноват Игрок)
+    /* ==========================================================
+       СЛУЧАЙ 1: ИГРОК ПОЛУЧАЕТ УРОН → ПЕРЕДАЕМ ПО КОНТРАКТУ
+       ========================================================== */
         if (victim instanceof Player player) {
-            player.getCapability(ActiveAbilitiesProvider.ACTIVE_ABILITIES_CAPABILITY).ifPresent(cap -> {
-                if (cap.isBloodContractActive()) {
-                    isProcessingContract = true;
-                    try {
-                        float amount = event.getAmount();
-                        // Здесь 'player' выступает как источник (cause), так как это его контракт бьет мобов
-                        DamageSource contractSource = copySourceWithNewCause(originalSource, player);
+            UUID playerUUID = player.getUUID();
 
-                        if (BloodCircleManager.isActive(player)) {
-                            AABB area = player.getBoundingBox().inflate(CIRCLE_AOE_RANGE);
-                            List<LivingEntity> nearby = player.level().getEntitiesOfClass(LivingEntity.class, area,
-                                    e -> e != player && e.isAlive());
+            if (!BloodContractManager.isContractActive(player)) return;
 
-                            for (LivingEntity linked : nearby) {
-                                linked.hurt(contractSource, amount);
-                            }
-                        } else if (cap.getContractTargetUUID() != null) {
-                            Entity target = ((ServerLevel)player.level()).getEntity(cap.getContractTargetUUID());
-                            if (target instanceof LivingEntity livingTarget && livingTarget.isAlive()) {
-                                livingTarget.hurt(contractSource, amount);
-                            }
-                        }
-                    } finally {
-                        isProcessingContract = false;
+            isProcessingContract = true;
+            try {
+                float amount = event.getAmount();
+                DamageSource contractSource =
+                        copySourceWithNewCause(originalSource, player);
+
+                // 🔴 AOE через круг
+                if (BloodCircleManager.isActive(player)) {
+                    AABB area = player.getBoundingBox().inflate(CIRCLE_AOE_RANGE);
+                    List<LivingEntity> targets =
+                            player.level().getEntitiesOfClass(
+                                    LivingEntity.class,
+                                    area,
+                                    e -> e != player && e.isAlive()
+                            );
+
+                    for (LivingEntity linked : targets) {
+                        linked.hurt(contractSource, amount);
                     }
                 }
-            });
+                // 🔴 одиночный контракт
+                else {
+                    UUID targetUUID = BloodContractManager.getContractTarget(playerUUID);
+                    if (targetUUID != null) {
+                        Entity target =
+                                ((ServerLevel) player.level()).getEntity(targetUUID);
+
+                        if (target instanceof LivingEntity living && living.isAlive()) {
+                            living.hurt(contractSource, amount);
+                        }
+                    }
+                }
+            } finally {
+                isProcessingContract = false;
+            }
         }
 
-        // СЛУЧАЙ 2: Моба ударили -> Передаем Игроку (Виноват Моб)
-        for (Player p : victim.level().players()) {
-            if (p.distanceTo(victim) > MAX_DISTANCE) continue;
+    /* ==========================================================
+       СЛУЧАЙ 2: МОБ ПОЛУЧАЕТ УРОН → ВОЗВРАЩАЕМ ИГРОКУ
+       ========================================================== */
+        for (Player player : victim.level().players()) {
+            if (player.distanceTo(victim) > MAX_DISTANCE) continue;
+            if (!BloodContractManager.isContractActive(player)) continue;
 
-            p.getCapability(ActiveAbilitiesProvider.ACTIVE_ABILITIES_CAPABILITY).ifPresent(cap -> {
-                if (cap.isBloodContractActive() && victim.getUUID().equals(cap.getContractTargetUUID())) {
-                    // Если игрок сам ударил моба, не возвращаем урон игроку (анти-суицид)
-                    if (originalSource.getEntity() != p) {
-                        isProcessingContract = true;
-                        try {
-                            // Здесь 'victim' (моб) выступает как источник урона для игрока
-                            p.hurt(copySourceWithNewCause(originalSource, victim), event.getAmount());
-                        } finally {
-                            isProcessingContract = false;
-                        }
-                    }
-                }
-            });
+            UUID targetUUID = BloodContractManager.getContractTarget(player.getUUID());
+            if (targetUUID == null || !victim.getUUID().equals(targetUUID)) continue;
+
+
+
+            isProcessingContract = true;
+            try {
+                player.hurt(
+                        copySourceWithNewCause(originalSource, victim),
+                        event.getAmount()
+                );
+            } finally {
+                isProcessingContract = false;
+            }
         }
     }
+
 
     /**
      * Создает копию источника урона, но заменяет того, кто нанес урон, на указанную сущность.

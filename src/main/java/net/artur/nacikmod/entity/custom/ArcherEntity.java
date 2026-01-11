@@ -44,7 +44,7 @@ public class ArcherEntity extends HeroSouls implements RangedAttackMob {
     private static final double SWITCH_TO_MELEE_DISTANCE = 6;
     private static final double SWITCH_TO_RANGED_DISTANCE = 7.0;
     private static final double MAX_SHOOT_DISTANCE = 32.0;
-    private static final double SHOOT_SPEED = 2.8;
+    private static final double SHOOT_SPEED = 5.2;
     private static final int SHOOT_COOLDOWN_TICKS = 19;
     private static final int MELEE_COOLDOWN_TICKS = 11;
     private static final int ROOT_ABILITY_COOLDOWN_TICKS = 300; // 20 секунд
@@ -189,11 +189,9 @@ public class ArcherEntity extends HeroSouls implements RangedAttackMob {
             net.artur.nacikmod.entity.projectiles.ManaArrowProjectile arrow =
                     new net.artur.nacikmod.entity.projectiles.ManaArrowProjectile(this.level(), this);
 
-            // Арчер всегда стреляет "идеально", поэтому power = 1.0F
-            float pullPower = 1.0F;
 
             // 1. Устанавливаем высокую скорость (как у игрока на максе или чуть выше)
-            float velocity = (float)SHOOT_SPEED * 1.8F; // 2.8 * 1.8 = ~5.0 (как у игрока)
+            float velocity = (float)SHOOT_SPEED;
 
             // 2. Рассчитываем базовый урон на основе ATTACK_DAMAGE моба (сейчас это 21.0)
             // Делим на 2, так как скорость 5.0 сильно множит результат

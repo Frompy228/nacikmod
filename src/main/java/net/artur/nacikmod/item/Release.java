@@ -10,15 +10,26 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.artur.nacikmod.item.ability.ManaRelease;
+import net.artur.nacikmod.util.ItemUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class Release extends Item {
+public class Release extends Item implements ItemUtils.ITogglableMagicItem {
     private static final String ACTIVE_TAG = "active";
 
     public Release(Properties properties) {
         super(properties.stacksTo(1).fireResistant());
+    }
+
+    // --- Реализация интерфейса ITogglableMagicItem ---
+    @Override
+    public String getActiveTag() { return ACTIVE_TAG; }
+
+    @Override
+    public void deactivate(Player player, ItemStack stack) {
+        ManaRelease.stopRelease(player);
+        stack.getOrCreateTag().putBoolean(getActiveTag(), false);
     }
 
     @Override
@@ -60,10 +71,10 @@ public class Release extends Item {
 
         boolean isActive = stack.hasTag() && stack.getTag().getBoolean(ACTIVE_TAG);
         if (isActive) {
-            tooltipComponents.add(Component.translatable("item.nacikmod.release.active")
+            tooltipComponents.add(Component.translatable("item.active")
                     .withStyle(ChatFormatting.GREEN));
         } else {
-            tooltipComponents.add(Component.translatable("item.nacikmod.release.inactive")
+            tooltipComponents.add(Component.translatable("item.inactive")
                     .withStyle(ChatFormatting.RED));
         }
     }

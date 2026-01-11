@@ -2,6 +2,7 @@ package net.artur.nacikmod.item.ability;
 
 import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.item.MagicHealing;
+import net.artur.nacikmod.util.ItemUtils;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
@@ -90,27 +91,17 @@ public class HealingOfShallowWounds {
         if (!(event.player instanceof ServerPlayer player)) return;
         if (event.phase != TickEvent.Phase.END) return;
 
-        // Проверяем все предметы MagicHealing в инвентаре
-        boolean hasActiveItem = false;
-        for (ItemStack stack : player.getInventory().items) {
-            if (stack.getItem() instanceof MagicHealing) {
-                if (stack.hasTag() && stack.getTag().getBoolean(ACTIVE_TAG)) {
-                    hasActiveItem = true;
-                } else if (activeHealingPlayers.contains(player.getUUID())) {
-                    // Если предмет помечен как неактивный, но игрок в списке активных
-                    stack.getOrCreateTag().putBoolean(ACTIVE_TAG, false);
-                }
-            }
-        }
+        // ИСПОЛЬЗУЕМ УТИЛИТУ: Поиск предмета по всему инвентарю и курсору
+        ItemStack activeItem = ItemUtils.findActiveItem(player, MagicHealing.class);
 
         // Если нет активного предмета, но игрок в списке активных
-        if (!hasActiveItem && activeHealingPlayers.contains(player.getUUID())) {
+        if (activeItem == null && activeHealingPlayers.contains(player.getUUID())) {
             stopHealing(player);
             return;
         }
 
         // Если эффект активен и предмет есть в инвентаре
-        if (activeHealingPlayers.contains(player.getUUID()) && hasActiveItem) {
+        if (activeHealingPlayers.contains(player.getUUID()) && activeItem != null) {
             // Check if player has enough mana
             player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
                 if (mana.getMana() >= MANA_COST_PER_SECOND) {

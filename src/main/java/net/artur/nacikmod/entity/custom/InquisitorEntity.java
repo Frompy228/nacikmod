@@ -10,7 +10,8 @@ import net.artur.nacikmod.entity.ai.InquisitorGuardGoal;
 import net.artur.nacikmod.entity.projectiles.FireCloudEntity;
 import net.artur.nacikmod.entity.projectiles.FireHailEntity;
 import net.artur.nacikmod.entity.projectiles.FireWallEntity;
-import net.artur.nacikmod.entity.projectiles.FireballEntity;
+import net.artur.nacikmod.entity.projectiles.FireBallEntity;
+import net.artur.nacikmod.entity.projectiles.FireAnnihilationEntity;
 import net.artur.nacikmod.item.Gravity;
 import net.artur.nacikmod.registry.ModAttributes;
 import net.artur.nacikmod.registry.ModEffects;
@@ -23,6 +24,8 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
@@ -42,7 +45,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.registries.RegistryObject;
@@ -56,7 +58,7 @@ public class InquisitorEntity extends HeroSouls {
     private static final int MANA_REGEN_PER_TICK = 30;
     private static final double ATTACK_RANGE = 3.0D;
     private static final int ATTACK_COOLDOWN_TICKS = 10;
-    private static final int GLOBAL_COOLDOWN_TICKS = 120;
+    private static final int GLOBAL_COOLDOWN_TICKS = 95;
     private static int BONUS_ARMOR = 30;
 
     private static final int SUMMON_CAST_TICKS = 60;
@@ -89,13 +91,21 @@ public class InquisitorEntity extends HeroSouls {
     private static final int BLESSING_MANA_COST = 700;
     private static final int BLESSING_DURATION_TICKS = 600; // 30 секунд
 
+    private static final int FIRE_ANNIHILATION_COOLDOWN_TICKS = 300; // 15 секунд
+    private static final int FIRE_ANNIHILATION_MANA_COST = 750;
+    private static final int FIRE_ANNIHILATION_COUNT = 3; // Количество выстрелов
+    private static final int FIRE_ANNIHILATION_INTERVAL_TICKS = 5; // Интервал между выстрелами (1 секунда)
+    private static final double FIRE_ANNIHILATION_SPAWN_DISTANCE = 2.5D; // Дистанция спавна от инквизитора
+
+
+
+    // Отдельные способности (вне основного списка)
     private static final int ANTI_FLIGHT_COOLDOWN_TICKS = 200; // 10 секунд
     private static final int ANTI_FLIGHT_MANA_COST = 300;
     private static final int ANTI_FLIGHT_LIGHTNING_COUNT = 5;
     private static final double ANTI_FLIGHT_LIGHTNING_SPREAD = 0.6D;
     public static final String ANTI_FLIGHT_LIGHTNING_TAG = "nacikmod_inquisitor_anti_flight";
 
-    // Отдельные способности (вне основного списка)
     private static final int DASH_COOLDOWN_TICKS = 500; // 25 seconds
     private static final float DASH_DAMAGE = 20.0F;
     private static final double DASH_DISTANCE = 8.0D; // Максимальная дистанция для рывка
@@ -115,7 +125,8 @@ public class InquisitorEntity extends HeroSouls {
         FIRE_WALL(FIRE_WALL_MANA_COST, FIRE_WALL_COOLDOWN_TICKS, 0), // Моментальная, без каста
         FIRE_HAIL(FIRE_HAIL_MANA_COST, FIRE_HAIL_COOLDOWN_TICKS, 0), // Моментальная, без каста
         FIREBALL_JUMP(FIREBALL_JUMP_MANA_COST, FIREBALL_JUMP_COOLDOWN_TICKS, 0), // Моментальная, без каста
-        HOLY_BLESSING(BLESSING_MANA_COST, BLESSING_COOLDOWN_TICKS, 0); // Моментальная, без каста
+        HOLY_BLESSING(BLESSING_MANA_COST, BLESSING_COOLDOWN_TICKS, 0), // Моментальная, без каста
+        FIRE_ANNIHILATION(FIRE_ANNIHILATION_MANA_COST, FIRE_ANNIHILATION_COOLDOWN_TICKS, 0); // Моментальная, без каста
 
         private final int manaCost;
         private final int cooldownTicks;
@@ -136,6 +147,9 @@ public class InquisitorEntity extends HeroSouls {
     private LivingEntity fireballJumpTarget = null; // Цель для выстрела после прыжка
     private int jumpCooldown = 0; // Кулдаун прыжка для Fireball Jump
     private int verticalJumpCooldown = 0; // Кулдаун для обычного вертикального прыжка
+    private int fireAnnihilationTicks = 0; // Счетчик тиков для интервала между выстрелами FireAnnihilation
+    private int fireAnnihilationCount = 0; // Счетчик оставшихся выстрелов FireAnnihilation
+    private LivingEntity fireAnnihilationTarget = null; // Цель для FireAnnihilation
     private final Object2IntMap<AbilityType> abilityCooldowns = new Object2IntOpenHashMap<>();
     private Vec3 pendingSummonPosition;
     private AreaEffectCloud telegraphCloud;
@@ -234,6 +248,7 @@ public class InquisitorEntity extends HeroSouls {
             tickSeparateAbilities(); // Отдельные способности (рывок и телепорт)
             checkDashCollision(); // Проверка столкновения во время рывка
             tickFireballJump(); // Обработка задержки выстрела после прыжка
+            tickFireAnnihilation(); // Обработка выстрелов FireAnnihilation с интервалом
             checkAndSwitchWeapon(); // Проверка необходимости переключения на Holy_bayonets
             
             // Обновляем кулдауны прыжков
@@ -680,6 +695,15 @@ public class InquisitorEntity extends HeroSouls {
 
             this.activeAbility = abilityType;
             finishHolyBlessingAbility();
+        } else if (abilityType == AbilityType.FIRE_ANNIHILATION) {
+            if (!consumeManaPreview(abilityType.manaCost)) {
+                scheduleNextAbilityRoll();
+                return;
+            }
+
+            // Моментальная способность, устанавливаем activeAbility и выполняем сразу
+            this.activeAbility = abilityType;
+            finishFireAnnihilationAbility();
         }
     }
 
@@ -795,6 +819,45 @@ public class InquisitorEntity extends HeroSouls {
         resetAbilityState();
     }
 
+    private void finishFireAnnihilationAbility() {
+        if (this.activeAbility != AbilityType.FIRE_ANNIHILATION) {
+            return;
+        }
+
+        LivingEntity target = this.getTarget();
+        if (target == null || !target.isAlive()) {
+            scheduleNextAbilityRoll();
+            resetAbilityState();
+            return;
+        }
+
+        if (!consumeMana(FIRE_ANNIHILATION_MANA_COST)) {
+            scheduleNextAbilityRoll();
+            resetAbilityState();
+            return;
+        }
+
+        // Инициализируем счетчики для выстрелов с интервалом
+        this.fireAnnihilationCount = FIRE_ANNIHILATION_COUNT;
+        this.fireAnnihilationTarget = target;
+        this.fireAnnihilationTicks = 0; // Первый выстрел сразу
+
+        // Делаем первый выстрел сразу
+        spawnFireAnnihilation(target);
+        fireAnnihilationCount--;
+        
+        // Если остались выстрелы, устанавливаем интервал
+        if (fireAnnihilationCount > 0) {
+            fireAnnihilationTicks = FIRE_ANNIHILATION_INTERVAL_TICKS;
+        } else {
+            // Если все выстрелы сделаны, завершаем способность
+            setAbilityCooldown(AbilityType.FIRE_ANNIHILATION, FIRE_ANNIHILATION_COOLDOWN_TICKS);
+            scheduleNextAbilityRoll();
+            resetAbilityState();
+            fireAnnihilationTarget = null;
+        }
+    }
+
     private void spawnBlessingParticles() {
         if (!(this.level() instanceof ServerLevel serverLevel)) {
             return;
@@ -874,31 +937,72 @@ public class InquisitorEntity extends HeroSouls {
         }
     }
 
+    /**
+     * Обрабатывает выстрелы FireAnnihilation с интервалом
+     */
+    private void tickFireAnnihilation() {
+        if (fireAnnihilationTicks > 0 && fireAnnihilationTarget != null && fireAnnihilationCount > 0) {
+            fireAnnihilationTicks--;
+            if (fireAnnihilationTicks <= 0) {
+                if (this.isAlive() && fireAnnihilationTarget.isAlive()) {
+                    spawnFireAnnihilation(fireAnnihilationTarget);
+                    fireAnnihilationCount--;
+                    
+                    // Если остались выстрелы, устанавливаем следующий интервал
+                    if (fireAnnihilationCount > 0) {
+                        fireAnnihilationTicks = FIRE_ANNIHILATION_INTERVAL_TICKS;
+                    } else {
+                        // Все выстрелы сделаны, завершаем способность
+                        setAbilityCooldown(AbilityType.FIRE_ANNIHILATION, FIRE_ANNIHILATION_COOLDOWN_TICKS);
+                        scheduleNextAbilityRoll();
+                        resetAbilityState();
+                        fireAnnihilationTarget = null;
+                    }
+                } else {
+                    // Цель мертва или инквизитор мертв, завершаем
+                    fireAnnihilationTarget = null;
+                    fireAnnihilationCount = 0;
+                    fireAnnihilationTicks = 0;
+                    scheduleNextAbilityRoll();
+                    resetAbilityState();
+                }
+            }
+        }
+    }
+
     private void shootFireball(LivingEntity target) {
         if (!(this.level() instanceof ServerLevel serverLevel) || target == null || !target.isAlive()) {
             return;
         }
 
-        // Создаем fireball (владелец устанавливается в конструкторе)
-        FireballEntity fireball = new FireballEntity(serverLevel, this);
+        // Используем правильный конструктор: FireBallEntity(Level level, LivingEntity owner)
+        FireBallEntity fireball = new FireBallEntity(serverLevel, this);
 
-        // Позиция выстрела (немного впереди инквизитора, чтобы избежать мгновенного столкновения)
+        // Позиция выстрела (немного впереди инквизитора)
         Vec3 lookDirection = this.getLookAngle().normalize();
-        Vec3 shootPos = this.getEyePosition().add(lookDirection.scale(0.5)); // 0.5 блока впереди
+        Vec3 shootPos = this.getEyePosition().add(lookDirection.scale(0.5));
         fireball.setPos(shootPos.x, shootPos.y, shootPos.z);
 
         // Вычисляем направление к цели
         Vec3 targetPos = target.getEyePosition();
         Vec3 direction = targetPos.subtract(shootPos).normalize();
 
-        // Скорость выстрела
+        // Скорость выстрела (немного больше для быстрого попадания)
         float speed = 1.5f;
-        float inaccuracy = 0.0f;
+        float inaccuracy = 0.05f; // Добавляем небольшую неточность для реалистичности
 
-        // Выстреливаем (владелец уже установлен в конструкторе)
+        // Выстреливаем
         fireball.shoot(direction.x, direction.y, direction.z, speed, inaccuracy);
 
+        // Добавляем визуальные/звуковые эффекты
         serverLevel.addFreshEntity(fireball);
+        serverLevel.playSound(null,
+                shootPos.x, shootPos.y, shootPos.z,
+                SoundEvents.BLAZE_SHOOT,
+                SoundSource.HOSTILE,
+                1.0f,
+                1.0f + (random.nextFloat() - random.nextFloat()) * 0.2f
+        );
     }
 
     /**
@@ -997,6 +1101,24 @@ public class InquisitorEntity extends HeroSouls {
         serverLevel.addFreshEntity(centerFireHail);
     }
 
+    private void spawnFireAnnihilation(LivingEntity target) {
+        if (!(this.level() instanceof ServerLevel serverLevel) || target == null || !target.isAlive()) {
+            return;
+        }
+
+        // Вычисляем направление взгляда инквизитора
+        Vec3 look = this.getLookAngle().normalize();
+
+        // Позиция спавна спереди инквизитора (как в FireAnnihilation.java)
+        double x = this.getX() + look.x * FIRE_ANNIHILATION_SPAWN_DISTANCE;
+        double y = this.getEyeY() - 0.2;
+        double z = this.getZ() + look.z * FIRE_ANNIHILATION_SPAWN_DISTANCE;
+
+        // Создаем FireAnnihilationEntity
+        FireAnnihilationEntity fireAnnihilation = new FireAnnihilationEntity(serverLevel, this, x, y, z);
+        serverLevel.addFreshEntity(fireAnnihilation);
+    }
+
     private Vec3 calculateFireWallPosition(LivingEntity target) {
         // Позиция цели
         Vec3 targetPos = target.position();
@@ -1078,6 +1200,10 @@ public class InquisitorEntity extends HeroSouls {
         this.castTicks = 0;
         this.damageTakenThisCast = 0.0F;
         this.pendingSummonPosition = null;
+        // Сбрасываем состояние FireAnnihilation
+        this.fireAnnihilationTicks = 0;
+        this.fireAnnihilationCount = 0;
+        this.fireAnnihilationTarget = null;
     }
 
     private void scheduleNextAbilityRoll() {

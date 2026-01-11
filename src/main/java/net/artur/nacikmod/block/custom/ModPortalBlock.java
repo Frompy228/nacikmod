@@ -33,12 +33,12 @@ public class ModPortalBlock extends Block {
     private void handleKaupenPortal(Entity player, BlockPos pPos) {
         if (player.level() instanceof ServerLevel serverlevel) {
             MinecraftServer minecraftserver = serverlevel.getServer();
-            ResourceKey<Level> resourcekey = player.level().dimension() == ModDimensions.SPARTA_LEVEL_KEY ?
-                    Level.OVERWORLD : ModDimensions.SPARTA_LEVEL_KEY;
+            ResourceKey<Level> resourcekey = player.level().dimension() == ModDimensions.POCKET_LEVEL_KEY ?
+                    Level.OVERWORLD : ModDimensions.POCKET_LEVEL_KEY;
 
             ServerLevel portalDimension = minecraftserver.getLevel(resourcekey);
             if (portalDimension != null && !player.isPassenger()) {
-                if(resourcekey == ModDimensions.SPARTA_LEVEL_KEY) {
+                if(resourcekey == ModDimensions.POCKET_LEVEL_KEY) {
                     player.changeDimension(portalDimension, new ModTeleporter(pPos, true));
                 } else {
                     player.changeDimension(portalDimension, new ModTeleporter(pPos, false));

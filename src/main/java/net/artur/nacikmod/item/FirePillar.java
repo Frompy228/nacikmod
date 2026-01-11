@@ -28,8 +28,8 @@ import java.util.Optional;
 public class FirePillar extends Item {
     private static final int RANGE = 150;
     private static final int MANA_COST = 400;
-    private static final int COOLDOWN_TICKS = 300; // 20 секунд = 20 * 20 тиков
-    
+    private static final int COOLDOWN_TICKS = 300; // 15 секунд = 20 * 15 тиков
+
     public FirePillar(Properties properties) {
         super(properties.fireResistant());
     }
@@ -39,7 +39,7 @@ public class FirePillar extends Item {
         ItemStack itemStack = player.getItemInHand(hand);
 
         if (!level.isClientSide) {
-            // Проверяем КД (кастомная система)
+            // Проверяем КД
             if (PlayerCooldowns.isOnCooldown(player, this)) {
                 int left = PlayerCooldowns.getCooldownLeft(player, this);
                 player.sendSystemMessage(Component.literal("Fire Pillar is on cooldown! (" + left / 20 + "s left)")
@@ -63,19 +63,19 @@ public class FirePillar extends Item {
             }
 
             double targetX, targetY, targetZ;
-            
+
             // Сначала проверяем, есть ли цель (сущность)
             LivingEntity targetEntity = getTargetedEntity(player);
-            
+
             if (targetEntity != null) {
-                // Если есть цель - используем позицию сущности
+                // Создаем столб прямо на позиции сущности
                 targetX = targetEntity.getX();
-                targetY = targetEntity.getY();
+                targetY = targetEntity.getY() + targetEntity.getBbHeight() / 2.0; // по центру тела
                 targetZ = targetEntity.getZ();
             } else {
                 // Если цели нет - спавним на блоке, на который смотрим
                 HitResult hitResult = player.pick(RANGE, 0.0F, false);
-                
+
                 if (hitResult.getType() == HitResult.Type.BLOCK) {
                     BlockHitResult blockHit = (BlockHitResult) hitResult;
                     Vec3 blockPos = blockHit.getLocation();
@@ -90,31 +90,19 @@ public class FirePillar extends Item {
                     targetZ = targetPos.z;
                 }
             }
-            
-            // Находим уровень земли под целью
-            double groundLevel = targetY;
-            net.minecraft.core.BlockPos pos = new net.minecraft.core.BlockPos((int) targetX, (int) targetY, (int) targetZ);
-            while (pos.getY() > level.getMinBuildHeight() && level.getBlockState(pos).isAir()) {
-                pos = pos.below();
-            }
-            if (pos.getY() > level.getMinBuildHeight()) {
-                groundLevel = pos.getY() + 1.0; // Верхняя поверхность блока
-            }
-            
-            // Тратим ману
+
+            // Тратим ману и ставим КД
             mana.removeMana(MANA_COST);
-            
-            // Устанавливаем КД (кастомная система)
             PlayerCooldowns.setCooldown(player, this, COOLDOWN_TICKS);
-            
-            // Спавним столб по центру на уровне земли (getY() будет центром, столб наполовину под землей)
-            FirePillarEntity pillar = new FirePillarEntity(level, targetX, groundLevel, targetZ, player);
+
+            // Спавним столб прямо на позиции цели
+            FirePillarEntity pillar = new FirePillarEntity(level, targetX, targetY, targetZ, player);
             level.addFreshEntity(pillar);
         }
 
         return InteractionResultHolder.success(itemStack);
     }
-    
+
     @Nullable
     private static LivingEntity getTargetedEntity(Player player) {
         Vec3 eyePos = player.getEyePosition();
@@ -147,4 +135,3 @@ public class FirePillar extends Item {
                 .withStyle(style -> style.withColor(0x00FFFF)));
     }
 }
-

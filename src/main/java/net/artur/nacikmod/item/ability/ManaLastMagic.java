@@ -8,6 +8,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.artur.nacikmod.NacikMod;
 import net.artur.nacikmod.registry.ModEffects;
 import net.artur.nacikmod.network.AbilityStateManager;
+import net.artur.nacikmod.item.ability.BloodCircleManager;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,9 +22,20 @@ public class ManaLastMagic {
     public static void startLastMagic(Player player) {
         if (!(player instanceof ServerPlayer)) return;
 
+        // Базовая длительность: 180 секунд (3600 тиков)
+        int baseDuration = 3600;
+        int bonusDuration = 0;
+        
+        // Проверка активности Blood Circle
+        if (BloodCircleManager.isActive(player)) {
+            bonusDuration = 200; // +10 секунд (200 тиков)
+        }
+        
+        int totalDuration = baseDuration + bonusDuration;
+
         // Добавляем эффект LastMagic
         player.addEffect(new net.minecraft.world.effect.MobEffectInstance(
-            ModEffects.MANA_LAST_MAGIC.get(), 3600, 0, false, false));
+            ModEffects.MANA_LAST_MAGIC.get(), totalDuration, 0, false, false));
 
         // Добавляем игрока в список активных
         activeLastMagicPlayers.add(player.getUUID());

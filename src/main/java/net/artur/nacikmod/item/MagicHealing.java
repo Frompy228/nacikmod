@@ -11,16 +11,27 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.artur.nacikmod.item.ability.HealingOfShallowWounds;
 import net.artur.nacikmod.capability.mana.ManaProvider;
+import net.artur.nacikmod.util.ItemUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class MagicHealing extends Item {
+public class MagicHealing extends Item implements ItemUtils.ITogglableMagicItem {
     private static final String ACTIVE_TAG = "active";
     private static final String HEALING_AMOUNT_TAG = "healing_amount";
 
     public MagicHealing(Properties properties) {
         super(properties.stacksTo(1).fireResistant());
+    }
+
+    // --- Реализация интерфейса ITogglableMagicItem ---
+    @Override
+    public String getActiveTag() { return ACTIVE_TAG; }
+
+    @Override
+    public void deactivate(Player player, ItemStack stack) {
+        HealingOfShallowWounds.stopHealing(player);
+        stack.getOrCreateTag().putBoolean(getActiveTag(), false);
     }
 
     @Override
@@ -59,10 +70,10 @@ public class MagicHealing extends Item {
 
         boolean isActive = stack.hasTag() && stack.getTag().getBoolean(ACTIVE_TAG);
         if (isActive) {
-            tooltipComponents.add(Component.translatable("item.nacikmod.magic_healing.active")
+            tooltipComponents.add(Component.translatable("item.active")
                     .withStyle(ChatFormatting.GREEN));
         } else {
-            tooltipComponents.add(Component.translatable("item.nacikmod.magic_healing.inactive")
+            tooltipComponents.add(Component.translatable("item.inactive")
                     .withStyle(ChatFormatting.RED));
         }
 

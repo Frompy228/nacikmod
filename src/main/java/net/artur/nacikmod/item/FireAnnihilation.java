@@ -17,6 +17,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import static net.artur.nacikmod.entity.projectiles.FireAnnihilationEntity.DAMAGE;
+
 public class FireAnnihilation extends Item {
 
     private static final int MANA_COST = 250;
@@ -71,7 +73,7 @@ public class FireAnnihilation extends Item {
         super.appendHoverText(stack, level, tooltipComponents, isAdvanced);
 
         tooltipComponents.add(Component.translatable("item.nacikmod.fire_annihilation.desc1"));
-        tooltipComponents.add(Component.translatable("item.nacikmod.fire_annihilation.desc2", MANA_COST)
+        tooltipComponents.add(Component.translatable("item.nacikmod.fire_annihilation.desc2", MANA_COST, DAMAGE)
                 .withStyle(style -> style.withColor(0x00FFFF)));
     }
 }

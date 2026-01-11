@@ -5,6 +5,7 @@ import net.artur.nacikmod.block.entity.BarrierBlockEntity;
 import net.artur.nacikmod.capability.mana.IMana;
 import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.registry.ModBlocks;
+import net.artur.nacikmod.util.ItemUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -35,7 +36,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = NacikMod.MOD_ID)
-public class BarrierSeal extends Item {
+public class BarrierSeal extends Item implements ItemUtils.ITogglableMagicItem {
     private static final int SLOT_COUNT = 3;
     private static final int MANA_COST_PER_BARRIER_PER_SECOND = 2;
     private static final String BARRIER_POSITIONS_TAG = "BarrierPositions";
@@ -45,9 +46,43 @@ public class BarrierSeal extends Item {
     private static final String OWNER_TAG = "Owner";
     private static final String OWNER_NAME_TAG = "OwnerName";
     private static final String JUST_ADDED_TAG = "JustAdded"; // Флаг для предотвращения конфликта use/useOn
+    private static final String ACTIVE_TAG = "active"; // Общий флаг активности (если хотя бы один барьер активен)
 
     public BarrierSeal(Properties properties) {
         super(properties);
+    }
+
+    // --- Реализация интерфейса ITogglableMagicItem ---
+    @Override
+    public String getActiveTag() { return ACTIVE_TAG; }
+
+    @Override
+    public void deactivate(Player player, ItemStack stack) {
+        // Деактивируем все барьеры в предмете
+        deactivateAllBarriers(stack, player);
+        stack.getOrCreateTag().putBoolean(getActiveTag(), false);
+    }
+
+    // Проверяет, активен ли предмет (есть ли хотя бы один активный барьер)
+    private static boolean hasActiveBarriers(ItemStack stack) {
+        if (stack == null || !stack.hasTag()) return false;
+        CompoundTag tag = stack.getTag();
+        ListTag positions = tag.getList(BARRIER_POSITIONS_TAG, Tag.TAG_COMPOUND);
+        
+        for (int i = 0; i < positions.size(); i++) {
+            CompoundTag barrierTag = positions.getCompound(i);
+            if (barrierTag.getBoolean(BARRIER_ACTIVE_TAG)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Обновляет общий флаг активности на основе состояния барьеров
+    private static void updateActiveFlag(ItemStack stack) {
+        if (stack == null || !stack.hasTag()) return;
+        boolean hasActive = hasActiveBarriers(stack);
+        stack.getOrCreateTag().putBoolean(ACTIVE_TAG, hasActive);
     }
 
     @Override
@@ -253,6 +288,9 @@ public class BarrierSeal extends Item {
         );
         updateBarrierBlockEntity(player, barrierPos, newState, slot);
 
+        // Обновляем общий флаг активности
+        updateActiveFlag(stack);
+
         player.sendSystemMessage(Component.literal("Barrier in slot " + (slot + 1) + " " + (newState ? "activated" : "deactivated"))
                 .withStyle(newState ? ChatFormatting.GREEN : ChatFormatting.RED));
     }
@@ -419,33 +457,49 @@ public class BarrierSeal extends Item {
         if (!(event.player instanceof ServerPlayer player)) return;
         if (player.level().isClientSide) return;
 
-        // Проверяем все BarrierSeal в инвентаре игрока
-        for (ItemStack stack : player.getInventory().items) {
-            if (!(stack.getItem() instanceof BarrierSeal)) continue;
-            if (!hasOwner(stack) || !isOwner(stack, player)) continue;
+        // ИСПОЛЬЗУЕМ УТИЛИТУ: Поиск активного предмета по всему инвентарю и курсору
+        ItemStack activeStack = ItemUtils.findActiveItem(player, BarrierSeal.class);
 
-            List<BlockPos> activeBarriers = getBarrierPositions(stack);
-            if (activeBarriers.isEmpty()) continue;
+        // Если активного предмета нет - ничего не делаем
+        // Проверка наличия активного предмета у владельца барьера выполняется в BarrierBlockEntity.serverTick()
+        if (activeStack == null) {
+            return;
+        }
 
-            // Тратим ману каждую секунду
-            if (player.tickCount % 20 == 0) {
-                int totalCost = activeBarriers.size() * MANA_COST_PER_BARRIER_PER_SECOND;
-                
-                LazyOptional<IMana> manaCap = player.getCapability(ManaProvider.MANA_CAPABILITY);
-                if (!manaCap.isPresent()) continue;
+        // Проверяем владельца
+        if (!hasOwner(activeStack) || !isOwner(activeStack, player)) {
+            return;
+        }
 
-                IMana mana = manaCap.orElseThrow(IllegalStateException::new);
-                if (mana.getMana() < totalCost) {
-                    // Не хватает маны - отключаем все барьеры
-                    deactivateAllBarriers(stack, player);
-                    player.sendSystemMessage(Component.literal("Not enough mana! All barriers deactivated.")
-                            .withStyle(ChatFormatting.RED));
-                } else {
-                    mana.removeMana(totalCost);
-                }
+        // Обновляем флаг активности на основе состояния барьеров
+        updateActiveFlag(activeStack);
+
+        List<BlockPos> activeBarriers = getBarrierPositions(activeStack);
+        if (activeBarriers.isEmpty()) {
+            // Если нет активных барьеров, обновляем флаг
+            activeStack.getOrCreateTag().putBoolean(ACTIVE_TAG, false);
+            return;
+        }
+
+        // Тратим ману каждую секунду
+        if (player.tickCount % 20 == 0) {
+            int totalCost = activeBarriers.size() * MANA_COST_PER_BARRIER_PER_SECOND;
+            
+            LazyOptional<IMana> manaCap = player.getCapability(ManaProvider.MANA_CAPABILITY);
+            if (!manaCap.isPresent()) return;
+
+            IMana mana = manaCap.orElseThrow(IllegalStateException::new);
+            if (mana.getMana() < totalCost) {
+                // Не хватает маны - отключаем все барьеры
+                deactivateAllBarriers(activeStack, player);
+                player.sendSystemMessage(Component.literal("Not enough mana! All barriers deactivated.")
+                        .withStyle(ChatFormatting.RED));
+            } else {
+                mana.removeMana(totalCost);
             }
         }
     }
+
 
     private static void deactivateAllBarriers(ItemStack stack, Player player) {
         if (stack == null || !stack.hasTag()) return;
@@ -467,6 +521,8 @@ public class BarrierSeal extends Item {
             }
         }
         tag.put(BARRIER_POSITIONS_TAG, positions);
+        // Обновляем общий флаг активности
+        tag.putBoolean(ACTIVE_TAG, false);
     }
 
     private void updateBarrierBlockEntity(Player player, BlockPos pos, boolean active, int slot) {
@@ -487,6 +543,13 @@ public class BarrierSeal extends Item {
         if (be instanceof BarrierBlockEntity barrierBe) {
             barrierBe.updateSealState(player.getUUID(), active, slot);
         }
+    }
+
+    @Override
+    public boolean onDroppedByPlayer(ItemStack item, Player player) {
+        // Деактивируем все барьеры при выбросе предмета
+        deactivate(player, item);
+        return true;
     }
 
     @Override

@@ -13,6 +13,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.artur.nacikmod.entity.projectiles.BloodShootProjectile;
 import net.artur.nacikmod.capability.mana.ManaProvider;
+import net.artur.nacikmod.item.ability.BloodCircleManager;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -47,6 +48,10 @@ public class BloodShoot extends Item {
 
             // Calculate damage based on current health before using health
             float damage = player.getHealth();
+            // Внутри метода use:
+            if (BloodCircleManager.isActive(player)) {
+                damage *= 1.5f; // +50% урона
+            }
 
             // Use health and mana
             player.hurt(player.damageSources().generic(), healthCost);
@@ -72,28 +77,33 @@ public class BloodShoot extends Item {
         tooltipComponents.add(Component.translatable("item.nacikmod.blood_shoot.desc1"));
 
         if (level != null && level.isClientSide) {
-            for (Player player : level.players()) {
-                if (player.isLocalPlayer()) {
-                    float damage = player.getHealth();
-                    tooltipComponents.add(Component.translatable("item.nacikmod.blood_shoot.desc2", String.format("%.1f", damage))
-                            .withStyle(ChatFormatting.DARK_RED));
-                    break;
+            Player player = net.artur.nacikmod.util.ItemUtils.getClientPlayer(level);
+            if (player != null) {
+                // 1. Отображение урона
+                float damage = player.getHealth();
+                // Если круг активен, визуально увеличиваем число урона в описании
+                if (BloodCircleManager.isActive(player)) {
+                    damage *= 1.5f;
                 }
-            }
-        }
 
-        if (level != null && level.isClientSide) {
-            for (Player player : level.players()) {
-                if (player.isLocalPlayer()) {
-                    float healthCost = player.getHealth()/2;
-                    tooltipComponents.add(Component.translatable("item.nacikmod.blood_shoot.desc3", String.format("%.1f", healthCost))
-                            .withStyle(ChatFormatting.DARK_RED));
-                    break;
+                tooltipComponents.add(Component.translatable("item.nacikmod.blood_shoot.desc2", String.format("%.1f", damage))
+                        .withStyle(ChatFormatting.DARK_RED));
+
+                // 2. Отображение стоимости здоровья
+                float healthCost = player.getHealth() / 2;
+                tooltipComponents.add(Component.translatable("item.nacikmod.blood_shoot.desc3", String.format("%.1f", healthCost))
+                        .withStyle(ChatFormatting.DARK_RED));
+
+                tooltipComponents.add(Component.translatable("item.nacikmod.blood_shoot.desc4", MANA_COST)
+                        .withStyle(style -> style.withColor(0x00FFFF)));
+
+                // 3. НОВОЕ: Проверка активности круга для фиолетового текста
+                if (BloodCircleManager.isActive(player)) {
+                    tooltipComponents.add(Component.literal("BLOOD CIRCLE ACTIVE: +50% Damage")
+                            .withStyle(ChatFormatting.LIGHT_PURPLE));
                 }
             }
         }
-        tooltipComponents.add(Component.translatable("item.nacikmod.blood_shoot.desc4", MANA_COST)
-                .withStyle(style -> style.withColor(0x00FFFF)));
     }
 
     @Override

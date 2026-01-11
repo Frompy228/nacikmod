@@ -10,6 +10,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.artur.nacikmod.NacikMod;
 import net.artur.nacikmod.item.HundredSeal;
+import net.artur.nacikmod.util.ItemUtils;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.ChatFormatting;
@@ -157,23 +158,11 @@ public class HundredSealAbility {
         if (!(event.player instanceof ServerPlayer player)) return;
         if (event.phase != TickEvent.Phase.END) return;
 
-        // Проверяем все предметы HundredSeal в инвентаре
-        boolean hasActiveItem = false;
-        ItemStack hundredSealItem = null;
-        for (ItemStack stack : player.getInventory().items) {
-            if (stack.getItem() instanceof HundredSeal) {
-                if (stack.hasTag() && stack.getTag().getBoolean(ACTIVE_TAG)) {
-                    hasActiveItem = true;
-                    hundredSealItem = stack;
-                } else if (activeHundredSealPlayers.contains(player.getUUID())) {
-                    // Если предмет помечен как неактивный, но игрок в списке активных
-                    stack.getOrCreateTag().putBoolean(ACTIVE_TAG, false);
-                }
-            }
-        }
+        // ИСПОЛЬЗУЕМ УТИЛИТУ: Поиск предмета по всему инвентарю и курсору
+        ItemStack hundredSealItem = ItemUtils.findActiveItem(player, HundredSeal.class);
 
         // Если нет активного предмета, но игрок в списке активных
-        if (!hasActiveItem && activeHundredSealPlayers.contains(player.getUUID())) {
+        if (hundredSealItem == null && activeHundredSealPlayers.contains(player.getUUID())) {
             stopHundredSeal(player);
             return;
         }

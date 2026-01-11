@@ -20,6 +20,7 @@ import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.registry.ModEffects;
 import net.artur.nacikmod.registry.ModItems;
 import net.artur.nacikmod.registry.ModSounds;
+import net.artur.nacikmod.util.ItemUtils;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -37,7 +38,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = NacikMod.MOD_ID)
-public class Gravity extends Item {
+public class Gravity extends Item implements ItemUtils.ITogglableMagicItem {
     private static final int MANA_COST_PER_SECOND = 20;
     private static final int MANA_COST_EFFECT = 500;
     private static final int EFFECT_RADIUS = 10;
@@ -47,6 +48,16 @@ public class Gravity extends Item {
 
     public Gravity(Properties properties) {
         super(properties.fireResistant());
+    }
+
+    // --- Реализация интерфейса ITogglableMagicItem ---
+    @Override
+    public String getActiveTag() { return ACTIVE_TAG; }
+
+    @Override
+    public void deactivate(Player player, ItemStack stack) {
+        stopFlying(player);
+        stack.getOrCreateTag().putBoolean(getActiveTag(), false);
     }
 
     @SubscribeEvent
@@ -254,27 +265,17 @@ public class Gravity extends Item {
             return;
         }
 
-        // Проверяем все предметы Gravity в инвентаре
-        boolean hasActiveItem = false;
-        for (ItemStack stack : player.getInventory().items) {
-            if (stack.getItem() instanceof Gravity) {
-                if (stack.hasTag() && stack.getTag().getBoolean(ACTIVE_TAG)) {
-                    hasActiveItem = true;
-                } else if (activeFlyingPlayers.contains(player.getUUID())) {
-                    // Если предмет помечен как неактивный, но игрок в списке активных
-                    stack.getOrCreateTag().putBoolean(ACTIVE_TAG, false);
-                }
-            }
-        }
+        // ИСПОЛЬЗУЕМ УТИЛИТУ: Поиск предмета по всему инвентарю и курсору
+        ItemStack activeItem = ItemUtils.findActiveItem(player, Gravity.class);
 
         // Если нет активного предмета, но игрок в списке активных
-        if (!hasActiveItem && activeFlyingPlayers.contains(player.getUUID())) {
+        if (activeItem == null && activeFlyingPlayers.contains(player.getUUID())) {
             stopFlying(player);
             return;
         }
 
         // Если эффект активен и предмет есть в инвентаре
-        if (activeFlyingPlayers.contains(player.getUUID()) && hasActiveItem) {
+        if (activeFlyingPlayers.contains(player.getUUID()) && activeItem != null) {
             // Проверяем ману
             if (!player.getCapability(ManaProvider.MANA_CAPABILITY).map(mana -> mana.getMana() >= MANA_COST_PER_SECOND).orElse(false)) {
                 stopFlying(player);

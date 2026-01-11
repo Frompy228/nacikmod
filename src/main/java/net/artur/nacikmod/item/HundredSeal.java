@@ -12,17 +12,28 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.artur.nacikmod.item.ability.HundredSealAbility;
 import net.artur.nacikmod.capability.mana.ManaProvider;
+import net.artur.nacikmod.util.ItemUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class HundredSeal extends Item {
+public class HundredSeal extends Item implements ItemUtils.ITogglableMagicItem {
     private static final String ACTIVE_TAG = "active";
     private static final int MAX_STORAGE = 100000;
     private static final int MANA_TRANSFER_AMOUNT = 200;
 
     public HundredSeal(Properties properties) {
         super(properties.stacksTo(1).fireResistant());
+    }
+
+    // --- Реализация интерфейса ITogglableMagicItem ---
+    @Override
+    public String getActiveTag() { return ACTIVE_TAG; }
+
+    @Override
+    public void deactivate(Player player, ItemStack stack) {
+        HundredSealAbility.stopHundredSeal(player);
+        stack.getOrCreateTag().putBoolean(getActiveTag(), false);
     }
 
     @Override

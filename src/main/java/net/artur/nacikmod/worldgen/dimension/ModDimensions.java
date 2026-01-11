@@ -31,15 +31,15 @@ import java.util.List;
 import java.util.OptionalLong;
 
 public class ModDimensions {
-    public static final ResourceKey<LevelStem> SPARTA_KEY = ResourceKey.create(Registries.LEVEL_STEM,
-            new ResourceLocation(NacikMod.MOD_ID, "sparta"));
-    public static final ResourceKey<Level> SPARTA_LEVEL_KEY = ResourceKey.create(Registries.DIMENSION,
-            new ResourceLocation(NacikMod.MOD_ID, "sparta"));
-    public static final ResourceKey<DimensionType> SPARTA_DIM_TYPE = ResourceKey.create(Registries.DIMENSION_TYPE,
-            new ResourceLocation(NacikMod.MOD_ID, "sparta_type"));
+    public static final ResourceKey<LevelStem> POCKET_KEY = ResourceKey.create(Registries.LEVEL_STEM,
+            new ResourceLocation(NacikMod.MOD_ID, "pocket"));
+    public static final ResourceKey<Level> POCKET_LEVEL_KEY = ResourceKey.create(Registries.DIMENSION,
+            new ResourceLocation(NacikMod.MOD_ID, "pocket"));
+    public static final ResourceKey<DimensionType> POCKET_DIM_TYPE = ResourceKey.create(Registries.DIMENSION_TYPE,
+            new ResourceLocation(NacikMod.MOD_ID, "pocket_type"));
 
     public static void bootstrapType(BootstapContext<DimensionType> context) {
-        context.register(SPARTA_DIM_TYPE, new DimensionType(
+        context.register(POCKET_DIM_TYPE, new DimensionType(
                 OptionalLong.of(12000), // fixedTime
                 true, // hasSkylight
                 false, // hasCeiling
@@ -66,9 +66,9 @@ public class ModDimensions {
                 new FixedBiomeSource(biomeRegistry.getOrThrow(ModBiomes.EMPTY_BIOME_KEY)),
                 noiseGenSettings.getOrThrow(CustomNoiseGeneratorSettings.EMPTY));
 
-        LevelStem stem = new LevelStem(dimTypes.getOrThrow(ModDimensions.SPARTA_DIM_TYPE), wrappedChunkGenerator);
+        LevelStem stem = new LevelStem(dimTypes.getOrThrow(ModDimensions.POCKET_DIM_TYPE), wrappedChunkGenerator);
 
-        context.register(SPARTA_KEY, stem);
+        context.register(POCKET_KEY, stem);
     }
 }
 

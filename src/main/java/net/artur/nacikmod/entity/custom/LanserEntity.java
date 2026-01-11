@@ -52,9 +52,8 @@ public class LanserEntity extends HeroSouls {
     private boolean attackWithMainHand = true; // Флаг для чередования атак
     
     // Константы для прыжков
-    private static final int JUMP_COOLDOWN_TICKS = 60; // 3 секунды между прыжками
+    private static final int JUMP_COOLDOWN_TICKS = 55; // 3 секунды между прыжками
     private static final double VERTICAL_JUMP_THRESHOLD = 2.0; // Минимальная разница высоты для прыжка
-    private static final double MAX_JUMP_HEIGHT = 4.0; // Максимальная высота прыжка
     private static int BONUS_ARMOR = 17;
     private int jumpCooldown = 0;
 
@@ -70,7 +69,7 @@ public class LanserEntity extends HeroSouls {
         if (jumpCooldown > 0) jumpCooldown--;
 
         if (!this.level().isClientSide && this.tickCount % 40 == 0) { // 20 тиков = 1 секунда
-            this.heal(1.0F);
+            this.heal(2.1F);
         }
         
         // Получаем мир
@@ -180,12 +179,12 @@ public class LanserEntity extends HeroSouls {
         return Monster.createMonsterAttributes()
                 .add(ModAttributes.BONUS_ARMOR.get(),BONUS_ARMOR)
                 .add(Attributes.ARMOR, 15)
-                .add(Attributes.ARMOR_TOUGHNESS, 10)
+                .add(Attributes.ARMOR_TOUGHNESS, 11)
                 .add(Attributes.MAX_HEALTH, 195.0)
-                .add(Attributes.ATTACK_DAMAGE, 20.0)
-                .add(Attributes.MOVEMENT_SPEED, 0.46)
+                .add(Attributes.ATTACK_DAMAGE, 25.0)
+                .add(Attributes.MOVEMENT_SPEED, 0.465)
                 .add(ForgeMod.SWIM_SPEED.get(), 2) // Увеличиваем скорость плавания в 1.5 раза
-                .add(Attributes.KNOCKBACK_RESISTANCE, 0.2)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0.21)
                 .add(Attributes.FOLLOW_RANGE, 32.0);
     }
 
