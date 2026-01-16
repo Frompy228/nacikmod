@@ -69,7 +69,7 @@ public class LanserEntity extends HeroSouls {
         if (jumpCooldown > 0) jumpCooldown--;
 
         if (!this.level().isClientSide && this.tickCount % 40 == 0) { // 20 тиков = 1 секунда
-            this.heal(2.1F);
+            this.heal(2.2F);
         }
         
         // Получаем мир

@@ -11,6 +11,7 @@ import net.artur.nacikmod.entity.client.*;
 import net.artur.nacikmod.entity.client.SuppressingGateRenderer;
 import net.artur.nacikmod.entity.client.ShamakRenderer;
 import net.artur.nacikmod.entity.client.SuppressingGateModel;
+import net.artur.nacikmod.gui.PocketOverlay;
 import net.artur.nacikmod.gui.TimeStopOverlay;
 import net.artur.nacikmod.item.MagicCrystal;
 import net.artur.nacikmod.registry.ModEntities;
@@ -79,6 +80,7 @@ public class ModEventBusClientEvents {
     @SubscribeEvent
     public static void registerOverlays(RegisterGuiOverlaysEvent event) {
         event.registerAboveAll("time_stop_overlay", TimeStopOverlay.OVERLAY);
+        event.registerAbove(net.minecraftforge.client.gui.overlay.VanillaGuiOverlay.CROSSHAIR.id(), "pocket_charge", PocketOverlay.HUD_INSTANCE);
     }
 
     @SubscribeEvent

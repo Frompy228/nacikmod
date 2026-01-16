@@ -7,6 +7,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -48,7 +49,6 @@ public class BreakBlockGoal extends Goal {
     private static final int MAX_IDLE_TICKS_DURING_BLOCK_FINDING = 20; // Максимум тиков простоя при поиске
     private static final int PATH_UPDATE_INTERVAL = 3; // Интервал обновления кэшированного пути
     private static final int DOOR_SEARCH_RADIUS = 5; // Радиус поиска дверей
-    private static final int FAR_BLOCK_SEARCH_DISTANCE = 8; // Дистанция поиска удаленных блоков
     
     // Отладочные флаги
     private final boolean debug = false;
@@ -75,21 +75,7 @@ public class BreakBlockGoal extends Goal {
     // Статические коллекции для синхронизации между сущностями
     private static final Set<BlockPos> currentlyMining = Collections.newSetFromMap(new ConcurrentHashMap<>(MAX_MINING_POSITIONS));
     private static final Map<Monster, BreakBlockGoal> goalMap = new ConcurrentHashMap<>();
-    
-    // Теги ломаемых блоков (кэш)
-    private static final Set<String> DEFAULT_BREAKABLE_BLOCKS = new HashSet<>(Arrays.asList(
-            "#minecraft:mineable/pickaxe",
-            "#minecraft:mineable/axe",
-            "#minecraft:mineable/shovel",
-            "minecraft:glass",
-            "minecraft:glass_pane",
-            "minecraft:stone",
-            "minecraft:cobblestone",
-            "minecraft:dirt",
-            "minecraft:grass_block",
-            "minecraft:wooden_door",
-            "minecraft:iron_door"
-    ));
+
     
     public BreakBlockGoal(Monster mob) {
         this.mob = mob;
@@ -449,65 +435,49 @@ public class BreakBlockGoal extends Goal {
      * Приоритет отдается уже ломаемому блоку, если он все еще валиден
      */
     private BlockPos findSuffocationBlock() {
-        if (mob == null || mob.level() == null) {
-            return null;
-        }
-        
+        if (mob == null || mob.level() == null) return null;
+
         Level world = mob.level();
         AABB boundingBox = mob.getBoundingBox();
-        
-        // ПРИОРИТЕТ 1: Если текущий блок - это блок удушья и он все еще валиден, продолжаем его ломать
+
+        // ПРИОРИТЕТ 1: Проверка текущего целевого блока
         if (targetBlock != null) {
-            BlockPos currentPos = targetBlock;
-            // Проверяем, что текущий блок все еще пересекается с хитбоксом
-            AABB currentBlockBox = new AABB(currentPos);
-            if (boundingBox.intersects(currentBlockBox)) {
-                BlockState currentState = world.getBlockState(currentPos);
-                // Если блок все еще существует и не воздух, и все еще душит
-                if (!currentState.isAir() && !currentState.canBeReplaced() && isBreakableBlock(world, currentPos)) {
-                    // Проверяем, что блок не под ногами
-                    double mobFeetY = mob.getBoundingBox().minY;
-                    if (currentPos.getY() >= (int) Math.floor(mobFeetY)) {
-                        if (debug) System.out.println("Current block is still suffocating: " + currentPos);
-                        return currentPos; // Продолжаем ломать текущий блок
-                    }
-                }
+            BlockState currentState = world.getBlockState(targetBlock);
+            // Используем isSuffocating вместо shouldSuffocate
+            if (boundingBox.intersects(new AABB(targetBlock)) &&
+                    currentState.isSuffocating(world, targetBlock) &&
+                    isBreakableBlock(world, targetBlock)) {
+                return targetBlock;
             }
         }
-        
-        // ПРИОРИТЕТ 2: Ищем другие блоки удушья, если текущий блок больше не валиден
-        int minX = (int) Math.floor(boundingBox.minX);
-        int maxX = (int) Math.ceil(boundingBox.maxX);
-        int minY = (int) Math.floor(boundingBox.minY);
-        int maxY = (int) Math.ceil(boundingBox.maxY);
-        int minZ = (int) Math.floor(boundingBox.minZ);
-        int maxZ = (int) Math.ceil(boundingBox.maxZ);
-        
-        // Проверяем все блоки внутри и на границах хитбокса
-        for (int x = minX; x < maxX; x++) {
-            for (int y = minY; y < maxY; y++) {
+
+        // ПРИОРИТЕТ 2: Поиск новых блоков (чуть сдуваем хитбокс, чтобы не цеплять стены рядом)
+        AABB tightBox = boundingBox.deflate(0.1);
+
+        int minX = Mth.floor(tightBox.minX);
+        int maxX = Mth.ceil(tightBox.maxX);
+        int minY = Mth.floor(tightBox.minY);
+        int maxY = Mth.ceil(tightBox.maxY);
+        int minZ = Mth.floor(tightBox.minZ);
+        int maxZ = Mth.ceil(tightBox.maxZ);
+
+        for (int y = maxY - 1; y >= minY; y--) {
+            // Не ломаем то, на чем стоим
+            if (y < (int) Math.floor(boundingBox.minY)) continue;
+
+            for (int x = minX; x < maxX; x++) {
                 for (int z = minZ; z < maxZ; z++) {
                     BlockPos checkPos = new BlockPos(x, y, z);
-                    
-                    // Пропускаем блоки под ногами (не ломаем опору)
-                    double mobFeetY = mob.getBoundingBox().minY;
-                    if (y < (int) Math.floor(mobFeetY)) {
-                        continue;
-                    }
-                    
                     BlockState state = world.getBlockState(checkPos);
-                    
-                    // Проверяем, что блок не воздух и не может быть заменен
-                    if (!state.isAir() && !state.canBeReplaced()) {
-                        // Проверяем, что блок реально пересекается с хитбоксом
-                        AABB blockBox = new AABB(checkPos);
-                        if (boundingBox.intersects(blockBox)) {
-                            // Проверяем, можно ли ломать этот блок
+
+                    // Проверка: блок должен быть твердым, удушающим и не пропускать свет
+                    // Это идеальное комбо против "ломания травы"
+                    if (state.isSuffocating(world, checkPos) && state.canOcclude()) {
+
+                        if (tightBox.intersects(new AABB(checkPos))) {
                             if (isBreakableBlock(world, checkPos)) {
-                                // Предпочитаем блок, который не ломается другими сущностями
                                 if (!currentlyMining.contains(checkPos)) {
-                                    if (debug) System.out.println("Found new suffocation block at " + checkPos);
-                                    return checkPos;
+                                    return checkPos.immutable();
                                 }
                             }
                         }
@@ -515,7 +485,6 @@ public class BreakBlockGoal extends Goal {
                 }
             }
         }
-        
         return null;
     }
     

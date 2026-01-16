@@ -205,7 +205,7 @@ public class HourlyRewardHandler {
                         
                         // Отправляем сообщение игроку
                         // Модификатор BONUS_ARMOR будет применен автоматически в ManaRegenerationHandler
-                        player.sendSystemMessage(Component.literal("Your mana regeneration has been permanently increased by +1 and you gained +1 BONUS_ARMOR!"));
+                        player.sendSystemMessage(Component.literal("Your mana regeneration has been permanently increased by +2 and you gained +1 BONUS_ARMOR!"));
                     }
                 });
             }

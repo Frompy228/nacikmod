@@ -5,7 +5,7 @@
   ],
   "spawners": {
     "type": "nacikmod:mysterious_trader",
-    "weight": 7,
+    "weight": 8,
     "minCount": 1,
     "maxCount": 1
   }

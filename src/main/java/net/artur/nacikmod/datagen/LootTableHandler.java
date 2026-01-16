@@ -24,15 +24,15 @@ public class LootTableHandler {
         if (tableName.getPath().startsWith("chests/")) {
 
             LootItem.Builder<?> magicCircuit = LootItem.lootTableItem(ModItems.MAGIC_CIRCUIT.get())
-                    .setWeight(170)
+                    .setWeight(180)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2)));
 
             LootItem.Builder<?> magicArmor = LootItem.lootTableItem(ModItems.MAGIC_ARMOR.get())
-                    .setWeight(8)
+                    .setWeight(6)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
             LootItem.Builder<?> magicCharm = LootItem.lootTableItem(ModItems.MAGIC_CHARM.get())
-                    .setWeight(10)
+                    .setWeight(8)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
             LootItem.Builder<?> manaCrystal = LootItem.lootTableItem(ModItems.MANA_CRYSTAL.get())
@@ -40,7 +40,7 @@ public class LootTableHandler {
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
             LootItem.Builder<?> magicSeal = LootItem.lootTableItem(ModItems.MAGIC_SEAL.get())
-                    .setWeight(13)
+                    .setWeight(11)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
             LootItem.Builder<?> ringOfTime = LootItem.lootTableItem(ModItems.RING_OF_TIME.get())
@@ -52,15 +52,15 @@ public class LootTableHandler {
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
             LootItem.Builder<?> bloodShoot = LootItem.lootTableItem(ModItems.BLOOD_SHOOT.get())
-                    .setWeight(7)
+                    .setWeight(6)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
             LootItem.Builder<?> bloodWarrior = LootItem.lootTableItem(ModItems.BLOOD_WARRIOR.get())
-                    .setWeight(7)
+                    .setWeight(6)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
             LootItem.Builder<?> hiraishinWithoutSeal = LootItem.lootTableItem(ModItems.HIRAISHIN_WITHOUT_SEAL.get())
-                    .setWeight(2)
+                    .setWeight(1)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
             LootItem.Builder<?> gravity = LootItem.lootTableItem(ModItems.GRAVITY.get())
@@ -68,7 +68,7 @@ public class LootTableHandler {
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
             LootItem.Builder<?> darkSphere = LootItem.lootTableItem(ModItems.DARK_SPHERE.get())
-                    .setWeight(2)
+                    .setWeight(1)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 
             LootItem.Builder<?> sensoryRain = LootItem.lootTableItem(ModItems.SENSORY_RAIN.get())

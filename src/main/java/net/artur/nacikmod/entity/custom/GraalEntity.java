@@ -3,6 +3,7 @@ package net.artur.nacikmod.entity.custom;
 import net.artur.nacikmod.lib.ExplosionHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -67,5 +68,18 @@ public class GraalEntity extends Monster {
     @Override
     public boolean canBeCollidedWith() {
         return true; // Можно атаковать
+    }
+
+    @Override
+    protected void dropExperience() {
+        if (!this.level().isClientSide) {
+            this.level().addFreshEntity(new ExperienceOrb(
+                    this.level(),
+                    this.getX(),
+                    this.getY(),
+                    this.getZ(),
+                    30000 // Количество опыта
+            ));
+        }
     }
 }

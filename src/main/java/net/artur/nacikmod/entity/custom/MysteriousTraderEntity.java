@@ -1,6 +1,7 @@
 package net.artur.nacikmod.entity.custom;
 
 import net.artur.nacikmod.capability.mana.ManaProvider;
+import net.artur.nacikmod.item.MagicCrystal;
 import net.artur.nacikmod.registry.ModAttributes;
 import net.artur.nacikmod.registry.ModItems;
 import net.artur.nacikmod.registry.ModBlocks;
@@ -172,6 +173,22 @@ public class MysteriousTraderEntity extends PathfinderMob implements Merchant, M
                 1, 2, 0.05F
         );
         offers.add(slashOffer);
+
+
+        ItemStack fullManaCrystal = new ItemStack(ModItems.MANA_CRYSTAL.get(), 1);
+        MagicCrystal.setStoredMana(fullManaCrystal, MagicCrystal.MAX_STORAGE);  // Полный кристалл
+
+// Создаём обмен
+        MerchantOffer manaCrystal = new MerchantOffer(
+                new ItemStack(ModItems.SHARD_OF_ARTIFACT.get(), 1), // Плата (Shard of Artifact)
+                new ItemStack(ModItems.MANA_CRYSTAL.get(), 1),
+                fullManaCrystal,  // Полный кристалл, который игрок получает
+                2, 2, 0.05F // Параметры обмена (количество, цена, и так далее)
+        );
+
+// Добавляем обмен в список предложений
+        offers.add(manaCrystal);
+
     }
 
     @Override

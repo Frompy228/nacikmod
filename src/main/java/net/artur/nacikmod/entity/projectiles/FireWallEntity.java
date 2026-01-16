@@ -10,6 +10,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -278,16 +279,33 @@ public class FireWallEntity extends Entity {
             return;
         }
 
-        if (isOwner(livingEntity) || livingEntity.isInvulnerableTo(this.damageSources().inFire())) {
+        // Пропускаем владельца
+        if (isOwner(livingEntity)) {
             return;
         }
 
         if (shouldDamage(livingEntity)) {
             recentHits.put(livingEntity.getUUID(), this.tickCount);
-            livingEntity.hurt(this.damageSources().inFire(), CONTACT_DAMAGE);
+
+            LivingEntity owner = getOwner(); // получаем объект владельца
+
+            // РАЗДЕЛЕНИЕ УРОНА 50/50:
+            // 1. 50% огненного урона
+            livingEntity.hurt(this.damageSources().inFire(), CONTACT_DAMAGE * 0.4f);
+
+            // 2. 50% магического урона (передаём владельца, чтобы мобы агрились)
+            livingEntity.hurt(this.damageSources().indirectMagic(this, owner), CONTACT_DAMAGE * 0.6f);
+
+            // Поджигаем
             livingEntity.setSecondsOnFire(FIRE_DURATION_SECONDS);
+
+            if (owner != null && livingEntity instanceof Mob mob) {
+                mob.setTarget(owner);
+            }
+
         }
     }
+
 
     private void destroyWall() {
         if (!this.level().isClientSide && damageZone != null) {

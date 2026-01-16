@@ -86,7 +86,7 @@ public class SensoryRain extends Item {
             player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> mana.removeMana(MANA_COST));
 
             // Устанавливаем кулдаун
-            player.getCooldowns().addCooldown(this, 260); // 5 seconds cooldown
+            player.getCooldowns().addCooldown(this, 245);
         }
 
         return InteractionResultHolder.success(itemStack);

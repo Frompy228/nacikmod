@@ -7,6 +7,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkEvent;
+import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.item.ability.ManaRelease;
 import net.artur.nacikmod.item.ability.ManaLastMagic;
 import net.artur.nacikmod.item.ability.HundredSealAbility;
@@ -36,14 +37,14 @@ public class AbilityStatePacket {
             buffer.writeUtf(entry.getKey());
             buffer.writeBoolean(entry.getValue());
         }
-        
+
         // Записываем количество уровней
         buffer.writeInt(packet.abilityLevels.size());
         for (Map.Entry<String, Integer> entry : packet.abilityLevels.entrySet()) {
             buffer.writeUtf(entry.getKey());
             buffer.writeInt(entry.getValue());
         }
-        
+
         buffer.writeInt(packet.playerId);
     }
 
@@ -56,7 +57,7 @@ public class AbilityStatePacket {
             boolean value = buffer.readBoolean();
             abilityStates.put(key, value);
         }
-        
+
         // Читаем уровни
         int levelsSize = buffer.readInt();
         Map<String, Integer> abilityLevels = new HashMap<>();
@@ -65,9 +66,9 @@ public class AbilityStatePacket {
             int value = buffer.readInt();
             abilityLevels.put(key, value);
         }
-        
+
         int playerId = buffer.readInt();
-        
+
         return new AbilityStatePacket(abilityStates, abilityLevels, playerId);
     }
 
@@ -96,14 +97,15 @@ public class AbilityStatePacket {
         updateAbilityState(targetPlayer, "simple_domain", packet.abilityStates.getOrDefault("simple_domain", false));
         updateAbilityState(targetPlayer, "domain", packet.abilityStates.getOrDefault("domain", false));
         updateAbilityState(targetPlayer, "kodai", packet.abilityStates.getOrDefault("kodai", false));
-        
+
         // Обновляем уровни
         updateAbilityLevel(targetPlayer, "release", packet.abilityLevels.getOrDefault("release", 0));
     }
-    
+
     private static void updateAbilityState(Player player, String ability, boolean isActive) {
         switch (ability) {
             case "release":
+                // Старая логика для других способностей (оставляем как есть)
                 if (isActive) {
                     if (!ManaRelease.activeReleasePlayers.contains(player.getUUID())) {
                         ManaRelease.activeReleasePlayers.add(player.getUUID());
@@ -149,17 +151,16 @@ public class AbilityStatePacket {
                 }
                 break;
             case "kodai":
-                if (isActive) {
-                    if (!VisionBlessingAbility.activeKodaiPlayers.contains(player.getUUID())) {
-                        VisionBlessingAbility.activeKodaiPlayers.add(player.getUUID());
+                // НОВАЯ ЛОГИКА: используем капабилити
+                player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
+                    if (isActive != mana.isKodaiActive()) {
+                        mana.setKodaiActive(isActive);
                     }
-                } else {
-                    VisionBlessingAbility.activeKodaiPlayers.remove(player.getUUID());
-                }
+                });
                 break;
         }
     }
-    
+
     private static void updateAbilityLevel(Player player, String ability, int level) {
         // Здесь можно добавить логику для обновления уровней способностей
         // Пока оставляем пустым, так как только Release использует уровни

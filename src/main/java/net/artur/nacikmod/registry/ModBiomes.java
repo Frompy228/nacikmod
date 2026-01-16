@@ -1,6 +1,7 @@
 package net.artur.nacikmod.registry;
 
 import net.artur.nacikmod.NacikMod;
+import net.artur.nacikmod.worldgen.dimension.ModFeatures;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
@@ -25,6 +26,9 @@ public class ModBiomes {
                 context.lookup(Registries.PLACED_FEATURE),
                 context.lookup(Registries.CONFIGURED_CARVER)
         );
+
+        generationBuilder.addFeature(GenerationStep.Decoration.LOCAL_MODIFICATIONS,
+                context.lookup(Registries.PLACED_FEATURE).getOrThrow(ModFeatures.PILLAR_PLACED));
 
         // Create surface rules that only generate air
         SurfaceRules.RuleSource surfaceRule = SurfaceRules.sequence(

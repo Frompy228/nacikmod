@@ -53,11 +53,11 @@ public class BreakingBodyLimitAbility {
     }
 
     public static final Level[] LEVELS = {
-        new Level(2, 2, 0, 1, 0, "Level 1"),   // +2 урона, скорость 1
-        new Level(4, 3, 0, 2, 0, "Level 2"),  // +3 урона, сила 0, скорость 2
-        new Level(6, 4, 0, 2, 1, "Level 3"),  // +4 урона, сила 0, скорость 2, прыгучесть 1
-        new Level(8, 5, 1, 3, 2, "Level 4"),  // +5 урона, сила 1, скорость 3, прыгучесть 2
-        new Level(10, 6, 2, 4, 3, "Level 5")   // +6 урона, сила 2, скорость 3, прыгучесть 3
+        new Level(2, 3, 0, 1, 0, "Level 1"),   // +2 урона, скорость 1
+        new Level(4, 4, 0, 2, 0, "Level 2"),  // +3 урона, сила 0, скорость 2
+        new Level(6, 5, 1, 2, 1, "Level 3"),  // +4 урона, сила 0, скорость 2, прыгучесть 1
+        new Level(8, 6, 2, 3, 2, "Level 4"),  // +5 урона, сила 1, скорость 3, прыгучесть 2
+        new Level(10, 7, 3, 4, 3, "Level 5")   // +6 урона, сила 2, скорость 3, прыгучесть 3
     };
 
     public static void start(Player player) {

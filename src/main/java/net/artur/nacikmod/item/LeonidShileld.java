@@ -43,7 +43,7 @@ public class LeonidShileld extends ShieldItem {
                     (LivingEntity) event.getDamageSource().getEntity() : null;
                 
                 if (attacker != null) {
-                    float reflectedDamage = event.getBlockedDamage() * 0.5f;
+                    float reflectedDamage = event.getBlockedDamage() * 0.6f;
                     attacker.hurt(player.damageSources().playerAttack(player), reflectedDamage);
                 }
             }

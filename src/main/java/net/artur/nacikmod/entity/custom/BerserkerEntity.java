@@ -143,7 +143,7 @@ public class BerserkerEntity extends HeroSouls {
                 .add(ModAttributes.BONUS_ARMOR.get(), BONUS_ARMOR)
                 .add(Attributes.ARMOR, 17)
                 .add(Attributes.ARMOR_TOUGHNESS, 15)
-                .add(Attributes.MAX_HEALTH, 110.0)
+                .add(Attributes.MAX_HEALTH, 100.0)
                 .add(Attributes.ATTACK_DAMAGE, BASE_ATTACK_DAMAGE)
                 .add(Attributes.MOVEMENT_SPEED, 0.32)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 5)
@@ -282,6 +282,7 @@ public class BerserkerEntity extends HeroSouls {
         double chanceCircuit = 0.25;
         double chanceGodHand = 0.2;
         double chanceMagicArmor = 0.1;
+        double chanceAncientSc = 0.02;
 
         if (random.nextDouble() < chanceCircuit) {
             int circuitCount = random.nextInt(20, 25);
@@ -292,6 +293,9 @@ public class BerserkerEntity extends HeroSouls {
         }
         if (random.nextDouble() < chanceMagicArmor) {
             this.spawnAtLocation(new ItemStack(ModItems.MAGIC_ARMOR.get(), 1));
+        }
+        if (random.nextDouble() < chanceAncientSc) {
+            this.spawnAtLocation(new ItemStack(ModItems.ANCIENT_SCROLL.get(), 1));
         }
     }
 
