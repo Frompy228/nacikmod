@@ -31,7 +31,7 @@ public class ModFeatures {
     // 3. Настройка параметров (высота, ширина)
     public static void bootstrapConfigured(BootstapContext<ConfiguredFeature<?,?>> context) {
         context.register(PILLAR_CONFIGURED, new ConfiguredFeature<>(BEDROCK_PILLAR.get(),
-                new BedrockPillarConfig(UniformInt.of(1, 5), UniformInt.of(40, 60))));
+                new BedrockPillarConfig(UniformInt.of(1, 8), UniformInt.of(40, 60))));
     }
 
     // 4. Правила размещения (частота, разброс)

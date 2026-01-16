@@ -9,7 +9,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfigur
 public record BedrockPillarConfig(IntProvider width, IntProvider height) implements FeatureConfiguration {
     public static final Codec<BedrockPillarConfig> CODEC = RecordCodecBuilder.create(instance ->
             instance.group(
-                    IntProvider.codec(1, 8).fieldOf("width").forGetter(BedrockPillarConfig::width),
+                    IntProvider.codec(1, 10).fieldOf("width").forGetter(BedrockPillarConfig::width),
                     IntProvider.codec(1, 256).fieldOf("height").forGetter(BedrockPillarConfig::height)
             ).apply(instance, BedrockPillarConfig::new)
     );
