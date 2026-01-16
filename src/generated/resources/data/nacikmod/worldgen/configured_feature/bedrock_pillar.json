@@ -1,0 +1,19 @@
+{
+  "type": "nacikmod:bedrock_pillar",
+  "config": {
+    "height": {
+      "type": "minecraft:uniform",
+      "value": {
+        "max_inclusive": 60,
+        "min_inclusive": 40
+      }
+    },
+    "width": {
+      "type": "minecraft:uniform",
+      "value": {
+        "max_inclusive": 8,
+        "min_inclusive": 1
+      }
+    }
+  }
+}

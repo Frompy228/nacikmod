@@ -140,6 +140,21 @@
           "type": "minecraft:item",
           "name": "nacikmod:gravity",
           "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nacikmod:blood_circle",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nacikmod:vision_blessing",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nacikmod:lord_of_souls",
+          "weight": 1
         }
       ]
     }

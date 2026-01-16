@@ -27,8 +27,8 @@ public class ManaProvider implements ICapabilityProvider, ICapabilitySerializabl
         tag.putInt("MaxMana", mana.getMaxMana());
         tag.putBoolean("IsTrueMage", mana.isTrueMage());
         tag.putBoolean("HasVisionBlessing", mana.hasVisionBlessing());
+        tag.putBoolean("KodaiActive", mana.isKodaiActive()); // ← НОВОЕ: сохраняем состояние Kodai
 
-        
         return tag;
     }
 
@@ -38,7 +38,7 @@ public class ManaProvider implements ICapabilityProvider, ICapabilitySerializabl
         mana.setMaxMana(tag.getInt("MaxMana"));
         mana.setTrueMage(tag.getBoolean("IsTrueMage"));
         mana.setVisionBlessing(tag.getBoolean("HasVisionBlessing"));
-
+        mana.setKodaiActive(tag.getBoolean("KodaiActive")); // ← НОВОЕ: загружаем состояние Kodai
     }
 
     // ✅ Сохранение маны после смерти
@@ -54,6 +54,7 @@ public class ManaProvider implements ICapabilityProvider, ICapabilitySerializabl
             newMana.setMaxMana(oldMana.getMaxMana()); // Передаём максимальную ману
             newMana.setTrueMage(oldMana.isTrueMage()); // Передаём статус истинного мага
             newMana.setVisionBlessing(oldMana.hasVisionBlessing()); // Передаём статус Vision Blessing
+            newMana.setKodaiActive(oldMana.isKodaiActive()); // ← НОВОЕ: передаём состояние Kodai
         }));
     }
 }

@@ -58,7 +58,7 @@ public class ModStructures {
     @SubscribeEvent
     public static void onWorldLoad(LevelEvent.Load event) {
         if (!(event.getLevel() instanceof ServerLevel level)) return;
-        if (level.dimension().location().getPath().equals("sparta")) {
+        if (level.dimension().location().getPath().equals("pocket")) {
             generateStructure(level);
         }
     }

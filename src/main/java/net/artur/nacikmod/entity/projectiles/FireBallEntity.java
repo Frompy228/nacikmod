@@ -6,6 +6,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
@@ -16,8 +17,8 @@ import net.minecraft.world.phys.Vec3;
 import net.artur.nacikmod.registry.ModItems;
 
 public class FireBallEntity extends ThrowableItemProjectile {
-    private static final float DAMAGE = 70.0F;
-    private static final float EXPLOSION_RADIUS = 3.5F;
+    private static final float DAMAGE = 85.0F;
+    private static final float EXPLOSION_RADIUS = 4.0F;
     private static final int FIRE_DURATION = 6;
     private static final int MAX_LIFETIME = 100;
 
@@ -62,15 +63,31 @@ public class FireBallEntity extends ThrowableItemProjectile {
     @Override
     protected void onHitEntity(EntityHitResult result) {
         super.onHitEntity(result);
-        if (!this.level().isClientSide) {
-            if (result.getEntity() instanceof LivingEntity living && result.getEntity() != this.getOwner()) {
-                living.hurt(this.damageSources().onFire(), DAMAGE);
-                living.setSecondsOnFire(FIRE_DURATION);
-            }
-            explode();
-            this.discard();
+        if (level().isClientSide) return;
+
+        if (result.getEntity() instanceof LivingEntity target) {
+            // Получаем владельца, если он LivingEntity
+            LivingEntity owner = (getOwner() instanceof LivingEntity le) ? le : null;
+
+            // Пропускаем владельца
+            if (target == owner) return;
+
+            // 50% огненный урон
+            target.hurt(this.damageSources().inFire(), DAMAGE * 0.4f);
+
+            // 50% магический урон, передаём владельца
+            target.hurt(this.damageSources().indirectMagic(this, owner), DAMAGE * 0.6f);
+
+            // Поджигаем цель
+            target.setSecondsOnFire(FIRE_DURATION);
+
         }
+
+        explode();
+        this.discard();
     }
+
+
 
     @Override
     protected void onHit(HitResult result) {

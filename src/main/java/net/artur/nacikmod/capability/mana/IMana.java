@@ -17,4 +17,6 @@ public interface IMana {
 
     boolean hasVisionBlessing();
     void setVisionBlessing(boolean hasVisionBlessing);
+    boolean isKodaiActive();
+    void setKodaiActive(boolean active);
 }

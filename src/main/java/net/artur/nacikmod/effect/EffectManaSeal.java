@@ -24,7 +24,7 @@ public class EffectManaSeal extends MobEffect {
         float maxHealth = entity.getMaxHealth();
         
         // Проверяем, упало ли здоровье до 10% или ниже
-        if ((currentHealth / maxHealth) <= 0.1F) {
+        if ((currentHealth / maxHealth) <= 0.15F) {
             // Срабатывает логика печати
             applySealEffect(entity);
             

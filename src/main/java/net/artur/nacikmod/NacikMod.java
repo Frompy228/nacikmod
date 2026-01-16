@@ -12,9 +12,15 @@ import net.artur.nacikmod.datagen.ModWorldGenProvider;
 import net.artur.nacikmod.registry.ModCreativeModTabs;
 import net.artur.nacikmod.registry.ModMessages;
 import net.artur.nacikmod.registry.*;
+import net.artur.nacikmod.worldgen.dimension.BedrockPillarConfig;
+import net.artur.nacikmod.worldgen.dimension.BedrockPillarFeature;
+import net.artur.nacikmod.worldgen.dimension.ModFeatures;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
+import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -24,14 +30,18 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.DeferredRegister;
 import org.slf4j.Logger;
 
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(NacikMod.MOD_ID)
 public class NacikMod
 {
+
     // Define mod id in a common place for everything to reference
     public static final String MOD_ID = "nacikmod";
     // Directly reference a slf4j logger
@@ -64,6 +74,8 @@ public class NacikMod
         ModCreativeModTabs.register(modEventBus);
         // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+
+        ModFeatures.FEATURES.register(modEventBus);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event)

@@ -375,7 +375,7 @@ public class LeonidEntity extends HeroSouls {
         // Отражение урона обратно на атакующего при успешном блокировании
         if (shieldBlocked && attacker instanceof LivingEntity livingAttacker && livingAttacker != this) {
             // Вычисляем 70% отраженного урона
-            float reflectedDamage = originalAmount * 0.9f;
+            float reflectedDamage = originalAmount * 1.2f;
             
             // Наносим отраженный урон атакующему
             livingAttacker.hurt(this.damageSources().mobAttack(this), reflectedDamage);

@@ -20,7 +20,7 @@ import java.util.List;
 
 public class ManaSeal extends Item {
     private static final int MANA_COST = 700;
-    private static final int EFFECT_DURATION = 130;
+    private static final int EFFECT_DURATION = 140;
     private static final int COOLDOWN_TICKS = 600;
 
     public ManaSeal(Properties properties) {

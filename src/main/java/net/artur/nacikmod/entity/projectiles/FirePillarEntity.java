@@ -5,9 +5,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class FirePillarEntity extends Entity {
@@ -130,14 +132,15 @@ public class FirePillarEntity extends Entity {
         );
         
         List<Entity> entities = this.level().getEntities(this, pillarArea);
-        
+
+        LivingEntity owner = getOwner();
+
         for (Entity entity : entities) {
             if (entity instanceof LivingEntity livingEntity) {
                 // Пропускаем владельца
-                if (ownerUUID != null && entity.getUUID().equals(ownerUUID)) {
-                    continue;
-                }
-                
+                if (owner != null && livingEntity == owner) continue;
+
+
                 // Проверяем, находится ли сущность в пределах столба
                 double dx = entity.getX() - this.getX();
                 double dz = entity.getZ() - this.getZ();
@@ -148,11 +151,17 @@ public class FirePillarEntity extends Entity {
                     entity.getY() <= this.getY() + halfHeight) {
                     
                     // Наносим урон огнем
-                    livingEntity.hurt(this.damageSources().onFire(), FIRE_DAMAGE);
+                    livingEntity.hurt(this.damageSources().inFire(), (float) (FIRE_DAMAGE*0.4));
+                    livingEntity.hurt(this.damageSources().indirectMagic(this, null), (float) (FIRE_DAMAGE*0.6));
                     
                     // Поджигаем цель на 5 секунд
                     livingEntity.setSecondsOnFire(5);
-                    
+
+                    if (owner != null && livingEntity instanceof Mob mob) {
+                        mob.setTarget(owner);
+                    }
+
+
                     // Создаем дополнительные частицы при нанесении урона
                     if (this.level() instanceof ServerLevel serverLevel) {
                         for (int i = 0; i < 10; i++) {
@@ -172,6 +181,18 @@ public class FirePillarEntity extends Entity {
                 }
             }
         }
+    }
+
+    @Nullable
+    public LivingEntity getOwner() {
+        if (ownerUUID == null) return null;
+        if (level() instanceof ServerLevel serverLevel) {
+            Entity e = serverLevel.getEntity(ownerUUID);
+            if (e instanceof LivingEntity living) {
+                return living;
+            }
+        }
+        return null;
     }
 
     @Override

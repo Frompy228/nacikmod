@@ -3,15 +3,20 @@ package net.artur.nacikmod.entity.projectiles;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.artur.nacikmod.registry.ModEntities;
 
+import javax.annotation.Nullable;
 import java.util.UUID;
+
+import static java.nio.file.Files.getOwner;
 
 public class FireAnnihilationEntity extends Entity {
 
@@ -71,15 +76,38 @@ public class FireAnnihilationEntity extends Entity {
                 getX() + RADIUS, getY() + RADIUS, getZ() + RADIUS
         );
 
+        LivingEntity owner = getOwner();
+
+
         for (Entity e : level().getEntities(this, box)) {
             if (e instanceof LivingEntity living) {
-                if (ownerUUID != null && living.getUUID().equals(ownerUUID)) continue;
+                if (owner != null && living == owner) continue;
 
-                living.hurt(damageSources().indirectMagic(this, null), DAMAGE);
+
+                living.hurt(damageSources().inFire(), (float) (DAMAGE * 0.4));
+                living.hurt(damageSources().indirectMagic(this, owner), (float) (DAMAGE * 0.6));
                 living.setSecondsOnFire(FIRE_SECONDS);
+                if (owner != null && living instanceof Mob mob) {
+                    mob.setTarget(owner);
+                }
+
             }
         }
     }
+
+    @Nullable
+    public LivingEntity getOwner() {
+        if (ownerUUID == null) return null;
+        if (level() instanceof ServerLevel serverLevel) {
+            Entity e = serverLevel.getEntity(ownerUUID);
+            if (e instanceof LivingEntity living) {
+                return living;
+            }
+        }
+        return null;
+    }
+
+
 
     private void igniteBlocks() {
         BlockPos center = blockPosition();

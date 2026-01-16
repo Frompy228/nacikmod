@@ -1588,7 +1588,7 @@ public class InquisitorEntity extends HeroSouls {
     protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
         Random random = new Random(); // Генератор случайных чисел
         double chanceCircuit = 0.25;
-        double chanceCross = 0.23;
+        double chanceCross = 0.22;
         double chanceAnni = 0.7;
         double chanceAncient = 0.5;
 

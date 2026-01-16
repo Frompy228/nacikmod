@@ -6,7 +6,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.artur.nacikmod.NacikMod;
 import net.artur.nacikmod.capability.mana.ManaProvider;
-import net.artur.nacikmod.item.ability.VisionBlessingAbility;
 import net.artur.nacikmod.network.PlayerManaCache;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -41,7 +40,13 @@ public class KodaiganWallhackRenderHandler {
 
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || mc.level == null) return;
-        if (!VisionBlessingAbility.isKodaiActive(mc.player)) return;
+
+        // ПРОВЕРКА: используем капабилити вместо статического метода
+        boolean shouldRender = mc.player.getCapability(ManaProvider.MANA_CAPABILITY)
+                .map(mana -> mana.isKodaiActive() && mana.hasVisionBlessing())
+                .orElse(false);
+
+        if (!shouldRender) return;
 
         Camera camera = event.getCamera();
         EntityRenderDispatcher dispatcher = mc.getEntityRenderDispatcher();
@@ -156,12 +161,10 @@ public class KodaiganWallhackRenderHandler {
             float manaPercent = (float) currentMana / maxMana;
 
             // 3. Полоска маны (СНИЗУ под HP, с отступом)
-            // Координаты 6 и 8 создают зазор в 4 пикселя от полоски HP
             drawRect(buffer, matrix, -20, 6, 20, 8, 0xAA000000);
             drawRect(buffer, matrix, -20, 6, -20 + (40 * manaPercent), 8, 0xFF00AAFF);
 
             // 4. Текст маны (СНИЗУ под полоской маны)
-            // Координата 11 опускает текст прямо под синюю линию
             String manaText = currentMana + " / " + maxMana;
             font.drawInBatch(manaText, -font.width(manaText) / 2f, 11, 0xFF00E5FF, false, matrix, buffer, Font.DisplayMode.NORMAL, 0, 15728880);
         }

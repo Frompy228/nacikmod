@@ -95,10 +95,10 @@ public class HundredSeal extends Item implements ItemUtils.ITogglableMagicItem {
 
         boolean isActive = stack.hasTag() && stack.getTag().getBoolean(ACTIVE_TAG);
         if (isActive) {
-            tooltipComponents.add(Component.translatable("item.nacikmod.hundred_seal.active")
+            tooltipComponents.add(Component.translatable("item.active")
                     .withStyle(ChatFormatting.GREEN));
         } else {
-            tooltipComponents.add(Component.translatable("item.nacikmod.hundred_seal.inactive")
+            tooltipComponents.add(Component.translatable("item.inactive")
                     .withStyle(ChatFormatting.RED));
         }
     }

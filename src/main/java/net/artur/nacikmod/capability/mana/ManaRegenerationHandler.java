@@ -25,7 +25,7 @@ public class ManaRegenerationHandler {
     private static final int BASE_REGEN_AMOUNT = 1;
     private static final int REGEN_INTERVAL = 20; // 1 раз в секунду
     private static final int DARK_SPHERE_REGEN = 2;
-    private static final int MANA_BLESSING_REGEN = 1;
+    private static final int MANA_BLESSING_REGEN = 2;
     private static final UUID TRUE_MAGE_ARMOR = UUID.fromString("464326ce-9581-4d13-8910-883042df1243");
     private static final UUID MANA_15K_ARMOR_UUID = UUID.fromString("a1b2c3d4-e5f6-7890-abcd-ef1234567891");
 
@@ -127,7 +127,7 @@ public class ManaRegenerationHandler {
         player.getCapability(PlayerRewardsProvider.PLAYER_REWARDS_CAPABILITY).ifPresent(rewards -> {
             if (rewards.hasReceived24hReward()) regenAmount[0] += 2;
             if (rewards.hasReceived5kManaReward()) regenAmount[0] += 1;
-            if (rewards.hasReceived15kManaReward()) regenAmount[0] += 1;
+            if (rewards.hasReceived15kManaReward()) regenAmount[0] += 2;
         });
 
         if (player.hasEffect(ModEffects.EFFECT_MANA_BLESSING.get())) {
