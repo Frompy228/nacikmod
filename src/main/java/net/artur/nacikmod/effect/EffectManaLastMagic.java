@@ -59,7 +59,7 @@ public class EffectManaLastMagic extends MobEffect {
     public void applyEffectTick(LivingEntity entity, int amplifier) {
         if (!entity.level().isClientSide && entity.isAlive() && entity instanceof Player player) {
             player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
-                mana.addMaxMana(500);
+                mana.addMaxMana(100);
                 mana.regenerateMana(1000);
             });
 

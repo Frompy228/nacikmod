@@ -1169,8 +1169,7 @@ public class InquisitorEntity extends HeroSouls {
         heroSoul.setTarget(this.getTarget());
         heroSoul.setPersistenceRequired();
 
-        // Очищаем все стандартные цели атаки и добавляем только нашу
-        heroSoul.targetSelector.removeAllGoals(goal -> true);
+
         heroSoul.targetSelector.addGoal(0, new InquisitorGuardGoal(heroSoul, this));
 
         // Используем только наш тег, без LordOfSouls

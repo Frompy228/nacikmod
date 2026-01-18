@@ -74,6 +74,7 @@ public class ModEventBusClientEvents {
         event.registerLayerDefinition(FireballModel.LAYER_LOCATION, FireballModel::createBodyLayer);
         event.registerLayerDefinition(CrossModel.LAYER_LOCATION, CrossModel::createBodyLayer);
         event.registerLayerDefinition(net.artur.nacikmod.client.renderer.eye.EyeModel.LAYER_LOCATION, net.artur.nacikmod.client.renderer.eye.EyeModel::createBodyLayer);
+        event.registerLayerDefinition(BoneModel.LAYER_LOCATION, BoneModel::createBodyLayer);
     }
 
 
@@ -91,6 +92,7 @@ public class ModEventBusClientEvents {
             renderer.addLayer(new MovementSealLayer(renderer));
             renderer.addLayer(new DomainLayer(renderer));
             renderer.addLayer(new SimpleDomainLayer(renderer));
+            renderer.addLayer(new BoneLayer(renderer));
             }
         }
     }
