@@ -89,6 +89,7 @@ public class ModItems {
     public static final RegistryObject<Item> BLOOD_CIRCLE_ITEM = ITEMS.register("blood_circle_item", () -> new BloodCircleItem(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> BLOOD_CONTRACT = ITEMS.register("blood_contract", () -> new BloodContract(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> FIRE_BALL = ITEMS.register("fire_ball", () -> new FireBall(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> BONE = ITEMS.register("bone", () -> new BoneItem());
 
 
 
