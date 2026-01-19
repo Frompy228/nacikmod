@@ -23,10 +23,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.living.MobEffectEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -220,6 +217,18 @@ public class ModEventBusEventsForge {
                         net.minecraft.sounds.SoundSource.PLAYERS, 1.0F, 1.0F);
                 }
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onLivingHeal(LivingHealEvent event) {
+        LivingEntity entity = event.getEntity();
+
+        if (entity.hasEffect(ModEffects.EFFECT_BLOOD_POISONING.get())) {
+            float original = event.getAmount();
+            float reduced = original * 0.85f; // −15%
+
+            event.setAmount(reduced);
         }
     }
 

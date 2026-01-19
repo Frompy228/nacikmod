@@ -52,4 +52,6 @@ public class ModEffects {
             EFFECTS.register("effect_base_domain", EffectBaseDomain::new);
     public static final RegistryObject<MobEffect> EFFECT_MANA_SEAL =
             EFFECTS.register("effect_mana_seal", EffectManaSeal::new);
+    public static final RegistryObject<MobEffect> EFFECT_BLOOD_POISONING =
+            EFFECTS.register("effect_blood_poisoning", EffectBloodPoisoning::new);
 }
