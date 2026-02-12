@@ -36,7 +36,7 @@ public class ManaAdvancementTracker {
                 
                 // Проверяем, что у игрока действительно развита мана (не базовая 100)
                 // и что максимальная мана достигла или превысила 10000
-                if (maxMana >= 10000) {
+                if (maxMana >= 15000) {
                     grantTrueMageAdvancement(player);
                 }
             });

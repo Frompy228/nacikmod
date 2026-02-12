@@ -107,7 +107,7 @@ public class ArcherEntity extends HeroSouls implements RangedAttackMob {
         
         // Root-способность только если есть цель
         LivingEntity target = this.getTarget();
-        if (target != null) {
+        if (target != null && target.isAlive()) {
             if (rootAbilityCooldown > 0) rootAbilityCooldown--;
             if (!this.level().isClientSide && rootAbilityCooldown == 0) {
                 // Проверяем блокировку способностей
@@ -170,9 +170,17 @@ public class ArcherEntity extends HeroSouls implements RangedAttackMob {
     @Override
     public boolean hurt(DamageSource source, float amount) {
         boolean isHurt = super.hurt(source, amount);
+
+        if (source.is(net.minecraft.tags.DamageTypeTags.IS_PROJECTILE)) {
+            // Уменьшаем урон на 30% (умножаем на 0.7)
+            amount *= 0.7F;
+        }
+
+
+
         if (isHurt) {
             Entity attacker = source.getEntity();
-            if (attacker instanceof LivingEntity livingAttacker && livingAttacker != this) {
+            if (attacker instanceof LivingEntity livingAttacker && livingAttacker != this && attacker.isAlive()) {
                 this.setTarget(livingAttacker);
             }
         }
@@ -303,12 +311,12 @@ public class ArcherEntity extends HeroSouls implements RangedAttackMob {
         @Override
         public boolean canUse() {
             LivingEntity target = archer.getTarget();
-            return target != null && archer.distanceTo(target) <= SWITCH_TO_MELEE_DISTANCE;
+            return target != null && archer.distanceTo(target) <= SWITCH_TO_MELEE_DISTANCE && target.isAlive();
         }
         @Override
         public boolean canContinueToUse() {
             LivingEntity target = archer.getTarget();
-            return target != null && archer.distanceTo(target) <= SWITCH_TO_RANGED_DISTANCE;
+            return target != null && archer.distanceTo(target) <= SWITCH_TO_RANGED_DISTANCE && target.isAlive();
         }
         @Override
         public void start() {
@@ -319,7 +327,7 @@ public class ArcherEntity extends HeroSouls implements RangedAttackMob {
         @Override
         public void tick() {
             LivingEntity target = archer.getTarget();
-            if (target == null) return;
+            if (target == null && !target.isAlive()) return;
             // Защита от самоатаки
             if (target == archer) {
                 archer.setTarget(null);

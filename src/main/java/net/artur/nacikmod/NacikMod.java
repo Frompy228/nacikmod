@@ -62,6 +62,7 @@ public class NacikMod
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         ModMenuTypes.register(modEventBus);
         ModMessages.register();
+        ModLootFunctions.register(modEventBus);
         MinecraftForge.EVENT_BUS.register(ManaSyncOnDeath.class);
         MinecraftForge.EVENT_BUS.register(RewardEvents.class);
         MinecraftForge.EVENT_BUS.register(RewardSyncOnDeath.class);

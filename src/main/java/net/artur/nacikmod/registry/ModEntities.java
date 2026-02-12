@@ -205,6 +205,57 @@ public class ModEntities {
                             .build("grail")
             );
 
+    public static final RegistryObject<EntityType<KnightEntity>> KNIGHT =
+            ENTITY_TYPES.register("knight", () ->
+                    EntityType.Builder.of(KnightEntity::new, MobCategory.MONSTER)
+                            .sized(0.6f, 1.8f)
+                            .build("knight")
+            );
+
+    public static final RegistryObject<EntityType<KnightLeaderEntity>> KNIGHT_LEADER =
+            ENTITY_TYPES.register("knight_leader", () ->
+                    EntityType.Builder.of(KnightLeaderEntity::new, MobCategory.MONSTER)
+                            .sized(0.6f, 1.8f)
+                            .build("knight_leader")
+            );
+
+    public static final RegistryObject<EntityType<KnightPaladinEntity>> KNIGHT_PALADIN =
+            ENTITY_TYPES.register("knight_paladin", () ->
+                    EntityType.Builder.of(KnightPaladinEntity::new, MobCategory.MONSTER)
+                            .sized(0.6f, 1.8f)
+                            .build("knight_paladin")
+            );
+
+    public static final RegistryObject<EntityType<KnightArcherEntity>> KNIGHT_ARCHER =
+            ENTITY_TYPES.register("knight_archer", () ->
+                    EntityType.Builder.of(KnightArcherEntity::new, MobCategory.MONSTER)
+                            .sized(0.6f, 1.8f)
+                            .build("knight_archer")
+            );
+
+    public static final RegistryObject<EntityType<KnightCasterEntity>> KNIGHT_CASTER =
+            ENTITY_TYPES.register("knight_caster", () ->
+                    EntityType.Builder.of(KnightCasterEntity::new, MobCategory.MONSTER)
+                            .sized(0.6f, 1.8f)
+                            .build("knight_caster")
+            );
+
+    public static final RegistryObject<EntityType<ChainEntity>> CHAIN_ENTITY =
+            ENTITY_TYPES.register("chain_entity", () ->
+                    EntityType.Builder.<ChainEntity>of(ChainEntity::new, MobCategory.MISC)
+                            .sized(0.1F, 0.1F)
+                            .clientTrackingRange(32)
+                            .updateInterval(1)
+                            .build("chain_entity")
+            );
+
+    public static final RegistryObject<EntityType<KnightBossEntity>> KNIGHT_BOSS =
+            ENTITY_TYPES.register("knight_boss", () ->
+                    EntityType.Builder.of(KnightBossEntity::new, MobCategory.MONSTER)
+                            .sized(0.6f, 1.8f)
+                            .build("knight_boss")
+            );
+
     public static final RegistryObject<EntityType<InquisitorEntity>> INQUISITOR =
             ENTITY_TYPES.register("inquisitor", () ->
                     EntityType.Builder.of(InquisitorEntity::new, MobCategory.MONSTER)
@@ -243,6 +294,15 @@ public class ModEntities {
                             .clientTrackingRange(16)
                             .updateInterval(2)
                             .build("fire_annihilation"));
+
+    public static final RegistryObject<EntityType<WeaponProjectile>> WEAPON_PROJECTILE =
+            ENTITY_TYPES.register("weapon_projectile",
+            () -> EntityType.Builder.<WeaponProjectile>of(WeaponProjectile::new, MobCategory.MISC)
+                    .sized(0.5f, 0.5f) // размер hitbox
+                    .clientTrackingRange(8)
+                    .updateInterval(1)
+                    .build("weapon_projectile")
+    );
 
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);

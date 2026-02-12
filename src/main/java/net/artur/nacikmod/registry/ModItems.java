@@ -1,7 +1,6 @@
 package net.artur.nacikmod.registry;
 
 import net.artur.nacikmod.armor.LeonidArmorMaterial;
-import net.artur.nacikmod.block.custom.BloodCircle;
 import net.artur.nacikmod.item.LeonidHelmet;
 import net.artur.nacikmod.item.*;
 import net.minecraft.world.item.Item;
@@ -89,7 +88,10 @@ public class ModItems {
     public static final RegistryObject<Item> BLOOD_CIRCLE_ITEM = ITEMS.register("blood_circle_item", () -> new BloodCircleItem(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> BLOOD_CONTRACT = ITEMS.register("blood_contract", () -> new BloodContract(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> FIRE_BALL = ITEMS.register("fire_ball", () -> new FireBall(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> BONE = ITEMS.register("bone", () -> new BoneItem());
+    public static final RegistryObject<Item> BLOOD_BONE = ITEMS.register("blood_rib", () -> new BloodBone(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> PALADIN_AXE = ITEMS.register("paladin_axe", () -> new PaladinAxe());
+    public static final RegistryObject<Item> KNIGHT_SWORD = ITEMS.register("knight_sword", () -> new KnightSword());
+    public static final RegistryObject<Item> WEAPON = ITEMS.register("weapon", () -> new WeaponProjectileItem(new Item.Properties()));
 
 
 
@@ -122,5 +124,23 @@ public class ModItems {
                     new Item.Properties()));
     public static final RegistryObject<Item> INQUISITOR_SPAWN_EGG = ITEMS.register("inquisitor_spawn_egg",
             () -> new ForgeSpawnEggItem(ModEntities.INQUISITOR, 0x3b1f1f, 0xb34b31,
+                    new Item.Properties()));
+    public static final RegistryObject<Item> KNIGHT_SPAWN_EGG = ITEMS.register("knight_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.KNIGHT, 0x9d9d9d, 0x3a0705,
+                    new Item.Properties()));
+    public static final RegistryObject<Item> KNIGHT_LEADER_SPAWN_EGG = ITEMS.register("knight_leader_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.KNIGHT_LEADER, 0x9d9d9d, 0x3a0705,
+                    new Item.Properties()));
+    public static final RegistryObject<Item> KNIGHT_ARCHER_SPAWN_EGG = ITEMS.register("knight_archer_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.KNIGHT_ARCHER, 0x9d9d9d, 0x3a0705,
+                    new Item.Properties()));
+    public static final RegistryObject<Item> KNIGHT_PALADIN_SPAWN_EGG = ITEMS.register("knight_paladin_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.KNIGHT_PALADIN, 0x9d9d9d, 0x3a0705,
+                    new Item.Properties()));
+    public static final RegistryObject<Item> KNIGHT_CASTER_SPAWN_EGG = ITEMS.register("knight_caster_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.KNIGHT_CASTER, 0x9d9d9d, 0x3a0705,
+                    new Item.Properties()));
+    public static final RegistryObject<Item> KNIGHT_BOSS_SPAWN_EGG = ITEMS.register("knight_boss_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.KNIGHT_BOSS, 0x9d9d9d, 0x3a0705,
                     new Item.Properties()));
 }

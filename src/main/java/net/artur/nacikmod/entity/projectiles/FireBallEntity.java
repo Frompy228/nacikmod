@@ -15,6 +15,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.artur.nacikmod.registry.ModItems;
+import net.artur.nacikmod.util.KnightUtils;
 
 public class FireBallEntity extends ThrowableItemProjectile {
     private static final float DAMAGE = 85.0F;
@@ -66,11 +67,13 @@ public class FireBallEntity extends ThrowableItemProjectile {
         if (level().isClientSide) return;
 
         if (result.getEntity() instanceof LivingEntity target) {
-            // Получаем владельца, если он LivingEntity
             LivingEntity owner = (getOwner() instanceof LivingEntity le) ? le : null;
 
-            // Пропускаем владельца
             if (target == owner) return;
+            if (KnightUtils.isKnight(target)) {
+                this.discard();
+                return;
+            }
 
             // 50% огненный урон
             target.hurt(this.damageSources().inFire(), DAMAGE * 0.4f);

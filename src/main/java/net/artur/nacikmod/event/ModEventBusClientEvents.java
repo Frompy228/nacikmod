@@ -58,6 +58,8 @@ public class ModEventBusClientEvents {
         event.registerLayerDefinition(ModModelLayers.BLOOD_WARRIOR_LAYER, BloodWarriorModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.INQUISITOR_LAYER, InquisitorModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.INQUISITOR_OUTER_LAYER, () -> InquisitorModel.createBodyLayer(new CubeDeformation(0.2F)));
+        event.registerLayerDefinition(ModModelLayers.KNIGHT_LAYER, KnightModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.KNIGHT_OUTER_LAYER, () -> KnightModel.createBodyLayer(new CubeDeformation(0.2F)));
         event.registerLayerDefinition(FireArrowModel.LAYER_LOCATION, FireArrowModel::createBodyLayer);
         event.registerLayerDefinition(ProjectileManaSwordModel.LAYER_LOCATION, ProjectileManaSwordModel::createBodyLayer);
         event.registerLayerDefinition(BloodShootProjectileModel.LAYER_LOCATION, BloodShootProjectileModel::createBodyLayer);
@@ -75,6 +77,7 @@ public class ModEventBusClientEvents {
         event.registerLayerDefinition(CrossModel.LAYER_LOCATION, CrossModel::createBodyLayer);
         event.registerLayerDefinition(net.artur.nacikmod.client.renderer.eye.EyeModel.LAYER_LOCATION, net.artur.nacikmod.client.renderer.eye.EyeModel::createBodyLayer);
         event.registerLayerDefinition(BoneModel.LAYER_LOCATION, BoneModel::createBodyLayer);
+        EntityRenderers.register(ModEntities.WEAPON_PROJECTILE.get(), RenderWeaponProjectile::new);
     }
 
 
@@ -116,12 +119,19 @@ public class ModEventBusClientEvents {
             EntityRenderers.register(ModEntities.MYSTERIOUS_TRADER_BATTLE_CLONE.get(), MysteriousTraderBattleCloneRender::new);
             EntityRenderers.register(ModEntities.BLOOD_WARRIOR.get(), BloodWarriorRender::new);
             EntityRenderers.register(ModEntities.INQUISITOR.get(), InquisitorRender::new);
+            EntityRenderers.register(ModEntities.KNIGHT.get(), KnightRender::new);
+            EntityRenderers.register(ModEntities.KNIGHT_LEADER.get(), KnightLeaderRender::new);
+            EntityRenderers.register(ModEntities.KNIGHT_PALADIN.get(), KnightPaladinRender::new);
+            EntityRenderers.register(ModEntities.KNIGHT_ARCHER.get(), KnightArcherRender::new);
+            EntityRenderers.register(ModEntities.KNIGHT_CASTER.get(), KnightCasterRender::new);
+            EntityRenderers.register(ModEntities.KNIGHT_BOSS.get(), KnightBossRender::new);
             EntityRenderers.register(ModEntities.FIRE_ARROW.get(), FireArrowRenderer::new);
             EntityRenderers.register(ModEntities.MANA_ARROW.get(), ManaArrowRenderer::new);
             EntityRenderers.register(ModEntities.FIRE_CLOUD.get(), FireCloudRenderer::new);
             EntityRenderers.register(ModEntities.FIRE_HAIL.get(), FireHailRenderer::new);
             EntityRenderers.register(ModEntities.FIRE_WALL.get(), FireWallRenderer::new);
             EntityRenderers.register(ModEntities.FIRE_WALL_DAMAGE_ZONE.get(), NoopRenderer::new);
+            EntityRenderers.register(ModEntities.CHAIN_ENTITY.get(), NoopRenderer::new);
             EntityRenderers.register(ModEntities.ICE_SPIKE_PROJECTILE.get(), IceSpikeProjectileRenderer::new);
             EntityRenderers.register(ModEntities.SLASH_PROJECTILE.get(), SlashProjectileRenderer::new);
             EntityRenderers.register(ModEntities.DOUBLE_SLASH_PROJECTILE.get(), DoubleSlashProjectileRenderer::new);

@@ -125,7 +125,7 @@ public class BloodContract extends Item implements ItemUtils.ITogglableMagicItem
 
                 // Бафф от круга
                 if (BloodCircleManager.isActive(player)) {
-                    tooltip.add(Component.literal("BLOOD CIRCLE BUFF: Linked Network (15 blocks)")
+                    tooltip.add(Component.literal("BLOOD CIRCLE ACTIVE: Linked Network (15 blocks)")
                             .withStyle(ChatFormatting.LIGHT_PURPLE));
                 }
 

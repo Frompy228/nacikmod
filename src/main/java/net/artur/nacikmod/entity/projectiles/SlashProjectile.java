@@ -16,7 +16,7 @@ import net.artur.nacikmod.registry.ModItems;
 import java.util.List;
 
 public class SlashProjectile extends ThrowableItemProjectile {
-    private static final float DAMAGE = 30.0F;
+    private static final float DAMAGE = 20.0F;
     private int lifetime = 0;
     private static final int MAX_LIFETIME = 60;
 

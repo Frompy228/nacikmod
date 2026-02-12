@@ -1,6 +1,8 @@
 package net.artur.nacikmod.datagen;
 
 import net.artur.nacikmod.NacikMod;
+import net.artur.nacikmod.item.MagicCrystal;
+import net.artur.nacikmod.lib.SetManaFunction;
 import net.artur.nacikmod.registry.ModBlocks;
 import net.artur.nacikmod.registry.ModItems;
 import net.minecraft.resources.ResourceLocation;
@@ -37,7 +39,11 @@ public class LootTableHandler {
 
             LootItem.Builder<?> manaCrystal = LootItem.lootTableItem(ModItems.MANA_CRYSTAL.get())
                     .setWeight(6)
-                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
+                    // Устанавливаем количество (1 штука)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)))
+                    // ПРИМЕНЯЕМ ТВОЮ ФУНКЦИЮ: устанавливаем рандомную ману
+                    // Например, от 500 до максимума (3000)
+                    .apply(SetManaFunction.setMana(UniformGenerator.between(100, MagicCrystal.MAX_STORAGE)));
 
             LootItem.Builder<?> magicSeal = LootItem.lootTableItem(ModItems.MAGIC_SEAL.get())
                     .setWeight(11)
