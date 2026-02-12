@@ -14,6 +14,7 @@ import net.artur.nacikmod.item.ability.HundredSealAbility;
 import net.artur.nacikmod.item.ability.SimpleDomainAbility;
 import net.artur.nacikmod.item.ability.DomainAbility;
 import net.artur.nacikmod.item.ability.VisionBlessingAbility;
+import net.artur.nacikmod.item.ability.BloodBoneAbility;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -97,6 +98,7 @@ public class AbilityStatePacket {
         updateAbilityState(targetPlayer, "simple_domain", packet.abilityStates.getOrDefault("simple_domain", false));
         updateAbilityState(targetPlayer, "domain", packet.abilityStates.getOrDefault("domain", false));
         updateAbilityState(targetPlayer, "kodai", packet.abilityStates.getOrDefault("kodai", false));
+        updateAbilityState(targetPlayer, "blood_bone", packet.abilityStates.getOrDefault("blood_bone", false));
 
         // Обновляем уровни
         updateAbilityLevel(targetPlayer, "release", packet.abilityLevels.getOrDefault("release", 0));
@@ -155,6 +157,14 @@ public class AbilityStatePacket {
                 player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
                     if (isActive != mana.isKodaiActive()) {
                         mana.setKodaiActive(isActive);
+                    }
+                });
+                break;
+            case "blood_bone":
+                // как у kodai: состояние хранится в capability
+                player.getCapability(ManaProvider.MANA_CAPABILITY).ifPresent(mana -> {
+                    if (isActive != mana.isBloodBoneActive()) {
+                        mana.setBloodBoneActive(isActive);
                     }
                 });
                 break;

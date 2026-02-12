@@ -20,7 +20,7 @@ import java.util.UUID;
 public class Cross extends Item implements ICurioItem {
     private static final UUID BONUS_ARMOR_UUID = UUID.fromString("a1b2c3d4-e5f6-7890-abcd-ef1234567890");
     private static final AttributeModifier BONUS_ARMOR = new AttributeModifier(
-            BONUS_ARMOR_UUID, "Cross Bonus Armor", 10.0, AttributeModifier.Operation.ADDITION
+            BONUS_ARMOR_UUID, "Cross Bonus Armor", 7.0, AttributeModifier.Operation.ADDITION
     );
 
     public Cross(Properties p_41383_) {

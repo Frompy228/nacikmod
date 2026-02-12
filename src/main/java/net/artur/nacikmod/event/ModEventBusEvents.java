@@ -28,6 +28,12 @@ public class ModEventBusEvents {
         event.put(ModEntities.MYSTERIOUS_TRADER_BATTLE_CLONE.get(), MysteriousTraderBattleCloneEntity.createAttributes().build());
         event.put(ModEntities.BLOOD_WARRIOR.get(), BloodWarriorEntity.createAttributes().build());
         event.put(ModEntities.GRAIL.get(), GraalEntity.createAttributes().build());
+        event.put(ModEntities.KNIGHT.get(), KnightEntity.createAttributes().build());
+        event.put(ModEntities.KNIGHT_LEADER.get(), KnightLeaderEntity.createAttributes().build());
+        event.put(ModEntities.KNIGHT_PALADIN.get(), KnightPaladinEntity.createAttributes().build());
+        event.put(ModEntities.KNIGHT_ARCHER.get(), KnightArcherEntity.createAttributes().build());
+        event.put(ModEntities.KNIGHT_CASTER.get(), KnightCasterEntity.createAttributes().build());
+        event.put(ModEntities.KNIGHT_BOSS.get(), KnightBossEntity.createAttributes().build());
         event.put(ModEntities.INQUISITOR.get(), InquisitorEntity.createAttributes().build());
     }
 

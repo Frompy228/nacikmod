@@ -3,6 +3,7 @@ package net.artur.nacikmod.event;
 import net.artur.nacikmod.NacikMod;
 import net.artur.nacikmod.capability.mana.ManaProvider;
 import net.artur.nacikmod.registry.ModItems;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementEarnEvent;
@@ -46,39 +47,40 @@ public class AdvancementRewardHandler {
         
         // Выдаем награду
         ItemStack rewardItem = new ItemStack(ModItems.LORD_OF_SOULS.get());
-        
-        // Добавляем предмет в инвентарь игрока
-        if (player.getInventory().add(rewardItem)) {
-            player.sendSystemMessage(net.minecraft.network.chat.Component.literal(
-                "Congratulations, you were the first to receive the achievement Slayer Hero Souls"
-            ));
-            player.sendSystemMessage(net.minecraft.network.chat.Component.literal(
-                "You have received your well-deserved reward"
-            ));
-            
-            // Оповещаем всех игроков на сервере
-            for (ServerPlayer serverPlayer : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-                if (serverPlayer != player) {
-                    serverPlayer.sendSystemMessage(net.minecraft.network.chat.Component.literal(
-                        "Player" + player.getName().getString() +
-                        "the first one achieved the achievement Slayer Hero Souls"
-                    ));
-                }
-            }
-        } else {
-            // Если инвентарь полон, выбрасываем предмет рядом с игроком
-            player.drop(rewardItem, false);
-            player.sendSystemMessage(net.minecraft.network.chat.Component.literal(
-                "Congratulations, you were the first to receive the achievement Slayer Hero Souls"
-            ));
+        ItemStack rewardItem2 = new ItemStack(ModItems.ANCIENT_SCROLL.get());
 
-            for (ServerPlayer serverPlayer : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-                if (serverPlayer != player) {
-                    serverPlayer.sendSystemMessage(net.minecraft.network.chat.Component.literal(
-                            "Player" + serverPlayer.getName().getString() +
-                                    "the first one achieved the achievement Slayer Hero Souls"
-                    ));
-                }
+        boolean allAdded = true;
+
+        if (!player.getInventory().add(rewardItem)) {
+            player.drop(rewardItem, false);
+            allAdded = false;
+        }
+        if (!player.getInventory().add(rewardItem2)) {
+            player.drop(rewardItem2, false);
+            allAdded = false;
+        }
+
+        player.sendSystemMessage(Component.literal(
+                "Congratulations, you were the first to receive the achievement Slayer Hero Souls"
+        ));
+
+        if (allAdded) {
+            player.sendSystemMessage(Component.literal(
+                    "You have received your well-deserved rewards"
+            ));
+        } else {
+            player.sendSystemMessage(Component.literal(
+                    "Some rewards were dropped on the ground because your inventory was full"
+            ));
+        }
+
+// Оповещаем других игроков
+        for (ServerPlayer serverPlayer : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
+            if (serverPlayer != player) {
+                serverPlayer.sendSystemMessage(Component.literal(
+                        "Player " + player.getName().getString() +
+                                " was the first to achieve the achievement Slayer Hero Souls"
+                ));
             }
         }
     }

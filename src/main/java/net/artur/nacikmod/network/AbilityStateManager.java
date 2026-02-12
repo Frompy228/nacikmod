@@ -8,6 +8,7 @@ import net.artur.nacikmod.item.ability.HundredSealAbility;
 import net.artur.nacikmod.item.ability.SimpleDomainAbility;
 import net.artur.nacikmod.item.ability.DomainAbility;
 import net.artur.nacikmod.item.ability.VisionBlessingAbility;
+import net.artur.nacikmod.item.ability.BloodBoneAbility;
 import net.artur.nacikmod.registry.ModEffects;
 
 import java.util.HashMap;
@@ -44,6 +45,10 @@ public class AbilityStateManager {
         registerAbility("kodai", 
             VisionBlessingAbility::isKodaiActive,
             player -> 0); // Kodai не имеет уровней
+            
+        registerAbility("blood_bone", 
+            BloodBoneAbility::isBloodBoneActive,
+            player -> 0); // BloodBone не имеет уровней
     }
     
     public static class AbilityInfo {

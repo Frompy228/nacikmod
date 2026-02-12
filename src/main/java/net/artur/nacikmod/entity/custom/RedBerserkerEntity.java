@@ -240,9 +240,14 @@ public class RedBerserkerEntity extends HeroSouls {
     protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
         Random random = new Random(); // Генератор случайных чисел
         double chanceCircuit = 0.7;
+        double chanceBloodRib = 0.1;
 
         if (random.nextDouble() < chanceCircuit) {
             this.spawnAtLocation(new ItemStack(ModItems.MAGIC_CIRCUIT.get(), 40));
+        }
+
+        if (random.nextDouble() < chanceBloodRib) {
+            this.spawnAtLocation(new ItemStack(ModItems.BLOOD_BONE.get(), 1));
         }
     }
 

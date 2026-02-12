@@ -107,4 +107,12 @@ public class ModModelLayers {
     public static final ModelLayerLocation CROSS_PROJECTILE_LAYER = new ModelLayerLocation(
             new ResourceLocation(NacikMod.MOD_ID, "cross_projectile"), "main");
 
+    @OnlyIn(Dist.CLIENT)
+    public static final ModelLayerLocation KNIGHT_LAYER = new ModelLayerLocation(
+            new ResourceLocation(NacikMod.MOD_ID, "knight_layer"), "main");
+
+    @OnlyIn(Dist.CLIENT)
+    public static final ModelLayerLocation KNIGHT_OUTER_LAYER = new ModelLayerLocation(
+            new ResourceLocation(NacikMod.MOD_ID, "knight_outer_layer"), "main");
+
 }

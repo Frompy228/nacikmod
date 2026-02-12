@@ -136,6 +136,39 @@ public class HeroSouls extends Monster {
         return super.startRiding(vehicle, force);
     }
 
+    // В классе HeroSouls добавим:
+
+    @Override
+    public boolean canAttack(LivingEntity target) {
+        // Проверяем, является ли цель FakePlayer
+        if (isFakePlayer(target)) {
+            return false; // Не атаковать FakePlayer
+        }
+
+        // Остальная логика проверки
+        if (this.isActionBlocked(ActionType.MELEE_ATTACK)) {
+            return false;
+        }
+        return super.canAttack(target);
+    }
+
+    private boolean isFakePlayer(Entity entity) {
+        // Проверка по имени
+        if (entity instanceof Player player) {
+            String name = player.getDisplayName().getString();
+            return name.equals("[Minecraft]") ||
+                    name.contains("FakePlayer") ||
+                    name.equals("FakePlayer");
+        }
+
+        // Дополнительная проверка через NBT или флаг
+        if (entity.getPersistentData().getBoolean("isFakePlayer")) {
+            return true;
+        }
+
+        return false;
+    }
+
 // ... existing code ...
 
     @Override

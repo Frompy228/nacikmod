@@ -2,6 +2,7 @@ package net.artur.nacikmod.entity.projectiles;
 
 import net.artur.nacikmod.registry.ModBlocks;
 import net.artur.nacikmod.registry.ModEntities;
+import net.artur.nacikmod.util.KnightUtils;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
@@ -63,6 +64,10 @@ public class IceSpikeProjectile extends ThrowableItemProjectile {
         if (this.level().isClientSide) return;
 
         if (result.getEntity() instanceof LivingEntity living) {
+            if (KnightUtils.isKnight(living)) {
+                this.discard();
+                return;
+            }
             float totalDamage = 20.0f + damage;
             living.hurt(this.damageSources().thrown(this, this.getOwner()), totalDamage);
             living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 2));

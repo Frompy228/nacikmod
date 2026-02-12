@@ -19,4 +19,8 @@ public interface IMana {
     void setVisionBlessing(boolean hasVisionBlessing);
     boolean isKodaiActive();
     void setKodaiActive(boolean active);
+    
+    // Blood Bone
+    boolean isBloodBoneActive();
+    void setBloodBoneActive(boolean active);
 }

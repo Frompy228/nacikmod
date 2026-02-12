@@ -5,14 +5,16 @@ public class Mana implements IMana {
     private int maxMana;
     private boolean isTrueMage;
     private boolean hasVisionBlessing;
-    private boolean kodaiActive; // НОВОЕ поле
+    private boolean kodaiActive;
+    private boolean bloodBoneActive;
 
     public Mana() {
         this.mana = 100;  // Начальная мана
         this.maxMana = 100;
         this.isTrueMage = false;
         this.hasVisionBlessing = false;
-        this.kodaiActive = false; // По умолчанию выключено
+        this.kodaiActive = false;
+        this.bloodBoneActive = false;
     }
 
     @Override
@@ -89,5 +91,15 @@ public class Mana implements IMana {
     @Override
     public void setKodaiActive(boolean active) {
         this.kodaiActive = active;
+    }
+
+    @Override
+    public boolean isBloodBoneActive() {
+        return bloodBoneActive;
+    }
+
+    @Override
+    public void setBloodBoneActive(boolean active) {
+        this.bloodBoneActive = active;
     }
 }
